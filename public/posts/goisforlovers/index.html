@@ -2,12 +2,12 @@
 
 <html lang="en">
 
-<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=4321&amp;path=livereload" data-no-instant defer></script>
+<head>
   <title>(Hu)go Template Primer - Kiera</title>
   <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="description" content="Kiera: A Hugo theme for creative and technical writing." />
-<meta name="author" content="Example" /><meta property="og:url" content="http://localhost:4321/posts/goisforlovers/">
+<meta name="author" content="Example" /><meta property="og:url" content="https://www.example.org/posts/goisforlovers/">
   <meta property="og:site_name" content="Kiera">
   <meta property="og:title" content="(Hu)go Template Primer">
   <meta property="og:description" content="Hugo uses the excellent go html/template library for its template engine. It is an extremely lightweight engine that provides a very small amount of logic. In our experience that it is just the right amount of logic to be able to create a good static website. If you have used other template systems from different languages or frameworks you will find a lot of similarities in go templates.">
@@ -30,13 +30,13 @@
 <meta name="generator" content="Hugo 0.134.0">
     
 
-  <link rel="stylesheet" href="http://localhost:4321/css/normalize.min.css" />
-  <link rel="stylesheet" href="http://localhost:4321/fontawesome/css/all.min.css" />
+  <link rel="stylesheet" href="https://www.example.org/css/normalize.min.css" />
+  <link rel="stylesheet" href="https://www.example.org/fontawesome/css/all.min.css" />
   
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Slab|Ruda" />
   
   
-  <link rel="stylesheet" type="text/css" href="http://localhost:4321/css/styles.css" />
+  <link rel="stylesheet" type="text/css" href="https://www.example.org/css/styles.css" />
 </head>
 
 <body>
@@ -44,7 +44,7 @@
     <header>
       
       <h1>
-        <a href="http://localhost:4321/">Kiera</a>
+        <a href="https://www.example.org/">Kiera</a>
       </h1>
 
       <ul id="social-media">
@@ -69,13 +69,13 @@
     <ul>
         
         <li>
-            <a class="active" href="http://localhost:4321/posts/">
+            <a class="active" href="https://www.example.org/posts/">
                 <i class="fa-li fa  fa-lg"></i><span>Posts</span>
             </a>
         </li>
         
         <li>
-            <a class="" href="http://localhost:4321/about/">
+            <a class="" href="https://www.example.org/about/">
                 <i class="fa-li fa  fa-lg"></i><span>About Hugo</span>
             </a>
         </li>
@@ -106,10 +106,10 @@
             <em>
                 
                     
-                    <a href="http://localhost:4321/categories/development">Development</a>
+                    <a href="https://www.example.org/categories/development">Development</a>
                 
                     , 
-                    <a href="http://localhost:4321/categories/golang">golang</a>
+                    <a href="https://www.example.org/categories/golang">golang</a>
                 
             </em>
         </li>
@@ -120,19 +120,19 @@
             <em>
                 
                     
-                    <a href="http://localhost:4321/tags/go">#go</a>
+                    <a href="https://www.example.org/tags/go">#go</a>
                 
                     , 
-                    <a href="http://localhost:4321/tags/golang">#golang</a>
+                    <a href="https://www.example.org/tags/golang">#golang</a>
                 
                     , 
-                    <a href="http://localhost:4321/tags/templates">#templates</a>
+                    <a href="https://www.example.org/tags/templates">#templates</a>
                 
                     , 
-                    <a href="http://localhost:4321/tags/themes">#themes</a>
+                    <a href="https://www.example.org/tags/themes">#themes</a>
                 
                     , 
-                    <a href="http://localhost:4321/tags/development">#development</a>
+                    <a href="https://www.example.org/tags/development">#development</a>
                 
             </em>
         </li>
@@ -147,7 +147,7 @@
     
       
 <div class="featured_image">
-    <a href="http://localhost:4321/posts/goisforlovers/" title="(Hu)go Template Primer">
+    <a href="https://www.example.org/posts/goisforlovers/" title="(Hu)go Template Primer">
         <img src="">
     </a>
 </div>
@@ -192,7 +192,7 @@ functions.</p>
 <p>Each go template has a struct (object) made available to it. In hugo each
 template is passed either a page or a node struct depending on which type of
 page you are rendering. More details are available on the
-<a href="http://localhost:4321/layout/variables">variables</a> page.</p>
+<a href="https://www.example.org/layout/variables">variables</a> page.</p>
 <p>A variable is accessed by referencing the variable name.</p>
 <pre><code>&lt;title&gt;{{ .Title }}&lt;/title&gt;
 </code></pre>
@@ -203,7 +203,7 @@ page you are rendering. More details are available on the
 <h2 id="functions">Functions</h2>
 <p>Go template ship with a few functions which provide basic functionality. The go
 template system also provides a mechanism for applications to extend the
-available functions with their own. <a href="http://localhost:4321/layout/functions">Hugo template
+available functions with their own. <a href="https://www.example.org/layout/functions">Hugo template
 functions</a> provide some additional functionality we believe
 are useful for building websites. Functions are called by using their name
 followed by the required parameters separated by spaces. Template
@@ -334,7 +334,7 @@ type (supported by your front matter/config format) and use them however
 you want to inside of your templates.</p>
 <h2 id="using-content-page-parameters">Using Content (page) Parameters</h2>
 <p>In each piece of content you can provide variables to be used by the
-templates. This happens in the <a href="http://localhost:4321/content/front-matter">front matter</a>.</p>
+templates. This happens in the <a href="https://www.example.org/content/front-matter">front matter</a>.</p>
 <p>An example of this is used in this documentation site. Most of the pages
 benefit from having the table of contents provided. Sometimes the TOC just
 doesn&rsquo;t make a lot of sense. We&rsquo;ve defined a variable in our front matter
@@ -397,12 +397,12 @@ so, such as in this example:</p>
     <ul>
         <li>
         
-            <a href="http://localhost:4321/posts/hugoisforlovers/"><i class="fa fa-chevron-circle-left"></i> Getting Started with Hugo</a>
+            <a href="https://www.example.org/posts/hugoisforlovers/"><i class="fa fa-chevron-circle-left"></i> Getting Started with Hugo</a>
         
         </li>
         <li>
         
-            <a href="http://localhost:4321/posts/creating-a-new-theme/">Creating a New Theme <i class="fa fa-chevron-circle-right"></i> </a>
+            <a href="https://www.example.org/posts/creating-a-new-theme/">Creating a New Theme <i class="fa fa-chevron-circle-right"></i> </a>
         
         </li>
     </ul>
@@ -422,14 +422,14 @@ so, such as in this example:</p>
             <li>
                 <h6>Copyright © 2023 - Author Name | 
                     Rendered by <a href="https://gohugo.io" title="Hugo">Hugo</a> |
-                    <a href="http://localhost:4321/index.xml">Subscribe </a></h6>
+                    <a href="https://www.example.org/index.xml">Subscribe </a></h6>
             </li>
             
             
         </ul>
     </footer>
 </div>
-<script src="http://localhost:4321/js/scripts.js"></script>
+<script src="https://www.example.org/js/scripts.js"></script>
 
   
 
