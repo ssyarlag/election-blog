@@ -1,0 +1,10 @@
+---
+title: Week 1 - Foundations
+author: Package Build
+date: '2024-09-06'
+slug: week-1-foundations
+categories: []
+tags: []
+---
+
+In this first blog post, I begin by conducting some initial analyses of the American elections. Using data from 1948-2020, I analyze how competitive elections are and the proportion of states that vote blue/red
