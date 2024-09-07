@@ -167,7 +167,7 @@ map_pop_2p_vote_by_state_post2008
 
 States that are more red on this map have consistently tended to overwhelmingly vote Republican, while those that are more blue have consistently voted overwhelmingly Democrat. While states like California and Wyoming appear to often regularly vote Democrat and Republican respectively, it is interesting to observe cases like Ohio or Michigan, which may tend to lean Republican or Democrat, but have a much smaller margin, indicating greater competitiveness.
 
-Then, to further understand what states have been battlegrounds, I created an additional map, which plots the degree to which a state's Democratic vote share has changed. Assuming that any declines correspond to an equal increase in Republican vote share and increases correspond to an equal decline in Republican vote share (ie: we ignore third party candidates for now), this map shows if a state has become "redder" or "bluer" since the previous election.
+Then, to further understand what states have been battlegrounds, I created an additional map, which plots the degree to which a state's Democratic vote share has changed compared to the prior election. Assuming that any declines correspond to an equal increase in Republican vote share and increases correspond to an equal decline in Republican vote share (ie: we ignore third party candidates for now), this map shows if a state has become "redder" or "bluer" since the previous election.
 
 
 ``` r
@@ -207,7 +207,7 @@ Given this caveat, we can see that states in the south and middle of the United 
 
 States on my swing map that appear to regularly alternate between increases (shown by a state being blue during an election in the above map) and decreases (shown by a state being red during an election in the above map) can be considered battleground states. These states have a lower chance of firmly voting for one party than states that are regularly only one color or appear to have little to no change relative to prior years (are white).
 
-Based on this criteria, states like Michigan, Pennsylvania, Nevada, and Ohio appear to be swing states, including in recent years. This prediction also seems to align with the states that the US News has identified as swing states (2)
+Based on this criteria, states like Michigan, Pennsylvania, Nevada, and Ohio appear to be swing states, including in recent years. This prediction also seems to align with the states that the US News has identified as swing states (2).
 
 # Cited Sources
 
