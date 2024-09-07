@@ -7,7 +7,7 @@ categories: []
 tags: []
 ---
 
-In this first blog post, I conduct some initial analyses of historical American presidential elections. Using popular vote data from 1948-2020 (provided by the course), I analyze how competitive elections are and the proportion of states that vote blue/red. My thanks to Matt Dardet for writing much of this code during and before our weekly section, as well as ShuXin Ho for helping me identify latitude/longitude loading bugs in my maps.
+In this first blog post, I conduct some initial analyses of historical American presidential elections. Using popular vote data from 1948-2020 (provided by the course), I analyze how competitive elections are and the proportion of states that vote blue/red. My thanks to Matt Dardet for writing much of this code during and before our weekly section, as well as ShuXin Ho for helping me identify latitude/longitude loading bugs in my maps when we were initially building them in section.
 
 
 To answer this week's questions, which focus on electoral competitiveness and historical voting patterns, we began by observing general trends in preference for either of the two major parties' candidates between 1948 and 2020 at both the national and state level. For the former, we produced a line plot of the two-party vote share per party in each election. For the latter, we showed which candidate won each state in each election. 
@@ -94,7 +94,7 @@ d_pvstate_wide$region = tolower(d_pvstate_wide$state)
 # Creating new dataframe with winners highlighted
 pop_2p_vote_w_state <- d_pvstate_wide |>
   left_join(states_map, by = "region") |>
-  mutate(winner = ifelse(D_pv2p > R_pv2p, "D", "R"))
+  mutate(Winner = ifelse(D_pv2p > R_pv2p, "D", "R"))
 ```
 
 ```
@@ -108,11 +108,12 @@ pop_2p_vote_w_state <- d_pvstate_wide |>
 ``` r
 # Map of Two Party Popular Vote Winners by State
 pop_2p_vote_winner_by_year_map <- pop_2p_vote_w_state |>
-  ggplot(mapping = aes(x = long, y = lat, group = group)) + geom_polygon(aes(fill = winner), color = "black") +
+  ggplot(mapping = aes(x = long, y = lat, group = group)) + geom_polygon(aes(fill = Winner), color = "black") +
   scale_fill_manual(values = c("dodgerblue4", "firebrick1")) +
   facet_wrap(~year)+
   theme_void() +
-  labs(title = "Two-Party Popular Vote Winners by State by Year")
+  labs(title = "Two-Party Popular Vote Winners by State by Year",
+       label = "Winner of State")
 
 line_plot_win_trend
 ```
@@ -131,11 +132,12 @@ To further explore state competitiveness, especially in recent years, I also pro
 
 
 ``` r
+# Dataframe averaging the margin between Democratic and Republican vote share for 2012, 2016, and 2020 elections (by state)
 pop_2p_vote_by_state_post2008 <- pop_2p_vote_w_state |>
   filter(year > 2008) |>
   mutate(margin = D_pv2p - R_pv2p) |>
-  group_by(state, group, order, lat, long) |>
-  summarize(average_margin = mean(margin))
+  group_by(state, group, order, lat, long) |> # This particular order was necessary to avoid code bugs
+  summarize(Average_Margin = mean(margin))
 ```
 
 ```
@@ -144,9 +146,10 @@ pop_2p_vote_by_state_post2008 <- pop_2p_vote_w_state |>
 ```
 
 ``` r
+# Mapping margin
 map_pop_2p_vote_by_state_post2008 <- pop_2p_vote_by_state_post2008 |>
   ggplot(mapping = aes(x=long, y = lat, group = group)) +
-  geom_polygon(aes(fill = average_margin), color = "black") +
+  geom_polygon(aes(fill = Average_Margin), color = "black") +
   scale_fill_gradient2(high= "dodgerblue4",
                        mid = "white",
                        low = "firebrick1",
@@ -168,10 +171,11 @@ Then, to further understand what states have been battlegrounds, I created an ad
 
 
 ``` r
+# New map measuring variation in Democratic vote share from previous election
 swing_maps_data <- pop_2p_vote_w_state |>
-  mutate(swing = (D_pv2p) - (D_pv2p_lag1)) |>
+  mutate(Democratic_Vote_Change = (D_pv2p) - (D_pv2p_lag1)) |>
   ggplot(aes(x = long, y = lat, group = group)) + 
-  geom_polygon(aes(fill = swing), color = "black") +
+  geom_polygon(aes(fill = Democratic_Vote_Change), color = "black") +
   scale_fill_gradient2(low = "firebrick1",
                       mid = "white",
                       high = "dodgerblue4",
