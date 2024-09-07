@@ -7,7 +7,7 @@ categories: []
 tags: []
 ---
 
-In this first blog post, I conduct some initial analyses of historical American presidential elections. Using popular vote data from 1948-2020 (provided by the course), I analyze how competitive elections are and the proportion of states that vote blue/red. My thanks to Matt Dardet for writing much of this code during and before our weekly section, as well as ShuXin Ho for helping me identify latitude/longitude loading bugs in my maps when we were initially building them in section.
+In this first blog post, I conduct some initial analyses of historical American presidential elections. Using *popular vote data from 1948-2020 (provided by the course)*, I analyze how competitive elections are and the proportion of states that vote blue/red. My thanks to Matt Dardet for writing much of this code during and before our weekly section, as well as ShuXin Ho for helping me identify latitude/longitude loading bugs in my maps when we were initially building them in section.
 
 
 To answer this week's questions, which focus on electoral competitiveness and historical voting patterns, we began by observing general trends in preference for either of the two major parties' candidates between 1948 and 2020 at both the national and state level. For the former, we produced a line plot of the two-party vote share per party in each election. For the latter, we showed which candidate won each state in each election. 
@@ -216,3 +216,6 @@ Based on this criteria, states like Michigan, Pennsylvania, Nevada, and Ohio app
 
 (2) Davis Jr., Elliott. “7 States That Could Sway the 2024 Presidential Election.” US News & World Report, August 27, 2024. //www.usnews.com/news/elections/articles/7-swing-states-that-could-decide-the-2024-presidential-election.
 
+# Data Source
+
+US Presidential Election Popular Vote Data from 1948-2020 (provided by the course)
