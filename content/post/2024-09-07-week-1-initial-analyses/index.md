@@ -1,6 +1,6 @@
 ---
 title: Week 1 - Initial Analyses
-author: Package Build
+author: Shriya Yarlagadda
 date: '2024-09-07'
 slug: week-1-initial-analyses
 categories: []
@@ -13,8 +13,9 @@ In this first blog post, I begin by conducting some initial analyses of the Amer
 ## Questions:
 ## 1: How competitive are presidential elections in the United States?
 ## 2: Which states vote blue/red and how consistently
+## 3: Extension: Plot a swing map for each year. Which states are/have been battleground states? Which states are no longer battlegrounds?
 
-To answer this question, we began by observing general trends in preference for either of the two major parties' candidates between 1948 and 2020. We conducted analyses at both the national and state level. For the former, we produced a line plot of the two-party vote share per party in each election. For the latter, we used a map to visually break down the total percentage in the line plot by state, showing which candidate won each state in each election. 
+To answer these questions, we began by observing general trends in preference for either of the two major parties' candidates between 1948 and 2020. We conducted analyses at both the national and state level. For the former, we produced a line plot of the two-party vote share per party in each election. For the latter, we used a map to visually break down the total percentage in the line plot by state, showing which candidate won each state in each election. 
 
 
 
@@ -127,7 +128,8 @@ pop_2p_vote_winner_by_year_map
 ```
 
 <img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-2-2.png" width="672" />
-Then, to measure the competitiveness of each states in recent years, I produced the following map, demonstrating the average two-party popular vote margin in each state in each election following 2008. I chose this cutoff to reflect modern trends in state-party alignment, especially in the era of Trump.
+
+To further explore state competitiveness, especially in recent years, I also produced the following map demonstrating the average two-party popular vote margin in each state in each election following 2008. I chose this cutoff to reflect modern trends in state-party alignment, especially in the era of Trump.
 
 
 ``` r
@@ -162,8 +164,30 @@ map_pop_2p_vote_by_state_post2008
 
 <img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-3-1.png" width="672" />
 
-States that are more red on this map have consistently tended to overwhelmingly vote Republican, while those that are more blue have consistently voted overwhelmingly Democrat. While states like California and Wyoming appear to often regularly vote Democrat and Republican respectively, it is interesting to observe cases like Ohio or Michigan, which may tend to lean Republican or Democrat, but have a much smaller margin. Such states with smaller margins appear to also be more competitive, based on recent historical trends. 
+States that are more red on this map have consistently tended to overwhelmingly vote Republican, while those that are more blue have consistently voted overwhelmingly Democrat. While states like California and Wyoming appear to often regularly vote Democrat and Republican respectively, it is interesting to observe cases like Ohio or Michigan, which may tend to lean Republican or Democrat, but have a much smaller margin, indicating greater competitiveness.
 
-To better understand what actually constitutes a swing state, I also plo
+Then, to further understand what states have been battlegrounds, I created an additional map, which plots the degree to which a state's democratic vote share has changed. Assuming that any declines correspond to an equal increase in Republican vote share and increases correspond to an equal decline in Republican vote share (ie: we ignore third party candidates for now), this map shows if a state has become "redder" or "bluer" since the previous election.
 
 
+``` r
+swing_maps_data <- pop_2p_vote_w_state |>
+  mutate(swing = (D_pv2p) - (D_pv2p_lag1)) |>
+  ggplot(aes(x = long, y = lat, group = group)) + 
+  geom_polygon(aes(fill = swing), color = "black") +
+  scale_fill_gradient2(low = "firebrick1",
+                      mid = "white",
+                      high = "dodgerblue4",
+                      breaks = c(-20, -10, 0, 10, 20),
+                      limits = c(-20,20)) +
+  facet_wrap(~year) +
+  theme_void() +
+  labs(title = "Change in Vote Share Relative to Prior Election")
+
+swing_maps_data
+```
+
+<img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-4-1.png" width="672" />
+
+States on this map that appear to regularly alternate between increases (shown by a state being blue during an election in the above map) and decreases (shown by a state being red during an election in the above map) can be considered battleground states. These states have a lower chance of firmly voting for one party than states that are regularly only one color or appear to have little to no change relative to prior years (are white).
+
+Based on this criteria, states like Michigan, Pennsylvania, Nevada, and Ohio appear to be swing states, including in recent years. This prediction also seems to align with the states that the US News has identified as swing states (https://www.usnews.com/news/elections/articles/7-swing-states-that-could-decide-the-2024-presidential-election). 
