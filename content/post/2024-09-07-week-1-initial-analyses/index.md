@@ -7,15 +7,10 @@ categories: []
 tags: []
 ---
 
-In this first blog post, I begin by conducting some initial analyses of the American elections. Using data from 1948-2020, I analyze how competitive elections are and the proportion of states that vote blue/red. My thanks to Matt Dardet for writing much of this code during and before our weekly section, as well as ShuXin Ho for helping me identify latitude/longitude loading bugs in my maps.
+In this first blog post, I conduct some initial analyses of historical American presidential elections. Using data from 1948-2020, I analyze how competitive elections are and the proportion of states that vote blue/red. My thanks to Matt Dardet for writing much of this code during and before our weekly section, as well as ShuXin Ho for helping me identify latitude/longitude loading bugs in my maps.
 
 
-## Questions:
-## 1: How competitive are presidential elections in the United States?
-## 2: Which states vote blue/red and how consistently
-## 3: Extension: Plot a swing map for each year. Which states are/have been battleground states? Which states are no longer battlegrounds?
-
-To answer these questions, we began by observing general trends in preference for either of the two major parties' candidates between 1948 and 2020. We conducted analyses at both the national and state level. For the former, we produced a line plot of the two-party vote share per party in each election. For the latter, we used a map to visually break down the total percentage in the line plot by state, showing which candidate won each state in each election. 
+To answer this week's questions, which focus on electoral competitiveness and historical voting patterns, we began by observing general trends in preference for either of the two major parties' candidates between 1948 and 2020. We conducted analyses at both the national and state level. For the former, we produced a line plot of the two-party vote share per party in each election. For the latter, we used a map to visually break down the total percentage in the line plot by state, showing which candidate won each state in each election. 
 
 
 
@@ -62,6 +57,7 @@ d_popvote_wide <- d_popvote |>
   pivot_wider(names_from = party, values_from = pv2p) |>
   mutate(winner = ifelse(democrat > republican, "D", "R"))
 ```
+
 
 
 ``` r
@@ -129,6 +125,8 @@ pop_2p_vote_winner_by_year_map
 
 <img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-2-2.png" width="672" />
 
+
+
 To further explore state competitiveness, especially in recent years, I also produced the following map demonstrating the average two-party popular vote margin in each state in each election following 2008. I chose this cutoff to reflect modern trends in state-party alignment, especially in the era of Trump.
 
 
@@ -150,7 +148,7 @@ map_pop_2p_vote_by_state_post2008 <- pop_2p_vote_by_state_post2008 |>
   ggplot(mapping = aes(x=long, y = lat, group = group)) +
   geom_polygon(aes(fill = average_margin), color = "black") +
   scale_fill_gradient2(high= "dodgerblue4",
-                       mid = "purple3",
+                       mid = "white",
                        low = "firebrick1",
                        breaks = c(-50, -25, 0, 25, 50),
                        limits = c(-50,50)) +
@@ -166,7 +164,7 @@ map_pop_2p_vote_by_state_post2008
 
 States that are more red on this map have consistently tended to overwhelmingly vote Republican, while those that are more blue have consistently voted overwhelmingly Democrat. While states like California and Wyoming appear to often regularly vote Democrat and Republican respectively, it is interesting to observe cases like Ohio or Michigan, which may tend to lean Republican or Democrat, but have a much smaller margin, indicating greater competitiveness.
 
-Then, to further understand what states have been battlegrounds, I created an additional map, which plots the degree to which a state's democratic vote share has changed. Assuming that any declines correspond to an equal increase in Republican vote share and increases correspond to an equal decline in Republican vote share (ie: we ignore third party candidates for now), this map shows if a state has become "redder" or "bluer" since the previous election.
+Then, to further understand what states have been battlegrounds, I created an additional map, which plots the degree to which a state's Democratic vote share has changed. Assuming that any declines correspond to an equal increase in Republican vote share and increases correspond to an equal decline in Republican vote share (ie: we ignore third party candidates for now), this map shows if a state has become "redder" or "bluer" since the previous election.
 
 
 ``` r
@@ -181,13 +179,36 @@ swing_maps_data <- pop_2p_vote_w_state |>
                       limits = c(-20,20)) +
   facet_wrap(~year) +
   theme_void() +
-  labs(title = "Change in Vote Share Relative to Prior Election")
+  labs(title = "Change in Democratic Vote Share Relative to Prior Election")
 
 swing_maps_data
 ```
 
 <img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-4-1.png" width="672" />
 
-States on this map that appear to regularly alternate between increases (shown by a state being blue during an election in the above map) and decreases (shown by a state being red during an election in the above map) can be considered battleground states. These states have a lower chance of firmly voting for one party than states that are regularly only one color or appear to have little to no change relative to prior years (are white).
 
-Based on this criteria, states like Michigan, Pennsylvania, Nevada, and Ohio appear to be swing states, including in recent years. This prediction also seems to align with the states that the US News has identified as swing states (https://www.usnews.com/news/elections/articles/7-swing-states-that-could-decide-the-2024-presidential-election). 
+# Questions:
+## 1: How competitive are presidential elections in the United States?
+Presidential elections in the United States are generally quite competitive. As seen in the line graph above, both primary parties appear to earn a significant share of votes in each election and the winning party changes quite frequently.
+
+However, this competition appears to be driven by certain states that appear to be especially competitive. When focusing on recent elections, several states appear to consistently vote for one party, but others, especially as seen in the first and second maps may be more uncertain in their vote.
+
+## 2: Which states vote blue/red and how consistently?
+First, it is important to note that several states that consistently voted for one party in the earlier elections in this dataset tend to consistently vote for the opposite party. This may be associated with the shifts in political preferences of each party during the latter half of the 20th century (1). Thus, when making predictions about consistency for upcoming elections, it is better to consider voting patterns in more recent years, to reflect more recent trends in voting. 
+
+Given this caveat, we can see that states in the south and middle of the United States have tended to consistently vote for Republicans, while those on the coasts and parts of the Midwest were more likely to vote Democrats when referencing the first map. However, certain states, often at the fringes of these geographic regions, were less consistent, such as Michigan, Pennsylvania, Ohio, and Florida. This is more clearly seen in the second and third maps, which do not show a clear pattern/preference in each of these states. 
+
+
+## 3: Extension: Plot a swing map for each year. Which states are/have been battleground states? Which states are no longer battlegrounds?
+
+States on my swing map that appear to regularly alternate between increases (shown by a state being blue during an election in the above map) and decreases (shown by a state being red during an election in the above map) can be considered battleground states. These states have a lower chance of firmly voting for one party than states that are regularly only one color or appear to have little to no change relative to prior years (are white).
+
+Based on this criteria, states like Michigan, Pennsylvania, Nevada, and Ohio appear to be swing states, including in recent years. This prediction also seems to align with the states that the US News has identified as swing states (2)
+
+# Cited Sources
+
+(1) Students of History. “The Great Switch: How Republicans and Democrats Flipped Ideologies.” Accessed September 7, 2024. https://www.studentsofhistory.com/ideologies-flip-Democratic-Republican-parties.; U.S. Embassy & Consulate in the Kingdom of Denmark. “Presidential Elections and the American Political System.” Accessed September 7, 2024. https://dk.usembassy.gov/usa-i-skolen/presidential-elections-and-the-american-political-system/.
+
+
+(2) Davis Jr., Elliott. “7 States That Could Sway the 2024 Presidential Election.” US News & World Report, August 27, 2024. //www.usnews.com/news/elections/articles/7-swing-states-that-could-decide-the-2024-presidential-election.
+
