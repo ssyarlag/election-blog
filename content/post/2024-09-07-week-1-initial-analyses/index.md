@@ -7,10 +7,10 @@ categories: []
 tags: []
 ---
 
-In this first blog post, I conduct some initial analyses of historical American presidential elections. Using data from 1948-2020, I analyze how competitive elections are and the proportion of states that vote blue/red. My thanks to Matt Dardet for writing much of this code during and before our weekly section, as well as ShuXin Ho for helping me identify latitude/longitude loading bugs in my maps.
+In this first blog post, I conduct some initial analyses of historical American presidential elections. Using popular vote data from 1948-2020 (provided by the course), I analyze how competitive elections are and the proportion of states that vote blue/red. My thanks to Matt Dardet for writing much of this code during and before our weekly section, as well as ShuXin Ho for helping me identify latitude/longitude loading bugs in my maps.
 
 
-To answer this week's questions, which focus on electoral competitiveness and historical voting patterns, we began by observing general trends in preference for either of the two major parties' candidates between 1948 and 2020. We conducted analyses at both the national and state level. For the former, we produced a line plot of the two-party vote share per party in each election. For the latter, we used a map to visually break down the total percentage in the line plot by state, showing which candidate won each state in each election. 
+To answer this week's questions, which focus on electoral competitiveness and historical voting patterns, we began by observing general trends in preference for either of the two major parties' candidates between 1948 and 2020 at both the national and state level. For the former, we produced a line plot of the two-party vote share per party in each election. For the latter, we showed which candidate won each state in each election. 
 
 
 
@@ -194,9 +194,9 @@ Presidential elections in the United States are generally quite competitive. As 
 However, this competition appears to be driven by certain states that appear to be especially competitive. When focusing on recent elections, several states appear to consistently vote for one party, but others, especially as seen in the first and second maps may be more uncertain in their vote.
 
 ## 2: Which states vote blue/red and how consistently?
-First, it is important to note that several states that consistently voted for one party in the earlier elections in this dataset tend to consistently vote for the opposite party. This may be associated with the shifts in political preferences of each party during the latter half of the 20th century (1). Thus, when making predictions about consistency for upcoming elections, it is better to consider voting patterns in more recent years, to reflect more recent trends in voting. 
+First, it is important to note that several states that consistently voted for one party in the earlier elections in this dataset tend to consistently vote for the opposite party in later years. This may be associated with the shifts in political preferences of each party during the latter half of the 20th century (1). Thus, when making predictions about consistency for upcoming elections, it is better to consider voting patterns in more recent years, to reflect more recent trends in voting. 
 
-Given this caveat, we can see that states in the south and middle of the United States have tended to consistently vote for Republicans, while those on the coasts and parts of the Midwest were more likely to vote Democrats when referencing the first map. However, certain states, often at the fringes of these geographic regions, were less consistent, such as Michigan, Pennsylvania, Ohio, and Florida. This is more clearly seen in the second and third maps, which do not show a clear pattern/preference in each of these states. 
+Given this caveat, we can see that states in the south and middle of the United States have tended to consistently vote for Republicans, while those on the coasts and parts of the Midwest were more likely to vote for Democrats when referencing the first map. However, certain states, often at the fringes of these geographic regions, were less consistent, such as Michigan, Pennsylvania, Ohio, and Florida. This is more clearly seen in the second and third maps, which do not show a clear pattern/preference in each of these states. 
 
 
 ## 3: Extension: Plot a swing map for each year. Which states are/have been battleground states? Which states are no longer battlegrounds?
