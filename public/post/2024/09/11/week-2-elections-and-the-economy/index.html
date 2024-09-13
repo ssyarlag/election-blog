@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Week 2: Elections and the Economy | A minimal Hugo website</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/fonts.css" />
+    
+  </head>
+
+  <body>
+    <nav>
+    <ul class="menu">
+      
+      <li><a href="/">Home</a></li>
+      
+    </ul>
+    <hr/>
+    </nav>
+
+<div class="article-meta">
+<h1><span class="title">Week 2: Elections and the Economy</span></h1>
+<h2 class="author">Shriya Yarlagadda</h2>
+<h2 class="date">2024/09/11</h2>
+</div>
+
+<main>
+<p>In this week&rsquo;s lab, we focus on understanding how well the status of the economy predicts the outcome of an election. In particular, we aim to quantify this uncertainty. My thanks again to Matt Dardet for his generous starter code in section, much of which I have used/adapted here.</p>
+<pre><code class="language-r"># Load libraries and datasets
+
+library(car)
+</code></pre>
+<pre><code>## Loading required package: carData
+</code></pre>
+<pre><code class="language-r">library(tidyverse)
+</code></pre>
+<pre><code>## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+## ✔ dplyr     1.1.4     ✔ readr     2.1.5
+## ✔ forcats   1.0.0     ✔ stringr   1.5.1
+## ✔ ggplot2   3.5.1     ✔ tibble    3.2.1
+## ✔ lubridate 1.9.3     ✔ tidyr     1.3.1
+## ✔ purrr     1.0.2
+</code></pre>
+<pre><code>## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()
+## ✖ dplyr::recode() masks car::recode()
+## ✖ purrr::some()   masks car::some()
+## ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors
+</code></pre>
+<pre><code class="language-r">d_popvote &lt;- read_csv(&quot;popvote_1948-2020.csv&quot;)
+</code></pre>
+<pre><code>## Rows: 38 Columns: 9
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: &quot;,&quot;
+## chr (2): party, candidate
+## dbl (3): year, pv, pv2p
+## lgl (4): winner, incumbent, incumbent_party, prev_admin
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+</code></pre>
+<pre><code class="language-r">d_fred &lt;- read_csv(&quot;fred_econ.csv&quot;)
+</code></pre>
+<pre><code>## Rows: 387 Columns: 14
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: &quot;,&quot;
+## dbl (14): year, quarter, GDP, GDP_growth_quarterly, RDPI, RDPI_growth_quarte...
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+</code></pre>
+<pre><code class="language-r">d_bea &lt;- read_csv(&quot;bea_econ.csv&quot;) |&gt; 
+  rename(year = &quot;Year&quot;,
+         quarter = &quot;Quarter&quot;, 
+         gdp = &quot;Gross domestic product&quot;, 
+         gnp = &quot;Gross national product&quot;, 
+         dpi = &quot;Disposable personal income&quot;, 
+         consumption = &quot;Personal consumption expenditures&quot;, 
+         goods = &quot;Goods&quot;, 
+         durables = &quot;Durable goods&quot;, 
+         nondurables = &quot;Nondurable goods&quot;, 
+         services = &quot;Services&quot;, 
+         pop = &quot;Population (midperiod, thousands)&quot;)
+</code></pre>
+<pre><code>## Rows: 310 Columns: 11
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: &quot;,&quot;
+## chr  (1): Quarter
+## dbl (10): Year, Gross domestic product, Gross national product, Disposable p...
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+</code></pre>
+<pre><code class="language-r"># Merged econ data
+d_inc_econ &lt;- d_popvote |&gt; 
+  filter(incumbent_party == TRUE) |&gt; 
+  select(year, pv, pv2p, winner) |&gt; 
+  left_join(d_fred |&gt; filter(quarter == 2)) |&gt; 
+  left_join(d_bea |&gt; filter(quarter == &quot;Q2&quot;) |&gt; select(year, dpi))
+</code></pre>
+<pre><code>## Joining with `by = join_by(year)`
+## Joining with `by = join_by(year)`
+</code></pre>
+<pre><code class="language-r"># Merged econ data, but without the year 2020
+d_inc_econ_2 &lt;- d_inc_econ |&gt;
+  filter(year != 2020)
+</code></pre>
+<p>First, we explored how well the economy <em>correlated</em> with election outcomes by computing the bivariate correlation between quarterly GDP growth and incumbent two-party vote share. We began by reviewing a scatterplot of this data.</p>
+<pre><code class="language-r">d_inc_econ |&gt;
+  ggplot(aes(x=GDP_growth_quarterly, y=pv2p)) +
+  geom_point()+
+  geom_label(aes(label = year)) +
+  labs(title = &quot;Two-Party Popular Vote Share by GDP Growth&quot;,
+       x = &quot;Quarterly GDP Growth&quot;,
+       y = &quot;Two-Party Popular Vote Share&quot;)
+</code></pre>
+<img src="https://example.org/post/2024/09/11/week-2-elections-and-the-economy/index_files/figure-html/unnamed-chunk-2-1.png" width="672" />
+<p>Clearly, this scatterplot shows that 2020 is a significant outlier, due to the significant decline in GDP right before the election. Therefore, when we compute the correlation between GDP growth and two-party vote share for the incumbent party in the election, it makes sense to also calculate the correlation excluding this year.</p>
+<pre><code class="language-r"># Correlation of GDP and two-party vote share (with 2020)
+gdp_cor_2020 &lt;- cor(d_inc_econ$GDP_growth_quarterly, 
+    d_inc_econ$pv2p)
+
+# Correlation of GDP and two-party vote share (without 2020)
+
+gdp_cor_no_2020 &lt;- cor(d_inc_econ_2$GDP_growth_quarterly, 
+    d_inc_econ_2$pv2p)
+
+gdp_cor_2020 
+</code></pre>
+<pre><code>## [1] 0.4336956
+</code></pre>
+<pre><code class="language-r">gdp_cor_no_2020
+</code></pre>
+<pre><code>## [1] 0.569918
+</code></pre>
+<p>This result shows that while there is a slight positive correlation (r = 0.43) between GDP growth and incumbent party vote share even including 2020, the correlation becomes even stronger when dropping 2020 (r = 0.57).</p>
+<p>Since we see what appears to be a relationship between these variables, we then move into <em>fitting a model</em> to this data. Since the scatterplot appeared to demonstrate a linear relationship, especially when removing the outlier of 2020, we fitted a linear regression model to our data.</p>
+<pre><code class="language-r">reg_econ_no_2020 &lt;- lm(data = d_inc_econ_2, pv2p~GDP_growth_quarterly)
+
+summary(reg_econ_no_2020)
+</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = pv2p ~ GDP_growth_quarterly, data = d_inc_econ_2)
+## 
+## Residuals:
+##    Min     1Q Median     3Q    Max 
+## -6.237 -4.160  0.450  1.904  8.728 
+## 
+## Coefficients:
+##                      Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)           49.3751     1.4163  34.862   &lt;2e-16 ***
+## GDP_growth_quarterly   0.7366     0.2655   2.774   0.0135 *  
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 4.463 on 16 degrees of freedom
+## Multiple R-squared:  0.3248,	Adjusted R-squared:  0.2826 
+## F-statistic: 7.697 on 1 and 16 DF,  p-value: 0.01354
+</code></pre>
+<p>This model suggests that a one percentage point increase in quarterly GDP growth predicts a ~0.7 percentage point increase national two-party popular vote share for the incumbent party during the upcoming election. Interestingly, the model also has an intercept of 49.4, implying that if there is no economic growth in the quarter before an election, the incumbent party is predicted to not gain a plurality of the votes. This suggests that voters particularly value economic growth, not just economic stability or the prevention of an economic decline.</p>
+<p>However, we also want to <em>evaluate this model</em> and its success in prediction. To do so, we conducted several tests of in-sample and out-of-sample predictive power. I highlight one of each here.</p>
+<p>In-Sample Fit: R^2 Value</p>
+<pre><code class="language-r">summary(reg_econ_no_2020)$r.squared
+</code></pre>
+<pre><code>## [1] 0.3248066
+</code></pre>
+<p>We find an R^2 value of 0.32. This is a fairly modest figure, suggesting that we may need to make further modifications to this model to improve its fit</p>
+<p>Out-of-Sample Prediction: Cross Validation</p>
+<pre><code class="language-r"># Create a loop that produces 1000 estimates of out of sample error, using a random subset that is taken out
+out_samp_errors &lt;-sapply(1:1000, function(i) {
+  years_out_samp &lt;- sample(d_inc_econ_2$year, 9) # Pick a random sample of years to extract from our dataset, and try to predict their outcomes later based on the other data
+  mod_without_subset &lt;- lm(pv2p~GDP_growth_quarterly, data = d_inc_econ_2[!(d_inc_econ_2$year %in% years_out_samp),])# Fit model without subset
+  out_samp_pred &lt;- predict(mod_without_subset, d_inc_econ_2[d_inc_econ_2$year %in% years_out_samp,]) # Predict values for years taken out based on model fit without them
+  out_samp_truth &lt;- d_inc_econ_2$pv2p[d_inc_econ_2$year %in% years_out_samp] # Real values for years taken out
+  mean(out_samp_pred - out_samp_truth) # Average of the difference between truth
+})
+
+# Visualize distribution
+hist(out_samp_errors)
+</code></pre>
+<img src="https://example.org/post/2024/09/11/week-2-elections-and-the-economy/index_files/figure-html/unnamed-chunk-6-1.png" width="672" />
+<p>This distribution shows that, in general, our model appears to make fairly accurate predictions. In other words, while our model may have appeared weak previously, this visualization demonstrates that it is stronger than we thought.</p>
+<p>Out-of-sample extrapolation: 2024</p>
+<pre><code class="language-r">GDP_new &lt;- d_fred |&gt;
+  filter(year == 2024 &amp; quarter == 2) |&gt;
+  select(GDP_growth_quarterly)
+
+predict(reg_econ_no_2020, GDP_new, interval = &quot;prediction&quot;)
+</code></pre>
+<pre><code>##        fit      lwr     upr
+## 1 51.58486 41.85982 61.3099
+</code></pre>
+<p>We can also use this model to predict the upcoming 2024 election, using recent economic data. This prediction suggests that the incumbent Democratic party can expect to receive about 51.58% of the two-party vote share. However, the margin of error on this prediction ranges from 41.86% to 61.31%, implying that the election could still swing either way.</p>
+<p>Given that we&rsquo;ve observed the limitations of a simple bivariate linear model, we also observed several methods to <em>improve this model</em></p>
+<p>Of course, GDP growth is only one metric of economic performance. Therefore, I also tested how well the unemployment rate predicted election outcomes. I again excluded 2020 because our previous graph showed it as an economic outlier.</p>
+<pre><code class="language-r">reg_unemp &lt;- lm(pv2p~unemployment, data = d_inc_econ_2)
+summary(reg_unemp)
+</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = pv2p ~ unemployment, data = d_inc_econ_2)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -7.2394 -2.9835 -0.7848  2.5555  9.7788 
+## 
+## Coefficients:
+##              Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  51.88452    4.84160  10.716 1.04e-08 ***
+## unemployment  0.02205    0.84527   0.026     0.98    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 5.431 on 16 degrees of freedom
+## Multiple R-squared:  4.254e-05,	Adjusted R-squared:  -0.06245 
+## F-statistic: 0.0006806 on 1 and 16 DF,  p-value: 0.9795
+</code></pre>
+<p>Unfortunately, the r^2 value of this regression is much smaller than that using GDP growth as a predictor, meaning that it is a less accurate model.</p>
+<p>As an <em>extension</em>, I conducted the same analysis for several other economic variables, summarizing it in the table below.</p>
+<pre><code class="language-r">library(stargazer)
+</code></pre>
+<pre><code>## 
+## Please cite as:
+</code></pre>
+<pre><code>##  Hlavac, Marek (2022). stargazer: Well-Formatted Regression and Summary Statistics Tables.
+</code></pre>
+<pre><code>##  R package version 5.2.3. https://CRAN.R-project.org/package=stargazer
+</code></pre>
+<pre><code class="language-r">reg_rdi &lt;- lm(pv2p~RDPI, data = d_inc_econ_2) # Regression on Real Disposable Income
+
+reg_inf &lt;- lm(pv2p~CPI, data = d_inc_econ_2) # Inflation
+
+reg_stocks &lt;- lm(pv2p~sp500_adj_close, data = d_inc_econ_2) # Stock market performance
+
+stargazer(reg_econ_no_2020, reg_unemp, reg_rdi, reg_inf, reg_stocks)
+</code></pre>
+<pre><code>## 
+## % Table created by stargazer v.5.2.3 by Marek Hlavac, Social Policy Institute. E-mail: marek.hlavac at gmail.com
+## % Date and time: Fri, Sep 13, 2024 - 19:35:00
+## \begin{table}[!htbp] \centering 
+##   \caption{} 
+##   \label{} 
+## \begin{tabular}{@{\extracolsep{5pt}}lccccc} 
+## \\[-1.8ex]\hline 
+## \hline \\[-1.8ex] 
+##  &amp; \multicolumn{5}{c}{\textit{Dependent variable:}} \\ 
+## \cline{2-6} 
+## \\[-1.8ex] &amp; \multicolumn{5}{c}{pv2p} \\ 
+## \\[-1.8ex] &amp; (1) &amp; (2) &amp; (3) &amp; (4) &amp; (5)\\ 
+## \hline \\[-1.8ex] 
+##  GDP\_growth\_quarterly &amp; 0.737$^{**}$ &amp;  &amp;  &amp;  &amp;  \\ 
+##   &amp; (0.265) &amp;  &amp;  &amp;  &amp;  \\ 
+##   &amp; &amp; &amp; &amp; &amp; \\ 
+##  unemployment &amp;  &amp; 0.022 &amp;  &amp;  &amp;  \\ 
+##   &amp;  &amp; (0.845) &amp;  &amp;  &amp;  \\ 
+##   &amp; &amp; &amp; &amp; &amp; \\ 
+##  RDPI &amp;  &amp;  &amp; $-$0.0004 &amp;  &amp;  \\ 
+##   &amp;  &amp;  &amp; (0.0004) &amp;  &amp;  \\ 
+##   &amp; &amp; &amp; &amp; &amp; \\ 
+##  CPI &amp;  &amp;  &amp;  &amp; $-$0.015 &amp;  \\ 
+##   &amp;  &amp;  &amp;  &amp; (0.017) &amp;  \\ 
+##   &amp; &amp; &amp; &amp; &amp; \\ 
+##  sp500\_adj\_close &amp;  &amp;  &amp;  &amp;  &amp; $-$0.002 \\ 
+##   &amp;  &amp;  &amp;  &amp;  &amp; (0.002) \\ 
+##   &amp; &amp; &amp; &amp; &amp; \\ 
+##  Constant &amp; 49.375$^{***}$ &amp; 51.885$^{***}$ &amp; 54.987$^{***}$ &amp; 53.604$^{***}$ &amp; 52.859$^{***}$ \\ 
+##   &amp; (1.416) &amp; (4.842) &amp; (3.021) &amp; (2.154) &amp; (1.638) \\ 
+##   &amp; &amp; &amp; &amp; &amp; \\ 
+## \hline \\[-1.8ex] 
+## Observations &amp; 18 &amp; 18 &amp; 15 &amp; 18 &amp; 18 \\ 
+## R$^{2}$ &amp; 0.325 &amp; 0.00004 &amp; 0.081 &amp; 0.049 &amp; 0.039 \\ 
+## Adjusted R$^{2}$ &amp; 0.283 &amp; $-$0.062 &amp; 0.011 &amp; $-$0.010 &amp; $-$0.021 \\ 
+## Residual Std. Error &amp; 4.463 (df = 16) &amp; 5.431 (df = 16) &amp; 5.219 (df = 13) &amp; 5.296 (df = 16) &amp; 5.323 (df = 16) \\ 
+## F Statistic &amp; 7.697$^{**}$ (df = 1; 16) &amp; 0.001 (df = 1; 16) &amp; 1.149 (df = 1; 13) &amp; 0.828 (df = 1; 16) &amp; 0.655 (df = 1; 16) \\ 
+## \hline 
+## \hline \\[-1.8ex] 
+## \textit{Note:}  &amp; \multicolumn{5}{r}{$^{*}$p$&lt;$0.1; $^{**}$p$&lt;$0.05; $^{***}$p$&lt;$0.01} \\ 
+## \end{tabular} 
+## \end{table}
+</code></pre>
+<h1 id="citations">Citations:</h1>
+<p>Hlavac, Marek (2022). stargazer: Well-Formatted Regression and Summary Statistics Tables.R package version 5.2.3. <a href="https://CRAN.R-project.org/package=stargazer">https://CRAN.R-project.org/package=stargazer</a></p>
+
+</main>
+
+  <footer>
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<script src="//cdn.jsdelivr.net/combine/npm/katex/dist/katex.min.js,npm/katex/dist/contrib/auto-render.min.js,npm/@xiee/utils/js/render-katex.js" defer></script>
+
+<script src="//cdn.jsdelivr.net/npm/@xiee/utils/js/center-img.min.js" defer></script>
+
+  
+  </footer>
+  </body>
+</html>
+

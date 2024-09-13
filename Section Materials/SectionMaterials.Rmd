@@ -1,0 +1,127 @@
+---
+title: "SectionMaterials"
+author: "Shriya Yarlagadda"
+date: "2024-09-12"
+output: pdf_document
+---
+
+```{r}
+# Correlation of GDP and two-party vote share (with 2020)
+cor(d_inc_econ$GDP_growth_quarterly, 
+    d_inc_econ$pv2p)
+
+# Bivariate OLS (to find R^2)
+reg_econ <- lm(pv2p ~ GDP_growth_quarterly, 
+               data = d_inc_econ)
+
+summary(reg_econ)$r.squared # 0.188
+
+# Correlation of GDP and two-party vote share (without 2020)
+cor(d_inc_econ_2$GDP_growth_quarterly, 
+    d_inc_econ_2$pv2p)
+
+# Bivariate OLS without 2020 (to find R^2)
+reg_econ_2 <- lm(pv2p ~ GDP_growth_quarterly, 
+               data = d_inc_econ_2)
+
+summary(reg_econ_2)$r.squared # 0.325
+```
+
+"Checking R-squared is a good in-sample goodness-of-fit test" - Matt
+
+```{r}
+# Scatterplot of Incumbent Vote Share vs GDP growth - with 2020
+
+d_inc_econ |> 
+  ggplot(aes(x = GDP_growth_quarterly, y = pv2p, label = year)) + 
+  geom_text() + 
+  geom_smooth(method = "lm", formula = y ~ x) +
+  geom_hline(yintercept = 50, lty = 2) + 
+  geom_vline(xintercept = 0.01, lty = 2) + 
+  labs(x = "Second Quarter GDP Growth (%)", 
+       y = "Incumbent Party's National Popular Vote Share", 
+       title = "Y = 51.25 + 0.274 * X") + 
+  theme_bw() + 
+  theme(plot.title = element_text(size = 18))
+
+d_inc_econ_2 |> 
+  ggplot(aes(x = GDP_growth_quarterly, y = pv2p, label = year)) + 
+  geom_text() + 
+  geom_smooth(method = "lm", formula = y ~ x) +
+  geom_hline(yintercept = 50, lty = 2) + 
+  geom_vline(xintercept = 0.01, lty = 2) + 
+  labs(x = "Second Quarter GDP Growth (%)", 
+       y = "Incumbent Party's National Popular Vote Share", 
+       title = "Y = 49.38 + 0.737 * X") + 
+  theme_bw() + 
+  theme(plot.title = element_text(size = 18))
+```
+
+```{r}
+# Leave one out
+
+(out_samp_pred <- predict(reg_econ_2, d_inc_econ[d_inc_econ$year == 2020,]))
+(out_samp_truth <- d_inc_econ |> filter(year == 2020) |> select(pv2p))
+
+out_samp_pred - out_samp_truth
+```
+Leave-one-out validation - fit on rest and test on one
+Cross-validation - train on some and predict on remaining - but do not just do this once!!
+
+```{r}
+# Cross validation
+years_out_samp <- sample(d_inc_econ_2$year, 9) 
+mod <- lm(pv2p ~ GDP_growth_quarterly, 
+          d_inc_econ_2[!(d_inc_econ_2$year %in% years_out_samp),])
+out_samp_pred <- predict(mod, d_inc_econ_2[d_inc_econ_2$year %in% years_out_samp,])
+out_samp_truth <- d_inc_econ_2$pv2p[d_inc_econ_2$year %in% years_out_samp]
+mean(out_samp_pred - out_samp_truth) # much smaller variation than just the one shot tet
+
+# Model Testing: Cross-Validation (1000 Runs)
+out_samp_errors <- sapply(1:1000, function(i) {
+  years_out_samp <- sample(d_inc_econ_2$year, 9)
+  mod <- lm(pv2p ~ GDP_growth_quarterly, 
+          d_inc_econ_2[!(d_inc_econ_2$year %in% years_out_samp),])
+out_samp_pred <- predict(mod, d_inc_econ_2[d_inc_econ_2$year %in% years_out_samp,])
+out_samp_truth <- d_inc_econ_2$pv2p[d_inc_econ_2$year %in% years_out_samp]
+mean(out_samp_pred - out_samp_truth)})
+```
+
+```{r}
+# Predict 2024 results
+
+GDP_new <- d_fred |>
+  filter(year == 2024 & quarter == 2) |>
+  select(GDP_growth_quarterly)
+
+# Predict outcome (given most recent GDP growth measure)
+predict(reg_econ_2, GDP_new) ## predicts incumbent vote will be 51.58
+
+# Predict uncertainty
+predict(reg_econ_2, GDP_new, interval = "prediction")
+
+```
+
+How to improve your model:
+- Add more variables (including other measures of the same variable)
+  - But this could lead to multicollinearity (maybe some variables aren't actually related)
+- Sociotropic voting - voting based on what is good for everyone, not just yourself
+
+
+```{r}
+# Extracting residuals and plotting
+
+plot(d_inc_econ$year, d_inc_econ$pv2p, type = "l", main = "True Y (Line)") + points(d_inc_econ$year, predict(reg_econ_2, d_inc_econ))
+```
+
+```{r}
+hist(reg_econ_2$residuals) # Can measure residuals to evaluate fit
+```
+
+```{r}
+mse <- mean((reg_econ_2$model$pv2p - reg_econ_2$fitted.values)^2)
+
+mse # Want to compare MSEs to each other to evaluate how well it fits
+```
+```
+
