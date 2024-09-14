@@ -306,6 +306,7 @@ msummary(regressions, output = "all_output_table.jpg")
 ## save_kable will have the best result with magick installed.
 ```
 ![](images/all_output_table.jpg)
+
 These results suggest that GDP remains the best economic predictor of voting outcomes among those available to us, with a higher R^2 value than all of the others. However, the R^2 value is still relatively low, meaning that we still need to consider many other factors in order to produce more accurate models. 
 
 # Citations:
