@@ -145,8 +145,7 @@ reg_inf <- lm(pv2p~CPI, data = d_inc_econ_2) # Inflation
 
 reg_stocks <- lm(pv2p~sp500_adj_close, data = d_inc_econ_2) # Stock market performance
 
-stargazer(reg_econ_no_2020, reg_unemp, reg_rdi, reg_inf, reg_stocks)
-
+stargazer(reg_econ_no_2020, reg_unemp, reg_rdi, reg_inf, reg_stocks, type = "html")
 
 ```
 

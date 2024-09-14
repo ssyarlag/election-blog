@@ -235,51 +235,38 @@ reg_inf &lt;- lm(pv2p~CPI, data = d_inc_econ_2) # Inflation
 
 reg_stocks &lt;- lm(pv2p~sp500_adj_close, data = d_inc_econ_2) # Stock market performance
 
-stargazer(reg_econ_no_2020, reg_unemp, reg_rdi, reg_inf, reg_stocks)
+stargazer(reg_econ_no_2020, reg_unemp, reg_rdi, reg_inf, reg_stocks, type = &quot;html&quot;)
 </code></pre>
 <pre><code>## 
-## % Table created by stargazer v.5.2.3 by Marek Hlavac, Social Policy Institute. E-mail: marek.hlavac at gmail.com
-## % Date and time: Fri, Sep 13, 2024 - 19:35:00
-## \begin{table}[!htbp] \centering 
-##   \caption{} 
-##   \label{} 
-## \begin{tabular}{@{\extracolsep{5pt}}lccccc} 
-## \\[-1.8ex]\hline 
-## \hline \\[-1.8ex] 
-##  &amp; \multicolumn{5}{c}{\textit{Dependent variable:}} \\ 
-## \cline{2-6} 
-## \\[-1.8ex] &amp; \multicolumn{5}{c}{pv2p} \\ 
-## \\[-1.8ex] &amp; (1) &amp; (2) &amp; (3) &amp; (4) &amp; (5)\\ 
-## \hline \\[-1.8ex] 
-##  GDP\_growth\_quarterly &amp; 0.737$^{**}$ &amp;  &amp;  &amp;  &amp;  \\ 
-##   &amp; (0.265) &amp;  &amp;  &amp;  &amp;  \\ 
-##   &amp; &amp; &amp; &amp; &amp; \\ 
-##  unemployment &amp;  &amp; 0.022 &amp;  &amp;  &amp;  \\ 
-##   &amp;  &amp; (0.845) &amp;  &amp;  &amp;  \\ 
-##   &amp; &amp; &amp; &amp; &amp; \\ 
-##  RDPI &amp;  &amp;  &amp; $-$0.0004 &amp;  &amp;  \\ 
-##   &amp;  &amp;  &amp; (0.0004) &amp;  &amp;  \\ 
-##   &amp; &amp; &amp; &amp; &amp; \\ 
-##  CPI &amp;  &amp;  &amp;  &amp; $-$0.015 &amp;  \\ 
-##   &amp;  &amp;  &amp;  &amp; (0.017) &amp;  \\ 
-##   &amp; &amp; &amp; &amp; &amp; \\ 
-##  sp500\_adj\_close &amp;  &amp;  &amp;  &amp;  &amp; $-$0.002 \\ 
-##   &amp;  &amp;  &amp;  &amp;  &amp; (0.002) \\ 
-##   &amp; &amp; &amp; &amp; &amp; \\ 
-##  Constant &amp; 49.375$^{***}$ &amp; 51.885$^{***}$ &amp; 54.987$^{***}$ &amp; 53.604$^{***}$ &amp; 52.859$^{***}$ \\ 
-##   &amp; (1.416) &amp; (4.842) &amp; (3.021) &amp; (2.154) &amp; (1.638) \\ 
-##   &amp; &amp; &amp; &amp; &amp; \\ 
-## \hline \\[-1.8ex] 
-## Observations &amp; 18 &amp; 18 &amp; 15 &amp; 18 &amp; 18 \\ 
-## R$^{2}$ &amp; 0.325 &amp; 0.00004 &amp; 0.081 &amp; 0.049 &amp; 0.039 \\ 
-## Adjusted R$^{2}$ &amp; 0.283 &amp; $-$0.062 &amp; 0.011 &amp; $-$0.010 &amp; $-$0.021 \\ 
-## Residual Std. Error &amp; 4.463 (df = 16) &amp; 5.431 (df = 16) &amp; 5.219 (df = 13) &amp; 5.296 (df = 16) &amp; 5.323 (df = 16) \\ 
-## F Statistic &amp; 7.697$^{**}$ (df = 1; 16) &amp; 0.001 (df = 1; 16) &amp; 1.149 (df = 1; 13) &amp; 0.828 (df = 1; 16) &amp; 0.655 (df = 1; 16) \\ 
-## \hline 
-## \hline \\[-1.8ex] 
-## \textit{Note:}  &amp; \multicolumn{5}{r}{$^{*}$p$&lt;$0.1; $^{**}$p$&lt;$0.05; $^{***}$p$&lt;$0.01} \\ 
-## \end{tabular} 
-## \end{table}
+## &lt;table style=&quot;text-align:center&quot;&gt;&lt;tr&gt;&lt;td colspan=&quot;6&quot; style=&quot;border-bottom: 1px solid black&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;&lt;/td&gt;&lt;td colspan=&quot;5&quot;&gt;&lt;em&gt;Dependent variable:&lt;/em&gt;&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;td colspan=&quot;5&quot; style=&quot;border-bottom: 1px solid black&quot;&gt;&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;&lt;/td&gt;&lt;td colspan=&quot;5&quot;&gt;pv2p&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;&lt;/td&gt;&lt;td&gt;(1)&lt;/td&gt;&lt;td&gt;(2)&lt;/td&gt;&lt;td&gt;(3)&lt;/td&gt;&lt;td&gt;(4)&lt;/td&gt;&lt;td&gt;(5)&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td colspan=&quot;6&quot; style=&quot;border-bottom: 1px solid black&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;GDP_growth_quarterly&lt;/td&gt;&lt;td&gt;0.737&lt;sup&gt;**&lt;/sup&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;&lt;/td&gt;&lt;td&gt;(0.265)&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;unemployment&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;0.022&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;(0.845)&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;RDPI&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;-0.0004&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;(0.0004)&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;CPI&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;-0.015&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;(0.017)&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;sp500_adj_close&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;-0.002&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;(0.002)&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;Constant&lt;/td&gt;&lt;td&gt;49.375&lt;sup&gt;***&lt;/sup&gt;&lt;/td&gt;&lt;td&gt;51.885&lt;sup&gt;***&lt;/sup&gt;&lt;/td&gt;&lt;td&gt;54.987&lt;sup&gt;***&lt;/sup&gt;&lt;/td&gt;&lt;td&gt;53.604&lt;sup&gt;***&lt;/sup&gt;&lt;/td&gt;&lt;td&gt;52.859&lt;sup&gt;***&lt;/sup&gt;&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;&lt;/td&gt;&lt;td&gt;(1.416)&lt;/td&gt;&lt;td&gt;(4.842)&lt;/td&gt;&lt;td&gt;(3.021)&lt;/td&gt;&lt;td&gt;(2.154)&lt;/td&gt;&lt;td&gt;(1.638)&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td colspan=&quot;6&quot; style=&quot;border-bottom: 1px solid black&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;Observations&lt;/td&gt;&lt;td&gt;18&lt;/td&gt;&lt;td&gt;18&lt;/td&gt;&lt;td&gt;15&lt;/td&gt;&lt;td&gt;18&lt;/td&gt;&lt;td&gt;18&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;R&lt;sup&gt;2&lt;/sup&gt;&lt;/td&gt;&lt;td&gt;0.325&lt;/td&gt;&lt;td&gt;0.00004&lt;/td&gt;&lt;td&gt;0.081&lt;/td&gt;&lt;td&gt;0.049&lt;/td&gt;&lt;td&gt;0.039&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;Adjusted R&lt;sup&gt;2&lt;/sup&gt;&lt;/td&gt;&lt;td&gt;0.283&lt;/td&gt;&lt;td&gt;-0.062&lt;/td&gt;&lt;td&gt;0.011&lt;/td&gt;&lt;td&gt;-0.010&lt;/td&gt;&lt;td&gt;-0.021&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;Residual Std. Error&lt;/td&gt;&lt;td&gt;4.463 (df = 16)&lt;/td&gt;&lt;td&gt;5.431 (df = 16)&lt;/td&gt;&lt;td&gt;5.219 (df = 13)&lt;/td&gt;&lt;td&gt;5.296 (df = 16)&lt;/td&gt;&lt;td&gt;5.323 (df = 16)&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;F Statistic&lt;/td&gt;&lt;td&gt;7.697&lt;sup&gt;**&lt;/sup&gt; (df = 1; 16)&lt;/td&gt;&lt;td&gt;0.001 (df = 1; 16)&lt;/td&gt;&lt;td&gt;1.149 (df = 1; 13)&lt;/td&gt;&lt;td&gt;0.828 (df = 1; 16)&lt;/td&gt;&lt;td&gt;0.655 (df = 1; 16)&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td colspan=&quot;6&quot; style=&quot;border-bottom: 1px solid black&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;&lt;em&gt;Note:&lt;/em&gt;&lt;/td&gt;&lt;td colspan=&quot;5&quot; style=&quot;text-align:right&quot;&gt;&lt;sup&gt;*&lt;/sup&gt;p&lt;0.1; &lt;sup&gt;**&lt;/sup&gt;p&lt;0.05; &lt;sup&gt;***&lt;/sup&gt;p&lt;0.01&lt;/td&gt;&lt;/tr&gt;
+## &lt;/table&gt;
 </code></pre>
 <h1 id="citations">Citations:</h1>
 <p>Hlavac, Marek (2022). stargazer: Well-Formatted Regression and Summary Statistics Tables.R package version 5.2.3. <a href="https://CRAN.R-project.org/package=stargazer">https://CRAN.R-project.org/package=stargazer</a></p>
