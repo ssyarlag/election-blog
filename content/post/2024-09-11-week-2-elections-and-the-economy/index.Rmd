@@ -8,7 +8,7 @@ tags: []
 ---
 In this week's lab, we focus on understanding how well the status of the economy predicts the outcome of an election. In particular, we aim to quantify this uncertainty. My thanks again to Matt Dardet for his generous starter code in section, much of which I have used/adapted here. 
 
-```{r}
+```{r echo = FALSE}
 # Load libraries and datasets
 
 library(car)
@@ -44,7 +44,7 @@ d_inc_econ_2 <- d_inc_econ |>
 
 First, we explored how well the economy *correlated* with election outcomes by computing the bivariate correlation between quarterly GDP growth and incumbent two-party vote share. We began by reviewing a scatterplot of this data.
 
-```{r}
+```{r echo = FALSE}
 # Scatterplot with labels
 d_inc_econ |>
   ggplot(aes(x=GDP_growth_quarterly, y=pv2p)) +
@@ -57,7 +57,7 @@ d_inc_econ |>
 
 Clearly, this scatterplot shows that 2020 is a significant outlier, due to the significant decline in GDP right before the election. Therefore, when we compute the correlation between GDP growth and two-party vote share for the incumbent party in the election, it makes sense to also calculate the correlation excluding this year.
 
-```{r}
+```{r echo = FALSE}
 # Correlation of GDP and two-party vote share (with 2020)
 gdp_cor_2020 <- cor(d_inc_econ$GDP_growth_quarterly, 
     d_inc_econ$pv2p)
@@ -75,7 +75,7 @@ We find that while there is a slight positive correlation (r = 0.43) between GDP
 
 Seeing what appears to be a relationship between these variables, we then move into *fitting a model* to this data. Since the scatterplot appeared to demonstrate a linear relationship, especially when removing the outlier of 2020, we fitted a linear regression model to our data. 
 
-```{r}
+```{r echo = FALSE}
 # OLS regression using data without 2020.
 
 reg_econ_no_2020 <- lm(data = d_inc_econ_2, pv2p~GDP_growth_quarterly)
@@ -90,7 +90,7 @@ However, we also want to *evaluate this model* and its success in prediction. To
 
 *In-Sample Fit: R^2 Value*
 
-```{r}
+```{r echo = FALSE}
 # R-Squared values
 summary(reg_econ_no_2020)$r.squared
 ```
@@ -99,7 +99,7 @@ We find an R^2 value of 0.32. This is a fairly modest figure, suggesting that we
 
 *Out-of-Sample Prediction: Cross Validation*
 
-```{r}
+```{r echo = FALSE}
 # Create a loop that produces 1000 estimates of out of sample error, using a random subset that is taken out
 out_samp_errors <-sapply(1:1000, function(i) {
   years_out_samp <- sample(d_inc_econ_2$year, 9) # Pick a random sample of years to extract from our dataset, and try to predict their outcomes later based on the other data
@@ -118,7 +118,7 @@ This distribution shows that, in general, our model appears to make fairly accur
 
 *Out-of-sample extrapolation: 2024*
 
-```{r}
+```{r echo = FALSE}
 # Pull most recent economic data from FRED dataset
 GDP_new <- d_fred |>
   filter(year == 2024 & quarter == 2) |>
@@ -134,7 +134,7 @@ Given that we've observed the limitations of a simple bivariate linear model, we
 
 Of course, GDP growth is only one metric of economic performance. Therefore, I also tested how well the unemployment rate predicted election outcomes. I again excluded 2020 because our previous graph showed it as an economic outlier. 
 
-```{r}
+```{r echo = FALSE}
 # Regression of incumbent two party vote share vs unemployment rate
 reg_unemp <- lm(pv2p~unemployment, data = d_inc_econ_2)
 
@@ -149,7 +149,7 @@ Unfortunately, the r^2 value of this regression is much smaller than that using 
 
 As an *extension*, I conducted the same analysis for several other economic variables, summarizing it in the table below.
 
-```{r}
+```{r echo = FALSE}
 library(modelsummary)
 
 reg_rdi <- lm(pv2p~RDPI, data = d_inc_econ_2) # Regression on Real Disposable Income
@@ -173,7 +173,6 @@ msummary(regressions, output = "all_output_table.jpg")
 These results suggest that GDP remains the best economic predictor of voting outcomes among those available to us, with a higher R^2 value than all of the others. However, the R^2 value is still relatively low, meaning that we still need to consider many other factors in order to produce more accurate models. 
 
 # Citations:
-
 
 Generate regression tables in R with the `modelsummary` package—Tilburg Science Hub. (n.d.). Tillburg ScienceHub. Retrieved September 14, 2024, from https://tilburgsciencehub.com/topics/visualization/data-visualization/regression-results/model-summary/
 

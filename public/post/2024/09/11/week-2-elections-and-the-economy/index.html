@@ -27,31 +27,21 @@
 
 <main>
 <p>In this week&rsquo;s lab, we focus on understanding how well the status of the economy predicts the outcome of an election. In particular, we aim to quantify this uncertainty. My thanks again to Matt Dardet for his generous starter code in section, much of which I have used/adapted here.</p>
-<pre><code class="language-r"># Load libraries and datasets
-
-library(car)
-</code></pre>
 <pre><code>## Loading required package: carData
-</code></pre>
-<pre><code class="language-r">library(tidyverse)
 </code></pre>
 <pre><code>## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
 ## ✔ dplyr     1.1.4     ✔ readr     2.1.5
 ## ✔ forcats   1.0.0     ✔ stringr   1.5.1
 ## ✔ ggplot2   3.5.1     ✔ tibble    3.2.1
 ## ✔ lubridate 1.9.3     ✔ tidyr     1.3.1
-## ✔ purrr     1.0.2
-</code></pre>
-<pre><code>## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## ✔ purrr     1.0.2     
+## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
 ## ✖ dplyr::filter() masks stats::filter()
 ## ✖ dplyr::lag()    masks stats::lag()
 ## ✖ dplyr::recode() masks car::recode()
 ## ✖ purrr::some()   masks car::some()
 ## ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors
-</code></pre>
-<pre><code class="language-r">library(modelsummary)
-</code></pre>
-<pre><code>## `modelsummary` 2.0.0 now uses `tinytable` as its default table-drawing
+## `modelsummary` 2.0.0 now uses `tinytable` as its default table-drawing
 ##   backend. Learn more at: https://vincentarelbundock.github.io/tinytable/
 ## 
 ## Revert to `kableExtra` for one session:
@@ -63,10 +53,8 @@ library(car)
 ## Silence this message forever:
 ## 
 ##   config_modelsummary(startup_message = FALSE)
-</code></pre>
-<pre><code class="language-r">d_popvote &lt;- read_csv(&quot;popvote_1948-2020.csv&quot;)
-</code></pre>
-<pre><code>## Rows: 38 Columns: 9
+## 
+## Rows: 38 Columns: 9
 ## ── Column specification ────────────────────────────────────────────────────────
 ## Delimiter: &quot;,&quot;
 ## chr (2): party, candidate
@@ -75,31 +63,14 @@ library(car)
 ## 
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
-</code></pre>
-<pre><code class="language-r">d_fred &lt;- read_csv(&quot;fred_econ.csv&quot;)
-</code></pre>
-<pre><code>## Rows: 387 Columns: 14
+## Rows: 387 Columns: 14
 ## ── Column specification ────────────────────────────────────────────────────────
 ## Delimiter: &quot;,&quot;
 ## dbl (14): year, quarter, GDP, GDP_growth_quarterly, RDPI, RDPI_growth_quarte...
 ## 
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
-</code></pre>
-<pre><code class="language-r">d_bea &lt;- read_csv(&quot;bea_econ.csv&quot;) |&gt; 
-  rename(year = &quot;Year&quot;,
-         quarter = &quot;Quarter&quot;, 
-         gdp = &quot;Gross domestic product&quot;, 
-         gnp = &quot;Gross national product&quot;, 
-         dpi = &quot;Disposable personal income&quot;, 
-         consumption = &quot;Personal consumption expenditures&quot;, 
-         goods = &quot;Goods&quot;, 
-         durables = &quot;Durable goods&quot;, 
-         nondurables = &quot;Nondurable goods&quot;, 
-         services = &quot;Services&quot;, 
-         pop = &quot;Population (midperiod, thousands)&quot;)
-</code></pre>
-<pre><code>## Rows: 310 Columns: 11
+## Rows: 310 Columns: 11
 ## ── Column specification ────────────────────────────────────────────────────────
 ## Delimiter: &quot;,&quot;
 ## chr  (1): Quarter
@@ -107,128 +78,42 @@ library(car)
 ## 
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
-</code></pre>
-<pre><code class="language-r"># Merged econ data
-d_inc_econ &lt;- d_popvote |&gt; 
-  filter(incumbent_party == TRUE) |&gt; 
-  select(year, pv, pv2p, winner) |&gt; 
-  left_join(d_fred |&gt; filter(quarter == 2)) |&gt; 
-  left_join(d_bea |&gt; filter(quarter == &quot;Q2&quot;) |&gt; select(year, dpi))
-</code></pre>
-<pre><code>## Joining with `by = join_by(year)`
+## Joining with `by = join_by(year)`
 ## Joining with `by = join_by(year)`
 </code></pre>
-<pre><code class="language-r"># Merged econ data, but without the year 2020
-d_inc_econ_2 &lt;- d_inc_econ |&gt;
-  filter(year != 2020)
-</code></pre>
 <p>First, we explored how well the economy <em>correlated</em> with election outcomes by computing the bivariate correlation between quarterly GDP growth and incumbent two-party vote share. We began by reviewing a scatterplot of this data.</p>
-<pre><code class="language-r"># Scatterplot with labels
-d_inc_econ |&gt;
-  ggplot(aes(x=GDP_growth_quarterly, y=pv2p)) +
-  geom_point()+
-  geom_label(aes(label = year)) +
-  labs(title = &quot;Two-Party Popular Vote Share by GDP Growth&quot;,
-       x = &quot;Quarterly GDP Growth&quot;,
-       y = &quot;Two-Party Popular Vote Share&quot;)
-</code></pre>
 <img src="https://example.org/post/2024/09/11/week-2-elections-and-the-economy/index_files/figure-html/unnamed-chunk-2-1.png" width="672" />
 <p>Clearly, this scatterplot shows that 2020 is a significant outlier, due to the significant decline in GDP right before the election. Therefore, when we compute the correlation between GDP growth and two-party vote share for the incumbent party in the election, it makes sense to also calculate the correlation excluding this year.</p>
-<pre><code class="language-r"># Correlation of GDP and two-party vote share (with 2020)
-gdp_cor_2020 &lt;- cor(d_inc_econ$GDP_growth_quarterly, 
-    d_inc_econ$pv2p)
-
-# Correlation of GDP and two-party vote share (without 2020)
-
-gdp_cor_no_2020 &lt;- cor(d_inc_econ_2$GDP_growth_quarterly, 
-    d_inc_econ_2$pv2p)
-
-gdp_cor_2020 
-</code></pre>
 <pre><code>## [1] 0.4336956
-</code></pre>
-<pre><code class="language-r">gdp_cor_no_2020
 </code></pre>
 <pre><code>## [1] 0.569918
 </code></pre>
 <p>We find that while there is a slight positive correlation (r = 0.43) between GDP growth and incumbent party vote share even including 2020, the correlation becomes even stronger when dropping 2020 (r = 0.57).</p>
 <p>Seeing what appears to be a relationship between these variables, we then move into <em>fitting a model</em> to this data. Since the scatterplot appeared to demonstrate a linear relationship, especially when removing the outlier of 2020, we fitted a linear regression model to our data.</p>
-<pre><code class="language-r"># OLS regression using data without 2020.
-
-reg_econ_no_2020 &lt;- lm(data = d_inc_econ_2, pv2p~GDP_growth_quarterly)
-msummary(reg_econ_no_2020, output = &quot;gdp_output_table.jpg&quot;)
-</code></pre>
 <pre><code>## save_kable will have the best result with magick installed.
 </code></pre>
 <p><img src="images/gdp_output_table.jpg" alt=""></p>
 <p>This model suggests that a one percentage point increase in quarterly GDP growth predicts a ~0.7 percentage point increase national two-party popular vote share for the incumbent party during the upcoming election. Interestingly, the model also has an intercept of 49.4, implying that if there is no economic growth in the quarter before an election, the incumbent party is predicted to not gain a plurality of the votes. This suggests that voters particularly value economic growth, not just economic stability or the prevention of an economic decline.</p>
 <p>However, we also want to <em>evaluate this model</em> and its success in prediction. To do so, we conducted several tests of in-sample and out-of-sample predictive power. I highlight one of each here.</p>
 <p><em>In-Sample Fit: R^2 Value</em></p>
-<pre><code class="language-r"># R-Squared values
-summary(reg_econ_no_2020)$r.squared
-</code></pre>
 <pre><code>## [1] 0.3248066
 </code></pre>
 <p>We find an R^2 value of 0.32. This is a fairly modest figure, suggesting that we may need to make further modifications to this model to improve its fit</p>
 <p><em>Out-of-Sample Prediction: Cross Validation</em></p>
-<pre><code class="language-r"># Create a loop that produces 1000 estimates of out of sample error, using a random subset that is taken out
-out_samp_errors &lt;-sapply(1:1000, function(i) {
-  years_out_samp &lt;- sample(d_inc_econ_2$year, 9) # Pick a random sample of years to extract from our dataset, and try to predict their outcomes later based on the other data
-  mod_without_subset &lt;- lm(pv2p~GDP_growth_quarterly, data = d_inc_econ_2[!(d_inc_econ_2$year %in% years_out_samp),])# Fit model without subset
-  out_samp_pred &lt;- predict(mod_without_subset, d_inc_econ_2[d_inc_econ_2$year %in% years_out_samp,]) # Predict values for years taken out based on model fit without them
-  out_samp_truth &lt;- d_inc_econ_2$pv2p[d_inc_econ_2$year %in% years_out_samp] # Real values for years taken out
-  mean(out_samp_pred - out_samp_truth) # Average of the difference between truth
-})
-
-# Visualize distribution
-hist(out_samp_errors)
-</code></pre>
 <img src="https://example.org/post/2024/09/11/week-2-elections-and-the-economy/index_files/figure-html/unnamed-chunk-6-1.png" width="672" />
 <p>This distribution shows that, in general, our model appears to make fairly accurate predictions. In other words, while our model may have appeared weak previously, this visualization demonstrates that it is stronger than we thought.</p>
 <p><em>Out-of-sample extrapolation: 2024</em></p>
-<pre><code class="language-r"># Pull most recent economic data from FRED dataset
-GDP_new &lt;- d_fred |&gt;
-  filter(year == 2024 &amp; quarter == 2) |&gt;
-  select(GDP_growth_quarterly)
-
-# Predict the expected incumbent two party vote share based on inputs from FRED and model fitted from prior data
-predict(reg_econ_no_2020, GDP_new, interval = &quot;prediction&quot;)
-</code></pre>
 <pre><code>##        fit      lwr     upr
 ## 1 51.58486 41.85982 61.3099
 </code></pre>
 <p>We can also use this model to predict the upcoming 2024 election, using recent economic data. This prediction suggests that the incumbent Democratic party can expect to receive about 51.58% of the two-party vote share. However, the margin of error on this prediction ranges from 41.86% to 61.31%, implying that the election could still swing either way.</p>
 <p>Given that we&rsquo;ve observed the limitations of a simple bivariate linear model, we also observed several methods to <em>improve this model</em></p>
 <p>Of course, GDP growth is only one metric of economic performance. Therefore, I also tested how well the unemployment rate predicted election outcomes. I again excluded 2020 because our previous graph showed it as an economic outlier.</p>
-<pre><code class="language-r"># Regression of incumbent two party vote share vs unemployment rate
-reg_unemp &lt;- lm(pv2p~unemployment, data = d_inc_econ_2)
-
-# Outputting image of regression characteristics
-msummary(reg_unemp, output = &quot;unemp_output_table.jpg&quot;)
-</code></pre>
 <pre><code>## save_kable will have the best result with magick installed.
 </code></pre>
 <p><img src="images/unemp_output_table.jpg" alt=""></p>
 <p>Unfortunately, the r^2 value of this regression is much smaller than that using GDP growth as a predictor, meaning that it is a less useful model.</p>
 <p>As an <em>extension</em>, I conducted the same analysis for several other economic variables, summarizing it in the table below.</p>
-<pre><code class="language-r">library(modelsummary)
-
-reg_rdi &lt;- lm(pv2p~RDPI, data = d_inc_econ_2) # Regression on Real Disposable Income
-
-reg_inf &lt;- lm(pv2p~CPI, data = d_inc_econ_2) # Inflation
-
-reg_stocks &lt;- lm(pv2p~sp500_adj_close, data = d_inc_econ_2) # Stock market performance
-
-regressions &lt;- list(
-  &quot;GDP Growth&quot; = reg_econ_no_2020,
-  &quot;Unemployment&quot; = reg_unemp,
-  &quot;Real Disposable Income&quot; = reg_rdi,
-  &quot;Inflation&quot; = reg_inf,
-  &quot;Stock Market&quot; = reg_stocks
-  ) # Referenced: https://tilburgsciencehub.com/topics/visualization/data-visualization/regression-results/model-summary/
-
-msummary(regressions, output = &quot;all_output_table.jpg&quot;)
-</code></pre>
 <pre><code>## save_kable will have the best result with magick installed.
 </code></pre>
 <p><img src="images/all_output_table.jpg" alt=""></p>
