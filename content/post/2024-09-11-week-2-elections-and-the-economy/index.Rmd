@@ -153,9 +153,9 @@ regressions <- list(
   "Stock Market" = reg_stocks
   ) # Referenced: https://tilburgsciencehub.com/topics/visualization/data-visualization/regression-results/model-summary/
 
-msummary(regressions, output = "kableExtra")
+msummary(regressions, output = "output_table.jpg")
 ```
-
+![](images/output_table.jpg)
 
 # Citations:
 
