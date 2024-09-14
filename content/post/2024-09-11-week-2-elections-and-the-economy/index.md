@@ -42,6 +42,25 @@ library(tidyverse)
 ```
 
 ``` r
+library(modelsummary)
+```
+
+```
+## `modelsummary` 2.0.0 now uses `tinytable` as its default table-drawing
+##   backend. Learn more at: https://vincentarelbundock.github.io/tinytable/
+## 
+## Revert to `kableExtra` for one session:
+## 
+##   options(modelsummary_factory_default = 'kableExtra')
+##   options(modelsummary_factory_latex = 'kableExtra')
+##   options(modelsummary_factory_html = 'kableExtra')
+## 
+## Silence this message forever:
+## 
+##   config_modelsummary(startup_message = FALSE)
+```
+
+``` r
 d_popvote <- read_csv("popvote_1948-2020.csv")
 ```
 
@@ -121,6 +140,7 @@ First, we explored how well the economy *correlated* with election outcomes by c
 
 
 ``` r
+# Scatterplot with labels
 d_inc_econ |>
   ggplot(aes(x=GDP_growth_quarterly, y=pv2p)) +
   geom_point()+
@@ -160,46 +180,33 @@ gdp_cor_no_2020
 ## [1] 0.569918
 ```
 
-This result shows that while there is a slight positive correlation (r = 0.43) between GDP growth and incumbent party vote share even including 2020, the correlation becomes even stronger when dropping 2020 (r = 0.57). 
+We find that while there is a slight positive correlation (r = 0.43) between GDP growth and incumbent party vote share even including 2020, the correlation becomes even stronger when dropping 2020 (r = 0.57). 
 
-Since we see what appears to be a relationship between these variables, we then move into *fitting a model* to this data. Since the scatterplot appeared to demonstrate a linear relationship, especially when removing the outlier of 2020, we fitted a linear regression model to our data. 
+Seeing what appears to be a relationship between these variables, we then move into *fitting a model* to this data. Since the scatterplot appeared to demonstrate a linear relationship, especially when removing the outlier of 2020, we fitted a linear regression model to our data. 
 
 
 ``` r
+# OLS regression using data without 2020.
+
 reg_econ_no_2020 <- lm(data = d_inc_econ_2, pv2p~GDP_growth_quarterly)
-
-summary(reg_econ_no_2020)
+msummary(reg_econ_no_2020, output = "gdp_output_table.jpg")
 ```
 
 ```
-## 
-## Call:
-## lm(formula = pv2p ~ GDP_growth_quarterly, data = d_inc_econ_2)
-## 
-## Residuals:
-##    Min     1Q Median     3Q    Max 
-## -6.237 -4.160  0.450  1.904  8.728 
-## 
-## Coefficients:
-##                      Estimate Std. Error t value Pr(>|t|)    
-## (Intercept)           49.3751     1.4163  34.862   <2e-16 ***
-## GDP_growth_quarterly   0.7366     0.2655   2.774   0.0135 *  
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-## 
-## Residual standard error: 4.463 on 16 degrees of freedom
-## Multiple R-squared:  0.3248,	Adjusted R-squared:  0.2826 
-## F-statistic: 7.697 on 1 and 16 DF,  p-value: 0.01354
+## save_kable will have the best result with magick installed.
 ```
+
+![](images/gdp_output_table.jpg)
 
 This model suggests that a one percentage point increase in quarterly GDP growth predicts a ~0.7 percentage point increase national two-party popular vote share for the incumbent party during the upcoming election. Interestingly, the model also has an intercept of 49.4, implying that if there is no economic growth in the quarter before an election, the incumbent party is predicted to not gain a plurality of the votes. This suggests that voters particularly value economic growth, not just economic stability or the prevention of an economic decline.
 
 However, we also want to *evaluate this model* and its success in prediction. To do so, we conducted several tests of in-sample and out-of-sample predictive power. I highlight one of each here.
 
-In-Sample Fit: R^2 Value
+*In-Sample Fit: R^2 Value*
 
 
 ``` r
+# R-Squared values
 summary(reg_econ_no_2020)$r.squared
 ```
 
@@ -209,7 +216,7 @@ summary(reg_econ_no_2020)$r.squared
 
 We find an R^2 value of 0.32. This is a fairly modest figure, suggesting that we may need to make further modifications to this model to improve its fit
 
-Out-of-Sample Prediction: Cross Validation
+*Out-of-Sample Prediction: Cross Validation*
 
 
 ``` r
@@ -230,14 +237,16 @@ hist(out_samp_errors)
 
 This distribution shows that, in general, our model appears to make fairly accurate predictions. In other words, while our model may have appeared weak previously, this visualization demonstrates that it is stronger than we thought.
 
-Out-of-sample extrapolation: 2024
+*Out-of-sample extrapolation: 2024*
 
 
 ``` r
+# Pull most recent economic data from FRED dataset
 GDP_new <- d_fred |>
   filter(year == 2024 & quarter == 2) |>
   select(GDP_growth_quarterly)
 
+# Predict the expected incumbent two party vote share based on inputs from FRED and model fitted from prior data
 predict(reg_econ_no_2020, GDP_new, interval = "prediction")
 ```
 
@@ -254,56 +263,28 @@ Of course, GDP growth is only one metric of economic performance. Therefore, I a
 
 
 ``` r
+# Regression of incumbent two party vote share vs unemployment rate
 reg_unemp <- lm(pv2p~unemployment, data = d_inc_econ_2)
-summary(reg_unemp)
+
+# Outputting image of regression characteristics
+msummary(reg_unemp, output = "unemp_output_table.jpg")
 ```
 
 ```
-## 
-## Call:
-## lm(formula = pv2p ~ unemployment, data = d_inc_econ_2)
-## 
-## Residuals:
-##     Min      1Q  Median      3Q     Max 
-## -7.2394 -2.9835 -0.7848  2.5555  9.7788 
-## 
-## Coefficients:
-##              Estimate Std. Error t value Pr(>|t|)    
-## (Intercept)  51.88452    4.84160  10.716 1.04e-08 ***
-## unemployment  0.02205    0.84527   0.026     0.98    
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-## 
-## Residual standard error: 5.431 on 16 degrees of freedom
-## Multiple R-squared:  4.254e-05,	Adjusted R-squared:  -0.06245 
-## F-statistic: 0.0006806 on 1 and 16 DF,  p-value: 0.9795
+## save_kable will have the best result with magick installed.
 ```
 
-Unfortunately, the r^2 value of this regression is much smaller than that using GDP growth as a predictor, meaning that it is a less accurate model.
+![](images/unemp_output_table.jpg)
+
+
+Unfortunately, the r^2 value of this regression is much smaller than that using GDP growth as a predictor, meaning that it is a less useful model.
 
 As an *extension*, I conducted the same analysis for several other economic variables, summarizing it in the table below.
 
 
 ``` r
 library(modelsummary)
-```
 
-```
-## `modelsummary` 2.0.0 now uses `tinytable` as its default table-drawing
-##   backend. Learn more at: https://vincentarelbundock.github.io/tinytable/
-## 
-## Revert to `kableExtra` for one session:
-## 
-##   options(modelsummary_factory_default = 'kableExtra')
-##   options(modelsummary_factory_latex = 'kableExtra')
-##   options(modelsummary_factory_html = 'kableExtra')
-## 
-## Silence this message forever:
-## 
-##   config_modelsummary(startup_message = FALSE)
-```
-
-``` r
 reg_rdi <- lm(pv2p~RDPI, data = d_inc_econ_2) # Regression on Real Disposable Income
 
 reg_inf <- lm(pv2p~CPI, data = d_inc_econ_2) # Inflation
@@ -318,18 +299,21 @@ regressions <- list(
   "Stock Market" = reg_stocks
   ) # Referenced: https://tilburgsciencehub.com/topics/visualization/data-visualization/regression-results/model-summary/
 
-msummary(regressions, output = "output_table.jpg")
+msummary(regressions, output = "all_output_table.jpg")
 ```
 
 ```
 ## save_kable will have the best result with magick installed.
 ```
-![](images/output_table.jpg)
+![](images/all_output_table.jpg)
+These results suggest that GDP remains the best economic predictor of voting outcomes among those available to us, with a higher R^2 value than all of the others. However, the R^2 value is still relatively low, meaning that we still need to consider many other factors in order to produce more accurate models. 
 
 # Citations:
 
+
+Generate regression tables in R with the `modelsummary` package—Tilburg Science Hub. (n.d.). Tillburg ScienceHub. Retrieved September 14, 2024, from https://tilburgsciencehub.com/topics/visualization/data-visualization/regression-results/model-summary/
+
 Hlavac, Marek (2022). stargazer: Well-Formatted Regression and Summary Statistics Tables.R package version 5.2.3. https://CRAN.R-project.org/package=stargazer 
 
-https://tilburgsciencehub.com/topics/visualization/data-visualization/regression-results/model-summary/
-
+R code chunk appears in post summary · Issue #426 · rstudio/blogdown. (n.d.). GitHub. Retrieved September 14, 2024, from https://github.com/rstudio/blogdown/issues/426
 
