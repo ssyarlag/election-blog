@@ -235,39 +235,78 @@ reg_inf &lt;- lm(pv2p~CPI, data = d_inc_econ_2) # Inflation
 
 reg_stocks &lt;- lm(pv2p~sp500_adj_close, data = d_inc_econ_2) # Stock market performance
 
-stargazer(reg_econ_no_2020, reg_unemp, reg_rdi, reg_inf, reg_stocks, type = &quot;html&quot;)
+stargazer(reg_econ_no_2020, reg_unemp, reg_rdi, reg_inf, reg_stocks, type = &quot;text&quot;)
 </code></pre>
 <pre><code>## 
-## &lt;table style=&quot;text-align:center&quot;&gt;&lt;tr&gt;&lt;td colspan=&quot;6&quot; style=&quot;border-bottom: 1px solid black&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;&lt;/td&gt;&lt;td colspan=&quot;5&quot;&gt;&lt;em&gt;Dependent variable:&lt;/em&gt;&lt;/td&gt;&lt;/tr&gt;
-## &lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;td colspan=&quot;5&quot; style=&quot;border-bottom: 1px solid black&quot;&gt;&lt;/td&gt;&lt;/tr&gt;
-## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;&lt;/td&gt;&lt;td colspan=&quot;5&quot;&gt;pv2p&lt;/td&gt;&lt;/tr&gt;
-## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;&lt;/td&gt;&lt;td&gt;(1)&lt;/td&gt;&lt;td&gt;(2)&lt;/td&gt;&lt;td&gt;(3)&lt;/td&gt;&lt;td&gt;(4)&lt;/td&gt;&lt;td&gt;(5)&lt;/td&gt;&lt;/tr&gt;
-## &lt;tr&gt;&lt;td colspan=&quot;6&quot; style=&quot;border-bottom: 1px solid black&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;GDP_growth_quarterly&lt;/td&gt;&lt;td&gt;0.737&lt;sup&gt;**&lt;/sup&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;&lt;/td&gt;&lt;td&gt;(0.265)&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;unemployment&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;0.022&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;(0.845)&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;RDPI&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;-0.0004&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;(0.0004)&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;CPI&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;-0.015&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;(0.017)&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;sp500_adj_close&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;-0.002&lt;/td&gt;&lt;/tr&gt;
-## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;(0.002)&lt;/td&gt;&lt;/tr&gt;
-## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;Constant&lt;/td&gt;&lt;td&gt;49.375&lt;sup&gt;***&lt;/sup&gt;&lt;/td&gt;&lt;td&gt;51.885&lt;sup&gt;***&lt;/sup&gt;&lt;/td&gt;&lt;td&gt;54.987&lt;sup&gt;***&lt;/sup&gt;&lt;/td&gt;&lt;td&gt;53.604&lt;sup&gt;***&lt;/sup&gt;&lt;/td&gt;&lt;td&gt;52.859&lt;sup&gt;***&lt;/sup&gt;&lt;/td&gt;&lt;/tr&gt;
-## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;&lt;/td&gt;&lt;td&gt;(1.416)&lt;/td&gt;&lt;td&gt;(4.842)&lt;/td&gt;&lt;td&gt;(3.021)&lt;/td&gt;&lt;td&gt;(2.154)&lt;/td&gt;&lt;td&gt;(1.638)&lt;/td&gt;&lt;/tr&gt;
-## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-## &lt;tr&gt;&lt;td colspan=&quot;6&quot; style=&quot;border-bottom: 1px solid black&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;Observations&lt;/td&gt;&lt;td&gt;18&lt;/td&gt;&lt;td&gt;18&lt;/td&gt;&lt;td&gt;15&lt;/td&gt;&lt;td&gt;18&lt;/td&gt;&lt;td&gt;18&lt;/td&gt;&lt;/tr&gt;
-## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;R&lt;sup&gt;2&lt;/sup&gt;&lt;/td&gt;&lt;td&gt;0.325&lt;/td&gt;&lt;td&gt;0.00004&lt;/td&gt;&lt;td&gt;0.081&lt;/td&gt;&lt;td&gt;0.049&lt;/td&gt;&lt;td&gt;0.039&lt;/td&gt;&lt;/tr&gt;
-## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;Adjusted R&lt;sup&gt;2&lt;/sup&gt;&lt;/td&gt;&lt;td&gt;0.283&lt;/td&gt;&lt;td&gt;-0.062&lt;/td&gt;&lt;td&gt;0.011&lt;/td&gt;&lt;td&gt;-0.010&lt;/td&gt;&lt;td&gt;-0.021&lt;/td&gt;&lt;/tr&gt;
-## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;Residual Std. Error&lt;/td&gt;&lt;td&gt;4.463 (df = 16)&lt;/td&gt;&lt;td&gt;5.431 (df = 16)&lt;/td&gt;&lt;td&gt;5.219 (df = 13)&lt;/td&gt;&lt;td&gt;5.296 (df = 16)&lt;/td&gt;&lt;td&gt;5.323 (df = 16)&lt;/td&gt;&lt;/tr&gt;
-## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;F Statistic&lt;/td&gt;&lt;td&gt;7.697&lt;sup&gt;**&lt;/sup&gt; (df = 1; 16)&lt;/td&gt;&lt;td&gt;0.001 (df = 1; 16)&lt;/td&gt;&lt;td&gt;1.149 (df = 1; 13)&lt;/td&gt;&lt;td&gt;0.828 (df = 1; 16)&lt;/td&gt;&lt;td&gt;0.655 (df = 1; 16)&lt;/td&gt;&lt;/tr&gt;
-## &lt;tr&gt;&lt;td colspan=&quot;6&quot; style=&quot;border-bottom: 1px solid black&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;&lt;em&gt;Note:&lt;/em&gt;&lt;/td&gt;&lt;td colspan=&quot;5&quot; style=&quot;text-align:right&quot;&gt;&lt;sup&gt;*&lt;/sup&gt;p&lt;0.1; &lt;sup&gt;**&lt;/sup&gt;p&lt;0.05; &lt;sup&gt;***&lt;/sup&gt;p&lt;0.01&lt;/td&gt;&lt;/tr&gt;
-## &lt;/table&gt;
+## =====================================================================================================================
+##                                                            Dependent variable:                                       
+##                      ------------------------------------------------------------------------------------------------
+##                                                                    pv2p                                              
+##                              (1)                 (2)                (3)                (4)                (5)        
+## ---------------------------------------------------------------------------------------------------------------------
+## GDP_growth_quarterly       0.737**                                                                                   
+##                            (0.265)                                                                                   
+##                                                                                                                      
+## unemployment                                    0.022                                                                
+##                                                (0.845)                                                               
+##                                                                                                                      
+## RDPI                                                              -0.0004                                            
+##                                                                   (0.0004)                                           
+##                                                                                                                      
+## CPI                                                                                   -0.015                         
+##                                                                                      (0.017)                         
+##                                                                                                                      
+## sp500_adj_close                                                                                          -0.002      
+##                                                                                                         (0.002)      
+##                                                                                                                      
+## Constant                  49.375***           51.885***          54.987***          53.604***          52.859***     
+##                            (1.416)             (4.842)            (3.021)            (2.154)            (1.638)      
+##                                                                                                                      
+## ---------------------------------------------------------------------------------------------------------------------
+## Observations                  18                  18                 15                 18                 18        
+## R2                          0.325              0.00004             0.081              0.049              0.039       
+## Adjusted R2                 0.283               -0.062             0.011              -0.010             -0.021      
+## Residual Std. Error    4.463 (df = 16)     5.431 (df = 16)    5.219 (df = 13)    5.296 (df = 16)    5.323 (df = 16)  
+## F Statistic          7.697** (df = 1; 16) 0.001 (df = 1; 16) 1.149 (df = 1; 13) 0.828 (df = 1; 16) 0.655 (df = 1; 16)
+## =====================================================================================================================
+## Note:                                                                                     *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01
 </code></pre>
+<p>Show in New Window</p>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: left">Dependent variable:</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">pv2p</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">(1)                 (2)                (3)                (4)                (5)</td>
+      </tr>
+  </tbody>
+</table>
+<h2 id="heading">=====================================================================================================================</h2>
+<p>GDP_growth_quarterly       0.737**                                                                                <br>
+(0.265)</p>
+<p>unemployment                                    0.022                                                             <br>
+(0.845)</p>
+<p>RDPI                                                              -0.0004                                         <br>
+(0.0004)</p>
+<p>CPI                                                                                   -0.015                      <br>
+(0.017)</p>
+<p>sp500_adj_close                                                                                          -0.002   <br>
+(0.002)</p>
+<p>Constant                  49.375***           51.885***          54.987***          53.604***          52.859***  <br>
+(1.416)             (4.842)            (3.021)            (2.154)            (1.638)</p>
+<hr>
+<h1 id="f-statistic----------7697-df--1-16-0001-df--1-16-1149-df--1-13-0828-df--1-16-0655-df--1-16">Observations                  18                  18                 15                 18                 18     <br>
+R2                          0.325              0.00004             0.081              0.049              0.039    <br>
+Adjusted R2                 0.283               -0.062             0.011              -0.010             -0.021   <br>
+Residual Std. Error    4.463 (df = 16)     5.431 (df = 16)    5.219 (df = 13)    5.296 (df = 16)    5.323 (df = 16)<br>
+F Statistic          7.697** (df = 1; 16) 0.001 (df = 1; 16) 1.149 (df = 1; 13) 0.828 (df = 1; 16) 0.655 (df = 1; 16)</h1>
+<p>Note:                                                                                     *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</p>
 <h1 id="citations">Citations:</h1>
 <p>Hlavac, Marek (2022). stargazer: Well-Formatted Regression and Summary Statistics Tables.R package version 5.2.3. <a href="https://CRAN.R-project.org/package=stargazer">https://CRAN.R-project.org/package=stargazer</a></p>
 

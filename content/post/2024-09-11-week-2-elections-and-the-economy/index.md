@@ -308,41 +308,78 @@ reg_inf <- lm(pv2p~CPI, data = d_inc_econ_2) # Inflation
 
 reg_stocks <- lm(pv2p~sp500_adj_close, data = d_inc_econ_2) # Stock market performance
 
-stargazer(reg_econ_no_2020, reg_unemp, reg_rdi, reg_inf, reg_stocks, type = "html")
+stargazer(reg_econ_no_2020, reg_unemp, reg_rdi, reg_inf, reg_stocks, type = "text")
 ```
 
 ```
 ## 
-## <table style="text-align:center"><tr><td colspan="6" style="border-bottom: 1px solid black"></td></tr><tr><td style="text-align:left"></td><td colspan="5"><em>Dependent variable:</em></td></tr>
-## <tr><td></td><td colspan="5" style="border-bottom: 1px solid black"></td></tr>
-## <tr><td style="text-align:left"></td><td colspan="5">pv2p</td></tr>
-## <tr><td style="text-align:left"></td><td>(1)</td><td>(2)</td><td>(3)</td><td>(4)</td><td>(5)</td></tr>
-## <tr><td colspan="6" style="border-bottom: 1px solid black"></td></tr><tr><td style="text-align:left">GDP_growth_quarterly</td><td>0.737<sup>**</sup></td><td></td><td></td><td></td><td></td></tr>
-## <tr><td style="text-align:left"></td><td>(0.265)</td><td></td><td></td><td></td><td></td></tr>
-## <tr><td style="text-align:left"></td><td></td><td></td><td></td><td></td><td></td></tr>
-## <tr><td style="text-align:left">unemployment</td><td></td><td>0.022</td><td></td><td></td><td></td></tr>
-## <tr><td style="text-align:left"></td><td></td><td>(0.845)</td><td></td><td></td><td></td></tr>
-## <tr><td style="text-align:left"></td><td></td><td></td><td></td><td></td><td></td></tr>
-## <tr><td style="text-align:left">RDPI</td><td></td><td></td><td>-0.0004</td><td></td><td></td></tr>
-## <tr><td style="text-align:left"></td><td></td><td></td><td>(0.0004)</td><td></td><td></td></tr>
-## <tr><td style="text-align:left"></td><td></td><td></td><td></td><td></td><td></td></tr>
-## <tr><td style="text-align:left">CPI</td><td></td><td></td><td></td><td>-0.015</td><td></td></tr>
-## <tr><td style="text-align:left"></td><td></td><td></td><td></td><td>(0.017)</td><td></td></tr>
-## <tr><td style="text-align:left"></td><td></td><td></td><td></td><td></td><td></td></tr>
-## <tr><td style="text-align:left">sp500_adj_close</td><td></td><td></td><td></td><td></td><td>-0.002</td></tr>
-## <tr><td style="text-align:left"></td><td></td><td></td><td></td><td></td><td>(0.002)</td></tr>
-## <tr><td style="text-align:left"></td><td></td><td></td><td></td><td></td><td></td></tr>
-## <tr><td style="text-align:left">Constant</td><td>49.375<sup>***</sup></td><td>51.885<sup>***</sup></td><td>54.987<sup>***</sup></td><td>53.604<sup>***</sup></td><td>52.859<sup>***</sup></td></tr>
-## <tr><td style="text-align:left"></td><td>(1.416)</td><td>(4.842)</td><td>(3.021)</td><td>(2.154)</td><td>(1.638)</td></tr>
-## <tr><td style="text-align:left"></td><td></td><td></td><td></td><td></td><td></td></tr>
-## <tr><td colspan="6" style="border-bottom: 1px solid black"></td></tr><tr><td style="text-align:left">Observations</td><td>18</td><td>18</td><td>15</td><td>18</td><td>18</td></tr>
-## <tr><td style="text-align:left">R<sup>2</sup></td><td>0.325</td><td>0.00004</td><td>0.081</td><td>0.049</td><td>0.039</td></tr>
-## <tr><td style="text-align:left">Adjusted R<sup>2</sup></td><td>0.283</td><td>-0.062</td><td>0.011</td><td>-0.010</td><td>-0.021</td></tr>
-## <tr><td style="text-align:left">Residual Std. Error</td><td>4.463 (df = 16)</td><td>5.431 (df = 16)</td><td>5.219 (df = 13)</td><td>5.296 (df = 16)</td><td>5.323 (df = 16)</td></tr>
-## <tr><td style="text-align:left">F Statistic</td><td>7.697<sup>**</sup> (df = 1; 16)</td><td>0.001 (df = 1; 16)</td><td>1.149 (df = 1; 13)</td><td>0.828 (df = 1; 16)</td><td>0.655 (df = 1; 16)</td></tr>
-## <tr><td colspan="6" style="border-bottom: 1px solid black"></td></tr><tr><td style="text-align:left"><em>Note:</em></td><td colspan="5" style="text-align:right"><sup>*</sup>p<0.1; <sup>**</sup>p<0.05; <sup>***</sup>p<0.01</td></tr>
-## </table>
+## =====================================================================================================================
+##                                                            Dependent variable:                                       
+##                      ------------------------------------------------------------------------------------------------
+##                                                                    pv2p                                              
+##                              (1)                 (2)                (3)                (4)                (5)        
+## ---------------------------------------------------------------------------------------------------------------------
+## GDP_growth_quarterly       0.737**                                                                                   
+##                            (0.265)                                                                                   
+##                                                                                                                      
+## unemployment                                    0.022                                                                
+##                                                (0.845)                                                               
+##                                                                                                                      
+## RDPI                                                              -0.0004                                            
+##                                                                   (0.0004)                                           
+##                                                                                                                      
+## CPI                                                                                   -0.015                         
+##                                                                                      (0.017)                         
+##                                                                                                                      
+## sp500_adj_close                                                                                          -0.002      
+##                                                                                                         (0.002)      
+##                                                                                                                      
+## Constant                  49.375***           51.885***          54.987***          53.604***          52.859***     
+##                            (1.416)             (4.842)            (3.021)            (2.154)            (1.638)      
+##                                                                                                                      
+## ---------------------------------------------------------------------------------------------------------------------
+## Observations                  18                  18                 15                 18                 18        
+## R2                          0.325              0.00004             0.081              0.049              0.039       
+## Adjusted R2                 0.283               -0.062             0.011              -0.010             -0.021      
+## Residual Std. Error    4.463 (df = 16)     5.431 (df = 16)    5.219 (df = 13)    5.296 (df = 16)    5.323 (df = 16)  
+## F Statistic          7.697** (df = 1; 16) 0.001 (df = 1; 16) 1.149 (df = 1; 13) 0.828 (df = 1; 16) 0.655 (df = 1; 16)
+## =====================================================================================================================
+## Note:                                                                                     *p<0.1; **p<0.05; ***p<0.01
 ```
+Show in New Window
+
+=====================================================================================================================
+                                                           Dependent variable:                                       
+                     ------------------------------------------------------------------------------------------------
+                                                                   pv2p                                              
+                             (1)                 (2)                (3)                (4)                (5)        
+---------------------------------------------------------------------------------------------------------------------
+GDP_growth_quarterly       0.737**                                                                                   
+                           (0.265)                                                                                   
+                                                                                                                     
+unemployment                                    0.022                                                                
+                                               (0.845)                                                               
+                                                                                                                     
+RDPI                                                              -0.0004                                            
+                                                                  (0.0004)                                           
+                                                                                                                     
+CPI                                                                                   -0.015                         
+                                                                                     (0.017)                         
+                                                                                                                     
+sp500_adj_close                                                                                          -0.002      
+                                                                                                        (0.002)      
+                                                                                                                     
+Constant                  49.375***           51.885***          54.987***          53.604***          52.859***     
+                           (1.416)             (4.842)            (3.021)            (2.154)            (1.638)      
+                                                                                                                     
+---------------------------------------------------------------------------------------------------------------------
+Observations                  18                  18                 15                 18                 18        
+R2                          0.325              0.00004             0.081              0.049              0.039       
+Adjusted R2                 0.283               -0.062             0.011              -0.010             -0.021      
+Residual Std. Error    4.463 (df = 16)     5.431 (df = 16)    5.219 (df = 13)    5.296 (df = 16)    5.323 (df = 16)  
+F Statistic          7.697** (df = 1; 16) 0.001 (df = 1; 16) 1.149 (df = 1; 13) 0.828 (df = 1; 16) 0.655 (df = 1; 16)
+=====================================================================================================================
+Note:                                                                                     *p<0.1; **p<0.05; ***p<0.01
 
 # Citations:
 
