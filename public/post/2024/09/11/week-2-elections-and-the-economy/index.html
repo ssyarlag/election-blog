@@ -26,7 +26,7 @@
 </div>
 
 <main>
-<p>In this week&rsquo;s lab, we focus on understanding how well the status of the economy predicts the outcome of an election. In particular, we aim to quantify this uncertainty. My thanks again to Matt Dardet for his generous starter code in section, much of which I have used/adapted here.</p>
+<p>In this week’s lab, we focus on understanding how well the status of the economy predicts the outcome of an election. In particular, we aim to quantify this uncertainty. My thanks again to Matt Dardet for his generous starter code in section, much of which I have used/adapted here.</p>
 <pre><code class="language-r"># Load libraries and datasets
 
 library(car)
@@ -41,8 +41,8 @@ library(car)
 ## ✔ ggplot2   3.5.1     ✔ tibble    3.2.1
 ## ✔ lubridate 1.9.3     ✔ tidyr     1.3.1
 ## ✔ purrr     1.0.2
-</code></pre>
-<pre><code>## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+
+## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
 ## ✖ dplyr::filter() masks stats::filter()
 ## ✖ dplyr::lag()    masks stats::lag()
 ## ✖ dplyr::recode() masks car::recode()
@@ -194,7 +194,7 @@ predict(reg_econ_no_2020, GDP_new, interval = &quot;prediction&quot;)
 ## 1 51.58486 41.85982 61.3099
 </code></pre>
 <p>We can also use this model to predict the upcoming 2024 election, using recent economic data. This prediction suggests that the incumbent Democratic party can expect to receive about 51.58% of the two-party vote share. However, the margin of error on this prediction ranges from 41.86% to 61.31%, implying that the election could still swing either way.</p>
-<p>Given that we&rsquo;ve observed the limitations of a simple bivariate linear model, we also observed several methods to <em>improve this model</em></p>
+<p>Given that we’ve observed the limitations of a simple bivariate linear model, we also observed several methods to <em>improve this model</em></p>
 <p>Of course, GDP growth is only one metric of economic performance. Therefore, I also tested how well the unemployment rate predicted election outcomes. I again excluded 2020 because our previous graph showed it as an economic outlier.</p>
 <pre><code class="language-r">reg_unemp &lt;- lm(pv2p~unemployment, data = d_inc_econ_2)
 summary(reg_unemp)
@@ -220,14 +220,20 @@ summary(reg_unemp)
 </code></pre>
 <p>Unfortunately, the r^2 value of this regression is much smaller than that using GDP growth as a predictor, meaning that it is a less accurate model.</p>
 <p>As an <em>extension</em>, I conducted the same analysis for several other economic variables, summarizing it in the table below.</p>
-<pre><code class="language-r">library(stargazer)
+<pre><code class="language-r">library(modelsummary)
 </code></pre>
-<pre><code>## 
-## Please cite as:
-</code></pre>
-<pre><code>##  Hlavac, Marek (2022). stargazer: Well-Formatted Regression and Summary Statistics Tables.
-</code></pre>
-<pre><code>##  R package version 5.2.3. https://CRAN.R-project.org/package=stargazer
+<pre><code>## `modelsummary` 2.0.0 now uses `tinytable` as its default table-drawing
+##   backend. Learn more at: https://vincentarelbundock.github.io/tinytable/
+## 
+## Revert to `kableExtra` for one session:
+## 
+##   options(modelsummary_factory_default = 'kableExtra')
+##   options(modelsummary_factory_latex = 'kableExtra')
+##   options(modelsummary_factory_html = 'kableExtra')
+## 
+## Silence this message forever:
+## 
+##   config_modelsummary(startup_message = FALSE)
 </code></pre>
 <pre><code class="language-r">reg_rdi &lt;- lm(pv2p~RDPI, data = d_inc_econ_2) # Regression on Real Disposable Income
 
@@ -235,80 +241,363 @@ reg_inf &lt;- lm(pv2p~CPI, data = d_inc_econ_2) # Inflation
 
 reg_stocks &lt;- lm(pv2p~sp500_adj_close, data = d_inc_econ_2) # Stock market performance
 
-stargazer(reg_econ_no_2020, reg_unemp, reg_rdi, reg_inf, reg_stocks, type = &quot;text&quot;)
+regressions &lt;- list(
+  &quot;GDP Growth&quot; = reg_econ_no_2020,
+  &quot;Unemployment&quot; = reg_unemp,
+  &quot;Real Disposable Income&quot; = reg_rdi,
+  &quot;Inflation&quot; = reg_inf,
+  &quot;Stock Market&quot; = reg_stocks
+  ) # Referenced: https://tilburgsciencehub.com/topics/visualization/data-visualization/regression-results/model-summary/
+
+msummary(regressions)
 </code></pre>
-<pre><code>## 
-## =====================================================================================================================
-##                                                            Dependent variable:                                       
-##                      ------------------------------------------------------------------------------------------------
-##                                                                    pv2p                                              
-##                              (1)                 (2)                (3)                (4)                (5)        
-## ---------------------------------------------------------------------------------------------------------------------
-## GDP_growth_quarterly       0.737**                                                                                   
-##                            (0.265)                                                                                   
-##                                                                                                                      
-## unemployment                                    0.022                                                                
-##                                                (0.845)                                                               
-##                                                                                                                      
-## RDPI                                                              -0.0004                                            
-##                                                                   (0.0004)                                           
-##                                                                                                                      
-## CPI                                                                                   -0.015                         
-##                                                                                      (0.017)                         
-##                                                                                                                      
-## sp500_adj_close                                                                                          -0.002      
-##                                                                                                         (0.002)      
-##                                                                                                                      
-## Constant                  49.375***           51.885***          54.987***          53.604***          52.859***     
-##                            (1.416)             (4.842)            (3.021)            (2.154)            (1.638)      
-##                                                                                                                      
-## ---------------------------------------------------------------------------------------------------------------------
-## Observations                  18                  18                 15                 18                 18        
-## R2                          0.325              0.00004             0.081              0.049              0.039       
-## Adjusted R2                 0.283               -0.062             0.011              -0.010             -0.021      
-## Residual Std. Error    4.463 (df = 16)     5.431 (df = 16)    5.219 (df = 13)    5.296 (df = 16)    5.323 (df = 16)  
-## F Statistic          7.697** (df = 1; 16) 0.001 (df = 1; 16) 1.149 (df = 1; 13) 0.828 (df = 1; 16) 0.655 (df = 1; 16)
-## =====================================================================================================================
-## Note:                                                                                     *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01
-</code></pre>
-<p>Show in New Window</p>
-<table>
-  <thead>
-      <tr>
-          <th style="text-align: left">Dependent variable:</th>
-      </tr>
-  </thead>
-  <tbody>
-      <tr>
-          <td style="text-align: left">pv2p</td>
-      </tr>
-      <tr>
-          <td style="text-align: left">(1)                 (2)                (3)                (4)                (5)</td>
-      </tr>
-  </tbody>
+<!-- preamble start -->
+<p>
+    <script>
+function styleCell_i9e7c7n4n8anuvzkkpd2(i, j, css_id) {
+var table = document.getElementById(&ldquo;tinytable_i9e7c7n4n8anuvzkkpd2&rdquo;);
+table.rows[i].cells[j].classList.add(css_id);
+}
+function insertSpanRow(i, colspan, content) {
+var table = document.getElementById(&rsquo;tinytable_i9e7c7n4n8anuvzkkpd2&rsquo;);
+var newRow = table.insertRow(i);
+var newCell = newRow.insertCell(0);
+newCell.setAttribute(&ldquo;colspan&rdquo;, colspan);
+// newCell.innerText = content;
+// this may be unsafe, but innerText does not interpret <br>
+newCell.innerHTML = content;
+}
+function spanCell_i9e7c7n4n8anuvzkkpd2(i, j, rowspan, colspan) {
+var table = document.getElementById(&ldquo;tinytable_i9e7c7n4n8anuvzkkpd2&rdquo;);
+const targetRow = table.rows[i];
+const targetCell = targetRow.cells[j];
+for (let r = 0; r &lt; rowspan; r++) {
+// Only start deleting cells to the right for the first row (r == 0)
+if (r === 0) {
+// Delete cells to the right of the target cell in the first row
+for (let c = colspan - 1; c &gt; 0; c&ndash;) {
+if (table.rows[i + r].cells[j + c]) {
+table.rows[i + r].deleteCell(j + c);
+}
+}
+}
+// For rows below the first, delete starting from the target column
+if (r &gt; 0) {
+for (let c = colspan - 1; c &gt;= 0; c&ndash;) {
+if (table.rows[i + r] &amp;&amp; table.rows[i + r].cells[j]) {
+table.rows[i + r].deleteCell(j);
+}
+}
+}
+}
+// Set rowspan and colspan of the target cell
+targetCell.rowSpan = rowspan;
+targetCell.colSpan = colspan;
+}
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(0, 0, &rsquo;tinytable_css_ido9fotqwqr9e5gdusl6gb&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(0, 1, &rsquo;tinytable_css_idv6d0ha5c3i6kvjaizxw6&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(0, 2, &rsquo;tinytable_css_idv6d0ha5c3i6kvjaizxw6&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(0, 3, &rsquo;tinytable_css_idv6d0ha5c3i6kvjaizxw6&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(0, 4, &rsquo;tinytable_css_idv6d0ha5c3i6kvjaizxw6&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(0, 5, &rsquo;tinytable_css_idv6d0ha5c3i6kvjaizxw6&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(1, 0, &rsquo;tinytable_css_idd3ug8qqzctab06uhcxrj&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(1, 1, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(1, 2, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(1, 3, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(1, 4, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(1, 5, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(2, 0, &rsquo;tinytable_css_idd3ug8qqzctab06uhcxrj&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(2, 1, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(2, 2, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(2, 3, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(2, 4, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(2, 5, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(3, 0, &rsquo;tinytable_css_idd3ug8qqzctab06uhcxrj&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(3, 1, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(3, 2, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(3, 3, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(3, 4, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(3, 5, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(4, 0, &rsquo;tinytable_css_idd3ug8qqzctab06uhcxrj&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(4, 1, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(4, 2, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(4, 3, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(4, 4, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(4, 5, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(5, 0, &rsquo;tinytable_css_idd3ug8qqzctab06uhcxrj&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(5, 1, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(5, 2, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(5, 3, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(5, 4, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(5, 5, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(6, 0, &rsquo;tinytable_css_idd3ug8qqzctab06uhcxrj&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(6, 1, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(6, 2, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(6, 3, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(6, 4, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(6, 5, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(7, 0, &rsquo;tinytable_css_idd3ug8qqzctab06uhcxrj&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(7, 1, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(7, 2, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(7, 3, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(7, 4, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(7, 5, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(8, 0, &rsquo;tinytable_css_idd3ug8qqzctab06uhcxrj&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(8, 1, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(8, 2, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(8, 3, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(8, 4, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(8, 5, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(9, 0, &rsquo;tinytable_css_idd3ug8qqzctab06uhcxrj&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(9, 1, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(9, 2, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(9, 3, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(9, 4, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(9, 5, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(10, 0, &rsquo;tinytable_css_idd3ug8qqzctab06uhcxrj&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(10, 1, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(10, 2, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(10, 3, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(10, 4, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(10, 5, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(11, 0, &rsquo;tinytable_css_idd3ug8qqzctab06uhcxrj&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(11, 1, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(11, 2, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(11, 3, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(11, 4, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(11, 5, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(12, 0, &rsquo;tinytable_css_idqcxa55xu698ia4ag9pof&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(12, 1, &rsquo;tinytable_css_id016ctwxn78uwym73ghfa&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(12, 2, &rsquo;tinytable_css_id016ctwxn78uwym73ghfa&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(12, 3, &rsquo;tinytable_css_id016ctwxn78uwym73ghfa&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(12, 4, &rsquo;tinytable_css_id016ctwxn78uwym73ghfa&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(12, 5, &rsquo;tinytable_css_id016ctwxn78uwym73ghfa&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(13, 0, &rsquo;tinytable_css_idd3ug8qqzctab06uhcxrj&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(13, 1, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(13, 2, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(13, 3, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(13, 4, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(13, 5, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(14, 0, &rsquo;tinytable_css_idd3ug8qqzctab06uhcxrj&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(14, 1, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(14, 2, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(14, 3, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(14, 4, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(14, 5, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(15, 0, &rsquo;tinytable_css_idd3ug8qqzctab06uhcxrj&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(15, 1, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(15, 2, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(15, 3, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(15, 4, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(15, 5, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(16, 0, &rsquo;tinytable_css_idd3ug8qqzctab06uhcxrj&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(16, 1, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(16, 2, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(16, 3, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(16, 4, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(16, 5, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(17, 0, &rsquo;tinytable_css_idd3ug8qqzctab06uhcxrj&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(17, 1, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(17, 2, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(17, 3, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(17, 4, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(17, 5, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(18, 0, &rsquo;tinytable_css_idd3ug8qqzctab06uhcxrj&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(18, 1, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(18, 2, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(18, 3, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(18, 4, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(18, 5, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(19, 0, &rsquo;tinytable_css_idd3ug8qqzctab06uhcxrj&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(19, 1, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(19, 2, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(19, 3, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(19, 4, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+window.addEventListener(&rsquo;load&rsquo;, function () { styleCell_i9e7c7n4n8anuvzkkpd2(19, 5, &rsquo;tinytable_css_idcb7e9nwmv3np3tbyd567&rsquo;) })
+</script>
+
+    <style>
+.table td.tinytable_css_ido9fotqwqr9e5gdusl6gb, .table th.tinytable_css_ido9fotqwqr9e5gdusl6gb {  text-align: left;  border-bottom: solid 0.1em #d3d8dc; }
+.table td.tinytable_css_idv6d0ha5c3i6kvjaizxw6, .table th.tinytable_css_idv6d0ha5c3i6kvjaizxw6 {  text-align: center;  border-bottom: solid 0.1em #d3d8dc; }
+.table td.tinytable_css_idd3ug8qqzctab06uhcxrj, .table th.tinytable_css_idd3ug8qqzctab06uhcxrj {  text-align: left; }
+.table td.tinytable_css_idcb7e9nwmv3np3tbyd567, .table th.tinytable_css_idcb7e9nwmv3np3tbyd567 {  text-align: center; }
+.table td.tinytable_css_idqcxa55xu698ia4ag9pof, .table th.tinytable_css_idqcxa55xu698ia4ag9pof {  border-bottom: solid 0.05em black;  text-align: left; }
+.table td.tinytable_css_id016ctwxn78uwym73ghfa, .table th.tinytable_css_id016ctwxn78uwym73ghfa {  border-bottom: solid 0.05em black;  text-align: center; }
+</style>
+<div class="container">
+<table class="table table-borderless" id="tinytable_i9e7c7n4n8anuvzkkpd2" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing='true'>
+<thead>
+
+              <tr>
+<th scope="col"> </th>
+<th scope="col">GDP Growth</th>
+<th scope="col">Unemployment</th>
+<th scope="col">Real Disposable Income</th>
+<th scope="col">Inflation</th>
+<th scope="col">Stock Market</th>
+</tr>
+</thead>
+
+        <tbody>
+<tr>
+<td>(Intercept)         </td>
+<td>49.375 </td>
+<td>51.885 </td>
+<td>54.987 </td>
+<td>53.604 </td>
+<td>52.859 </td>
+</tr>
+<tr>
+<td>                    </td>
+<td>(1.416)</td>
+<td>(4.842)</td>
+<td>(3.021)</td>
+<td>(2.154)</td>
+<td>(1.638)</td>
+</tr>
+<tr>
+<td>GDP_growth_quarterly</td>
+<td>0.737  </td>
+<td>       </td>
+<td>       </td>
+<td>       </td>
+<td>       </td>
+</tr>
+<tr>
+<td>                    </td>
+<td>(0.265)</td>
+<td>       </td>
+<td>       </td>
+<td>       </td>
+<td>       </td>
+</tr>
+<tr>
+<td>unemployment        </td>
+<td>       </td>
+<td>0.022  </td>
+<td>       </td>
+<td>       </td>
+<td>       </td>
+</tr>
+<tr>
+<td>                    </td>
+<td>       </td>
+<td>(0.845)</td>
+<td>       </td>
+<td>       </td>
+<td>       </td>
+</tr>
+<tr>
+<td>RDPI                </td>
+<td>       </td>
+<td>       </td>
+<td>0.000  </td>
+<td>       </td>
+<td>       </td>
+</tr>
+<tr>
+<td>                    </td>
+<td>       </td>
+<td>       </td>
+<td>(0.000)</td>
+<td>       </td>
+<td>       </td>
+</tr>
+<tr>
+<td>CPI                 </td>
+<td>       </td>
+<td>       </td>
+<td>       </td>
+<td>-0.015 </td>
+<td>       </td>
+</tr>
+<tr>
+<td>                    </td>
+<td>       </td>
+<td>       </td>
+<td>       </td>
+<td>(0.017)</td>
+<td>       </td>
+</tr>
+<tr>
+<td>sp500_adj_close     </td>
+<td>       </td>
+<td>       </td>
+<td>       </td>
+<td>       </td>
+<td>-0.002 </td>
+</tr>
+<tr>
+<td>                    </td>
+<td>       </td>
+<td>       </td>
+<td>       </td>
+<td>       </td>
+<td>(0.002)</td>
+</tr>
+<tr>
+<td>Num.Obs.            </td>
+<td>18     </td>
+<td>18     </td>
+<td>15     </td>
+<td>18     </td>
+<td>18     </td>
+</tr>
+<tr>
+<td>R2                  </td>
+<td>0.325  </td>
+<td>0.000  </td>
+<td>0.081  </td>
+<td>0.049  </td>
+<td>0.039  </td>
+</tr>
+<tr>
+<td>R2 Adj.             </td>
+<td>0.283  </td>
+<td>-0.062 </td>
+<td>0.011  </td>
+<td>-0.010 </td>
+<td>-0.021 </td>
+</tr>
+<tr>
+<td>AIC                 </td>
+<td>108.8  </td>
+<td>115.9  </td>
+<td>96.0   </td>
+<td>115.0  </td>
+<td>115.2  </td>
+</tr>
+<tr>
+<td>BIC                 </td>
+<td>111.5  </td>
+<td>118.5  </td>
+<td>98.1   </td>
+<td>117.6  </td>
+<td>117.8  </td>
+</tr>
+<tr>
+<td>Log.Lik.            </td>
+<td>-51.404</td>
+<td>-54.939</td>
+<td>-44.995</td>
+<td>-54.485</td>
+<td>-54.578</td>
+</tr>
+<tr>
+<td>RMSE                </td>
+<td>4.21   </td>
+<td>5.12   </td>
+<td>4.86   </td>
+<td>4.99   </td>
+<td>5.02   </td>
+</tr>
+</tbody>
 </table>
-<h2 id="heading">=====================================================================================================================</h2>
-<p>GDP_growth_quarterly       0.737**                                                                                <br>
-(0.265)</p>
-<p>unemployment                                    0.022                                                             <br>
-(0.845)</p>
-<p>RDPI                                                              -0.0004                                         <br>
-(0.0004)</p>
-<p>CPI                                                                                   -0.015                      <br>
-(0.017)</p>
-<p>sp500_adj_close                                                                                          -0.002   <br>
-(0.002)</p>
-<p>Constant                  49.375***           51.885***          54.987***          53.604***          52.859***  <br>
-(1.416)             (4.842)            (3.021)            (2.154)            (1.638)</p>
-<hr>
-<h1 id="f-statistic----------7697-df--1-16-0001-df--1-16-1149-df--1-13-0828-df--1-16-0655-df--1-16">Observations                  18                  18                 15                 18                 18     <br>
-R2                          0.325              0.00004             0.081              0.049              0.039    <br>
-Adjusted R2                 0.283               -0.062             0.011              -0.010             -0.021   <br>
-Residual Std. Error    4.463 (df = 16)     5.431 (df = 16)    5.219 (df = 13)    5.296 (df = 16)    5.323 (df = 16)<br>
-F Statistic          7.697** (df = 1; 16) 0.001 (df = 1; 16) 1.149 (df = 1; 13) 0.828 (df = 1; 16) 0.655 (df = 1; 16)</h1>
-<p>Note:                                                                                     *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</p>
+</div></p>
+<!-- hack to avoid NA insertion in last line -->
 <h1 id="citations">Citations:</h1>
 <p>Hlavac, Marek (2022). stargazer: Well-Formatted Regression and Summary Statistics Tables.R package version 5.2.3. <a href="https://CRAN.R-project.org/package=stargazer">https://CRAN.R-project.org/package=stargazer</a></p>
+<p><a href="https://tilburgsciencehub.com/topics/visualization/data-visualization/regression-results/model-summary/">https://tilburgsciencehub.com/topics/visualization/data-visualization/regression-results/model-summary/</a></p>
 
 </main>
 
