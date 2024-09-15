@@ -75,13 +75,13 @@ gdp_cor_no_2020
 
 We find that while there is a slight positive correlation (r = 0.43) between GDP growth and incumbent party vote share even including 2020, the correlation becomes even stronger when dropping 2020 (r = 0.57). 
 
-Seeing what appears to be a relationship between these variables, we then move into *fitting a model* to this data. Since the scatterplot appeared to demonstrate a linear relationship, especially when removing the outlier of 2020, we fitted a linear regression model to our data. 
+Seeing what appears to be a relationship between these variables, we then move into *fitting a model* to this data. Since the scatterplot appeared to demonstrate a linear relationship, especially when removing the outlier of 2020, we fitted a linear regression model to our dataset without 2020. 
 
 ```{r echo = FALSE}
 # OLS regression using data without 2020.
 
 reg_econ_no_2020 <- lm(data = d_inc_econ_2, pv2p~GDP_growth_quarterly)
-msummary(reg_econ_no_2020, output = "gdp_output_table.jpg")
+msummary(list("GDP Growth" = reg_econ_no_2020), output = "gdp_output_table.jpg")
 ```
 
 ![](images/gdp_output_table.jpg)
@@ -130,7 +130,7 @@ GDP_new <- d_fred |>
 predict(reg_econ_no_2020, GDP_new, interval = "prediction")
 ```
 
-We can also use this model to predict the upcoming 2024 election, using recent economic data. This prediction suggests that the incumbent Democratic party can expect to receive about 51.58% of the two-party vote share. However, the margin of error on this prediction ranges from 41.86% to 61.31%, implying that the election could still swing either way.
+We can also use this model to predict the upcoming 2024 election, using recent economic data. This prediction suggests that the incumbent Democratic party can expect to receive about 51.58% of the two-party vote share in the 2024 election. However, the margin of error on this prediction ranges from 41.86% to 61.31%, implying that the election could still swing either way.
 
 Given that we've observed the limitations of a simple bivariate linear model, we also observed several methods to *improve this model*
 
@@ -141,11 +141,10 @@ Of course, GDP growth is only one metric of economic performance. Therefore, I a
 reg_unemp <- lm(pv2p~unemployment, data = d_inc_econ_2)
 
 # Outputting image of regression characteristics
-msummary(reg_unemp, output = "unemp_output_table.jpg")
+msummary(list("Unemployment rate" = reg_unemp), output = "unemp_output_table.jpg")
 ```
 
 ![](images/unemp_output_table.jpg)
-
 
 Unfortunately, the r^2 value of this regression is much smaller than that using GDP growth as a predictor, meaning that it is a less useful model.
 
@@ -156,9 +155,9 @@ library(modelsummary)
 
 reg_rdi <- lm(pv2p~RDPI, data = d_inc_econ_2) # Regression on Real Disposable Income
 
-reg_inf <- lm(pv2p~CPI, data = d_inc_econ_2) # Inflation
+reg_inf <- lm(pv2p~CPI, data = d_inc_econ_2) # Regression on Inflation
 
-reg_stocks <- lm(pv2p~sp500_adj_close, data = d_inc_econ_2) # Stock market performance
+reg_stocks <- lm(pv2p~sp500_adj_close, data = d_inc_econ_2) # Regression on Stock market performance
 
 regressions <- list(
   "GDP Growth" = reg_econ_no_2020,
@@ -168,6 +167,7 @@ regressions <- list(
   "Stock Market" = reg_stocks
   ) # Referenced: https://tilburgsciencehub.com/topics/visualization/data-visualization/regression-results/model-summary/
 
+# Produce output of all regressions
 msummary(regressions, output = "all_output_table.jpg")
 ```
 ![](images/all_output_table.jpg)
