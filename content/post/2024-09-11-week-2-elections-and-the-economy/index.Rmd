@@ -143,7 +143,6 @@ reg_unemp <- lm(pv2p~unemployment, data = d_inc_econ_2)
 # Outputting image of regression characteristics
 msummary(list("Unemployment rate" = reg_unemp), output = "unemp_output_table.jpg")
 ```
-
 ![](images/unemp_output_table.jpg)
 
 Unfortunately, the r^2 value of this regression is much smaller than that using GDP growth as a predictor, meaning that it is a less useful model.
