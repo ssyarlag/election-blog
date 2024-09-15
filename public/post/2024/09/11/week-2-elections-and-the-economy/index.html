@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en-us">
-  <head>
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=7464&amp;path=livereload" data-no-instant defer></script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Week 2: Elections and the Economy | A minimal Hugo website</title>
@@ -82,7 +82,7 @@
 ## Joining with `by = join_by(year)`
 </code></pre>
 <p>First, we explored how well the economy <em>correlated</em> with election outcomes by computing the bivariate correlation between quarterly GDP growth and incumbent two-party vote share. We began by reviewing a scatterplot of this data.</p>
-<img src="https://example.org/post/2024/09/11/week-2-elections-and-the-economy/index_files/figure-html/unnamed-chunk-2-1.png" width="672" />
+<img src="/post/2024/09/11/week-2-elections-and-the-economy/index_files/figure-html/unnamed-chunk-2-1.png" width="672" />
 <p>Clearly, this scatterplot shows that 2020 is a significant outlier, due to the significant decline in GDP right before the election. Therefore, when we compute the correlation between GDP growth and two-party vote share for the incumbent party in the election, it makes sense to also calculate the correlation excluding this year.</p>
 <pre><code>## [1] 0.4336956
 </code></pre>
@@ -100,7 +100,7 @@
 </code></pre>
 <p>We find an R^2 value of 0.32. This is a fairly modest figure, suggesting that we may need to make further modifications to this model to improve its fit</p>
 <p><em>Out-of-Sample Prediction: Cross Validation</em></p>
-<img src="https://example.org/post/2024/09/11/week-2-elections-and-the-economy/index_files/figure-html/unnamed-chunk-6-1.png" width="672" />
+<img src="/post/2024/09/11/week-2-elections-and-the-economy/index_files/figure-html/unnamed-chunk-6-1.png" width="672" />
 <p>This distribution shows that, in general, our model appears to make fairly accurate predictions. In other words, while our model may have appeared weak previously, this visualization demonstrates that it is stronger than we thought.</p>
 <p><em>Out-of-sample extrapolation: 2024</em></p>
 <pre><code>##        fit      lwr     upr
