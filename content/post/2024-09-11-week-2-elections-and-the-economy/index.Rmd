@@ -8,7 +8,7 @@ tags: []
 ---
 In this week's lab, we focus on understanding how well the status of the economy predicts the outcome of an election. In particular, we aim to quantify this uncertainty. My thanks again to Matt Dardet for his generous starter code in section, much of which I have used/adapted here. 
 
-```{r echo = FALSE}
+```{r echo = FALSE, message = FALSE, warning = FALSE}
 # Load libraries and datasets
 
 library(car)
@@ -118,7 +118,7 @@ hist(out_samp_errors)
 
 This histogram demonstrates the results when we removed sets of nine random elections, fit a linear model to the remaining data, and evaluated the accuracy of that fitted model to the randomly removed data. In general, our model appears to make fairly accurate predictions. In other words, while our model may have appeared weak previously, this visualization demonstrates that it is stronger than we thought.
 
-*Out-of-sample extrapolation: 2024*
+*Out-of-sample Extrapolation: 2024*
 
 ```{r echo = FALSE}
 # Pull most recent economic data from FRED dataset
