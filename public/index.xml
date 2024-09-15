@@ -2,31 +2,31 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Home on A minimal Hugo website</title>
-    <link>http://localhost:7464/</link>
+    <link>https://example.org/</link>
     <description>Recent content in Home on A minimal Hugo website</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Wed, 11 Sep 2024 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://localhost:7464/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://example.org/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Week 2: Elections and the Economy</title>
-      <link>http://localhost:7464/post/2024/09/11/week-2-elections-and-the-economy/</link>
+      <link>https://example.org/post/2024/09/11/week-2-elections-and-the-economy/</link>
       <pubDate>Wed, 11 Sep 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:7464/post/2024/09/11/week-2-elections-and-the-economy/</guid>
+      <guid>https://example.org/post/2024/09/11/week-2-elections-and-the-economy/</guid>
       <description>&lt;p&gt;In this week&amp;rsquo;s lab, we focus on understanding how well the status of the economy predicts the outcome of an election. In particular, we aim to quantify this uncertainty. My thanks again to Matt Dardet for his generous starter code in section, much of which I have used/adapted here.&lt;/p&gt;&#xA;&lt;pre&gt;&lt;code&gt;## Loading required package: carData&#xA;&lt;/code&gt;&lt;/pre&gt;&#xA;&lt;pre&gt;&lt;code&gt;## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──&#xA;## ✔ dplyr     1.1.4     ✔ readr     2.1.5&#xA;## ✔ forcats   1.0.0     ✔ stringr   1.5.1&#xA;## ✔ ggplot2   3.5.1     ✔ tibble    3.2.1&#xA;## ✔ lubridate 1.9.3     ✔ tidyr     1.3.1&#xA;## ✔ purrr     1.0.2     &#xA;## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──&#xA;## ✖ dplyr::filter() masks stats::filter()&#xA;## ✖ dplyr::lag()    masks stats::lag()&#xA;## ✖ dplyr::recode() masks car::recode()&#xA;## ✖ purrr::some()   masks car::some()&#xA;## ℹ Use the conflicted package (&amp;lt;http://conflicted.r-lib.org/&amp;gt;) to force all conflicts to become errors&#xA;## `modelsummary` 2.0.0 now uses `tinytable` as its default table-drawing&#xA;##   backend. Learn more at: https://vincentarelbundock.github.io/tinytable/&#xA;## &#xA;## Revert to `kableExtra` for one session:&#xA;## &#xA;##   options(modelsummary_factory_default = &#39;kableExtra&#39;)&#xA;##   options(modelsummary_factory_latex = &#39;kableExtra&#39;)&#xA;##   options(modelsummary_factory_html = &#39;kableExtra&#39;)&#xA;## &#xA;## Silence this message forever:&#xA;## &#xA;##   config_modelsummary(startup_message = FALSE)&#xA;## &#xA;## Rows: 38 Columns: 9&#xA;## ── Column specification ────────────────────────────────────────────────────────&#xA;## Delimiter: &amp;quot;,&amp;quot;&#xA;## chr (2): party, candidate&#xA;## dbl (3): year, pv, pv2p&#xA;## lgl (4): winner, incumbent, incumbent_party, prev_admin&#xA;## &#xA;## ℹ Use `spec()` to retrieve the full column specification for this data.&#xA;## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.&#xA;## Rows: 387 Columns: 14&#xA;## ── Column specification ────────────────────────────────────────────────────────&#xA;## Delimiter: &amp;quot;,&amp;quot;&#xA;## dbl (14): year, quarter, GDP, GDP_growth_quarterly, RDPI, RDPI_growth_quarte...&#xA;## &#xA;## ℹ Use `spec()` to retrieve the full column specification for this data.&#xA;## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.&#xA;## Rows: 310 Columns: 11&#xA;## ── Column specification ────────────────────────────────────────────────────────&#xA;## Delimiter: &amp;quot;,&amp;quot;&#xA;## chr  (1): Quarter&#xA;## dbl (10): Year, Gross domestic product, Gross national product, Disposable p...&#xA;## &#xA;## ℹ Use `spec()` to retrieve the full column specification for this data.&#xA;## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.&#xA;## Joining with `by = join_by(year)`&#xA;## Joining with `by = join_by(year)`&#xA;&lt;/code&gt;&lt;/pr</description>
     </item>
     <item>
       <title>Week 1 - Initial Analyses</title>
-      <link>http://localhost:7464/post/2024/09/07/week-1-initial-analyses/</link>
+      <link>https://example.org/post/2024/09/07/week-1-initial-analyses/</link>
       <pubDate>Sat, 07 Sep 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:7464/post/2024/09/07/week-1-initial-analyses/</guid>
+      <guid>https://example.org/post/2024/09/07/week-1-initial-analyses/</guid>
       <description>&lt;p&gt;In this first blog post, I conduct some initial analyses of historical American presidential elections. Using &lt;em&gt;popular vote data from 1948-2020 (provided by the course)&lt;/em&gt;, I analyze how competitive elections are and the proportion of states that vote blue/red. My thanks to Matt Dardet for writing much of this code during and before our weekly section, as well as ShuXin Ho for helping me identify latitude/longitude loading bugs in my maps when we were initially building them in section.&lt;/p&gt;</description>
     </item>
     <item>
       <title>Election Blog Homepage</title>
-      <link>http://localhost:7464/about/</link>
+      <link>https://example.org/about/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://localhost:7464/about/</guid>
+      <guid>https://example.org/about/</guid>
       <description>&lt;p&gt;&lt;strong&gt;XMin&lt;/strong&gt; is the first Hugo theme I have designed. The original reason that I wrote it was I needed a minimal example of Hugo themes when I was writing the  &lt;a href=&#34;https://github.com/rstudio/blogdown&#34;&gt;&lt;strong&gt;blogdown&lt;/strong&gt;&lt;/a&gt; book. Basically I wanted a simple theme that supports a navigation menu, a home page, other single pages, lists of pages, blog posts, categories, tags, and RSS. That is all. Nothing fancy. In terms of CSS and JavaScript, I really want to keep them minimal. In fact, this theme does not contain any JavaScript code at all, although on this example website I did introduce some JavaScript code (still relatively simple anyway). The theme does not contain any images, either, and is pretty much a plain-text theme.&lt;/p&gt;</description>
     </item>
   </channel>

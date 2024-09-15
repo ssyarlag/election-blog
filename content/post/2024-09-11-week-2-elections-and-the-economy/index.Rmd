@@ -14,6 +14,8 @@ In this week's lab, we focus on understanding how well the status of the economy
 library(car)
 library(tidyverse)
 library(modelsummary)
+show_col_types = FALSE
+config_modelsummary(startup_message = FALSE)
 
 d_popvote <- read_csv("popvote_1948-2020.csv")
 d_fred <- read_csv("fred_econ.csv")
@@ -114,7 +116,7 @@ hist(out_samp_errors)
 
 ```
 
-This distribution shows that, in general, our model appears to make fairly accurate predictions. In other words, while our model may have appeared weak previously, this visualization demonstrates that it is stronger than we thought.
+This histogram demonstrates the results when we removed sets of nine random elections, fit a linear model to the remaining data, and evaluated the accuracy of that fitted model to the randomly removed data. In general, our model appears to make fairly accurate predictions. In other words, while our model may have appeared weak previously, this visualization demonstrates that it is stronger than we thought.
 
 *Out-of-sample extrapolation: 2024*
 
