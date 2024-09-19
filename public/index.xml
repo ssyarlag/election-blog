@@ -22,12 +22,5 @@
       <guid>https://example.org/post/2024/09/07/week-1-initial-analyses/</guid>
       <description>&lt;p&gt;In this first blog post, I conduct some initial analyses of historical American presidential elections. Using &lt;em&gt;popular vote data from 1948-2020 (provided by the course)&lt;/em&gt;, I analyze how competitive elections are and the proportion of states that vote blue/red. My thanks to Matt Dardet for writing much of this code during and before our weekly section, as well as ShuXin Ho for helping me identify latitude/longitude loading bugs in my maps when we were initially building them in section.&lt;/p&gt;</description>
     </item>
-    <item>
-      <title>Election Blog Homepage</title>
-      <link>https://example.org/about/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>https://example.org/about/</guid>
-      <description>&lt;p&gt;&lt;strong&gt;XMin&lt;/strong&gt; is the first Hugo theme I have designed. The original reason that I wrote it was I needed a minimal example of Hugo themes when I was writing the  &lt;a href=&#34;https://github.com/rstudio/blogdown&#34;&gt;&lt;strong&gt;blogdown&lt;/strong&gt;&lt;/a&gt; book. Basically I wanted a simple theme that supports a navigation menu, a home page, other single pages, lists of pages, blog posts, categories, tags, and RSS. That is all. Nothing fancy. In terms of CSS and JavaScript, I really want to keep them minimal. In fact, this theme does not contain any JavaScript code at all, although on this example website I did introduce some JavaScript code (still relatively simple anyway). The theme does not contain any images, either, and is pretty much a plain-text theme.&lt;/p&gt;</description>
-    </item>
   </channel>
 </rss>
