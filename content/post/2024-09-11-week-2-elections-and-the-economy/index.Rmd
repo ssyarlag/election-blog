@@ -181,3 +181,8 @@ Hlavac, Marek (2022). stargazer: Well-Formatted Regression and Summary Statistic
 
 R code chunk appears in post summary · Issue #426 · rstudio/blogdown. (n.d.). GitHub. Retrieved September 14, 2024, from https://github.com/rstudio/blogdown/issues/426
 
+# Data Sources
+All information provided directly by GOV 1347 staff
+
+US Popular Vote Data
+Economic Data from Federal Reserve Economic Data (FRED) and Bureau of Economic Analysis (BEA)
