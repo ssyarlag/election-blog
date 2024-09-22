@@ -14,6 +14,7 @@ For the purpose of this analysis, we focus on polling data from FiveThirtyEight.
 
 
 <img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-2-1.png" width="672" />
+
 This data shows the polling averages at various stages of the election, benchmarked against the actual vote share earned by each candidate during that year's election (horizontal lines). This is very likely affected by events occurring during the election cycle and each campaign's response to them. For example, we see a substantial decline in support for Donald Trump around June 2020 - perhaps corresponding to the murder of George Floyd (1).
 
 However, it is interesting to see if election forecasts made using polling data in the few weeks prior to the election are necessarily more predictive of the final outcomes than those considering prior weeks. Some, such Tien and Lewis-Beck, claim that "short-view forecasts," which solely rely on polling data, especially in the weeks prior to the election, tend to be inaccurate (2). While some of these charts above show relatively accurate November predictions (eg: Biden's polling in 2020), many others are very inaccurate. For example, polling about 15 weeks before the election better predicted Trump's 2016 vote share than polling in the weeks immediately prior. 
