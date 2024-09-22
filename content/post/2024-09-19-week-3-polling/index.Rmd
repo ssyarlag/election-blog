@@ -33,7 +33,7 @@ poll_and_actual_data <- nationalpoll_av |>
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 # Plot recent presidential polling data over time - reference (9)
 
-poll_and_actual_data |>
+polls_by_year <- poll_and_actual_data |>
   filter(year < 2024 & year > 2000) |>
   ggplot(mapping = aes(x = weeks_left, y =  final_poll, color = party)) +
   geom_line() +
@@ -45,6 +45,8 @@ poll_and_actual_data |>
        y = "Support for Candidate") +
   theme_minimal() +
   facet_wrap(~year)
+
+polls_by_year
 ```
 This data shows the polling averages at various stages of the election, benchmarked against the actual vote share earned by each candidate during that year's election (horizontal lines). This is very likely affected by events occurring during the election cycle and each campaign's response to them. For example, we see a substantial decline in support for Donald Trump around June 2020 - perhaps corresponding to the murder of George Floyd (1).
 
