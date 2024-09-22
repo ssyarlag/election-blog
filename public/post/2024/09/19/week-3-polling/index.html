@@ -21,21 +21,21 @@
 
 <div class="article-meta">
 <h1><span class="title">Week 3 - Polling</span></h1>
-<h2 class="author">Package Build</h2>
+<h2 class="author">Shriya Yarlagadda</h2>
 <h2 class="date">2024/09/19</h2>
 </div>
 
 <main>
 <p>In this week&rsquo;s post, we focus on analyzing polling data, attempting to understand how they can best predict election outcomes. My thanks again to Matthew Dardet for his generous starter code.</p>
-<p>For the purpose of this analysis, we looked at polling data from the 2020 election (sourced from FiveThirtyEight). While election forecasting might benefit from more data, we reference 2020 here for simplicity. We began by visualizing the available data, helping us understand existing patterns.</p>
+<p>For the purpose of this analysis, we focus on polling data from FiveThirtyEight. We began by visualizing the available data from the past several elections, understanding how polling data changes relative to the actual election outcome.</p>
 <img src="https://example.org/post/2024/09/19/week-3-polling/index_files/figure-html/unnamed-chunk-2-1.png" width="672" />
-This data shows that polling averages shift over the months before the election, perhaps being affected by events that happened during the election cycle. For example, we see a substantial decline in support for Donald Trump around June 2020 - perhaps corresponding to the murder of George Floyd (1).
-<p>However, it is interesting to see if election forecasts made using polling data in the few weeks prior to the election are necessarily more predictive of the final outcomes than prior weeks. Some, such Tien and Lewis-Beck, claim that &ldquo;short-view forecasts,&rdquo; which solely rely on polling data, especially in the weeks prior to the election, tend to be inaccurate (2).</p>
-<p>To test the accuracy of November polls, we computed several regressions of November polling averages on actual election outcomes between 1968 and 2020 (we have data as early as 1948, but we drop earlier years given that we do not have polling data from FiveThirtyEight). I calculated three separate regressions, highlighted in the table below, which model predictions for only Democratic candidates, only Republicans, and both parties.</p>
+This data shows the polling averages at various stages of the election, benchmarked against the actual vote share earned by each candidate during that year's election (horizontal lines). This is very likely affected by events occurring during the election cycle and each campaign's response to them. For example, we see a substantial decline in support for Donald Trump around June 2020 - perhaps corresponding to the murder of George Floyd (1).
+<p>However, it is interesting to see if election forecasts made using polling data in the few weeks prior to the election are necessarily more predictive of the final outcomes than those considering prior weeks. Some, such Tien and Lewis-Beck, claim that &ldquo;short-view forecasts,&rdquo; which solely rely on polling data, especially in the weeks prior to the election, tend to be inaccurate (2). While some of these charts above show relatively accurate November predictions (eg: Biden&rsquo;s polling in 2020), many others are very inaccurate. For example, polling about 15 weeks before the election better predicted Trump&rsquo;s 2016 vote share than polling in the weeks immediately prior.</p>
+<p>To test the accuracy of November polls, we computed several regressions of November polling averages on actual election outcomes between 1968 and 2020 (we have data as early as 1948, but we drop earlier years given that we do not have polling data from FiveThirtyEight from 1948-1964). I calculated three separate regressions, highlighted in the table below, which model predictions for only Democratic candidates, only Republicans, and both parties respectively.</p>
 <p><img src="images/novpolls.jpg" alt=""></p>
-<p>Given that the Republican only model has an R^2 value of 0.727 while the Democrat only model has an R^2 value of 0.665 (with the combined model being in between), it appears that polling data from FiveThirtyEight has, on average, been more predictive of Republican outcomes. However, I also wanted to see if the relationship may have been skewed by earlier polling data, which was likely less accurate.</p>
+<p>Given that the Republican only model has an R^2 value of 0.727 while the Democrat only model has an R^2 value of 0.665 (with the combined model being in between), it appears that polling data from FiveThirtyEight has, on average, been more predictive of Republican outcomes. However, I also wanted to see if the relationship may have been skewed by earlier polling data, which was likely less accurate. To explore this, I wanted to see if earlier polls tended to be more inaccurate than more recent ones, starting with a scatterplot.</p>
 <img src="https://example.org/post/2024/09/19/week-3-polling/index_files/figure-html/unnamed-chunk-4-1.png" width="672" />
-<p>This scatterplot, which includes a line demonstrating perfect poll prediction, shows that November polls often underpredict candidate performance. This led me to calculate the years/candidates with the lowest November prediction error.</p>
+<p>This scatterplot, which includes a line demonstrating perfect poll prediction, shows that most November polls are somewhat inaccurate, often underpredicting candidate performance. However, given that it didn&rsquo;t clearly demonstrate trends in performance over the years, I calculated the years/candidates with the lowest November prediction error, including them in the table below.</p>
 <table>
   <thead>
       <tr>
@@ -51,88 +51,88 @@ This data shows that polling averages shift over the months before the election,
       <tr>
           <td style="text-align: right">2012</td>
           <td style="text-align: left">REP</td>
-          <td style="text-align: left">Romney, Mitt</td>
+          <td style="text-align: left">Mitt Romney</td>
           <td style="text-align: right">48.08</td>
-          <td style="text-align: right">47.75</td>
-          <td style="text-align: right">-0.34</td>
+          <td style="text-align: right">48.08</td>
+          <td style="text-align: right">0.00</td>
+      </tr>
+      <tr>
+          <td style="text-align: right">2004</td>
+          <td style="text-align: left">DEM</td>
+          <td style="text-align: left">John Kerry</td>
+          <td style="text-align: right">48.73</td>
+          <td style="text-align: right">48.74</td>
+          <td style="text-align: right">0.01</td>
+      </tr>
+      <tr>
+          <td style="text-align: right">2008</td>
+          <td style="text-align: left">REP</td>
+          <td style="text-align: left">John McCain</td>
+          <td style="text-align: right">46.23</td>
+          <td style="text-align: right">46.21</td>
+          <td style="text-align: right">-0.02</td>
+      </tr>
+      <tr>
+          <td style="text-align: right">2012</td>
+          <td style="text-align: left">REP</td>
+          <td style="text-align: left">Mitt Romney</td>
+          <td style="text-align: right">48.08</td>
+          <td style="text-align: right">48.07</td>
+          <td style="text-align: right">-0.02</td>
+      </tr>
+      <tr>
+          <td style="text-align: right">2008</td>
+          <td style="text-align: left">REP</td>
+          <td style="text-align: left">John McCain</td>
+          <td style="text-align: right">46.23</td>
+          <td style="text-align: right">46.25</td>
+          <td style="text-align: right">0.02</td>
       </tr>
       <tr>
           <td style="text-align: right">2020</td>
           <td style="text-align: left">DEM</td>
-          <td style="text-align: left">Biden, Joseph R.</td>
+          <td style="text-align: left">NA</td>
           <td style="text-align: right">52.27</td>
-          <td style="text-align: right">51.85</td>
-          <td style="text-align: right">-0.42</td>
+          <td style="text-align: right">52.25</td>
+          <td style="text-align: right">-0.02</td>
+      </tr>
+      <tr>
+          <td style="text-align: right">2012</td>
+          <td style="text-align: left">REP</td>
+          <td style="text-align: left">Mitt Romney</td>
+          <td style="text-align: right">48.08</td>
+          <td style="text-align: right">48.05</td>
+          <td style="text-align: right">-0.03</td>
+      </tr>
+      <tr>
+          <td style="text-align: right">2012</td>
+          <td style="text-align: left">REP</td>
+          <td style="text-align: left">Mitt Romney</td>
+          <td style="text-align: right">48.08</td>
+          <td style="text-align: right">48.12</td>
+          <td style="text-align: right">0.04</td>
       </tr>
       <tr>
           <td style="text-align: right">1988</td>
-          <td style="text-align: left">REP</td>
-          <td style="text-align: left">Bush, George H.W.</td>
-          <td style="text-align: right">53.83</td>
-          <td style="text-align: right">52.29</td>
-          <td style="text-align: right">-1.54</td>
-      </tr>
-      <tr>
-          <td style="text-align: right">2004</td>
           <td style="text-align: left">DEM</td>
-          <td style="text-align: left">Kerry, John</td>
-          <td style="text-align: right">48.73</td>
-          <td style="text-align: right">46.98</td>
-          <td style="text-align: right">-1.75</td>
+          <td style="text-align: left">Michael S. Dukakis</td>
+          <td style="text-align: right">46.17</td>
+          <td style="text-align: right">46.13</td>
+          <td style="text-align: right">-0.04</td>
       </tr>
       <tr>
-          <td style="text-align: right">1984</td>
-          <td style="text-align: left">DEM</td>
-          <td style="text-align: left">Mondale, Walter</td>
-          <td style="text-align: right">40.88</td>
-          <td style="text-align: right">38.95</td>
-          <td style="text-align: right">-1.93</td>
-      </tr>
-      <tr>
-          <td style="text-align: right">1984</td>
+          <td style="text-align: right">2012</td>
           <td style="text-align: left">REP</td>
-          <td style="text-align: left">Reagan, Ronald</td>
-          <td style="text-align: right">59.12</td>
-          <td style="text-align: right">56.92</td>
-          <td style="text-align: right">-2.20</td>
-      </tr>
-      <tr>
-          <td style="text-align: right">2008</td>
-          <td style="text-align: left">REP</td>
-          <td style="text-align: left">McCain, John</td>
-          <td style="text-align: right">46.23</td>
-          <td style="text-align: right">43.82</td>
-          <td style="text-align: right">-2.41</td>
-      </tr>
-      <tr>
-          <td style="text-align: right">2004</td>
-          <td style="text-align: left">REP</td>
-          <td style="text-align: left">Bush, George W.</td>
-          <td style="text-align: right">51.27</td>
-          <td style="text-align: right">48.60</td>
-          <td style="text-align: right">-2.67</td>
-      </tr>
-      <tr>
-          <td style="text-align: right">1968</td>
-          <td style="text-align: left">REP</td>
-          <td style="text-align: left">Nixon, Richard M.</td>
-          <td style="text-align: right">50.40</td>
-          <td style="text-align: right">47.72</td>
-          <td style="text-align: right">-2.68</td>
-      </tr>
-      <tr>
-          <td style="text-align: right">2008</td>
-          <td style="text-align: left">DEM</td>
-          <td style="text-align: left">Obama, Barack H.</td>
-          <td style="text-align: right">53.77</td>
-          <td style="text-align: right">50.99</td>
-          <td style="text-align: right">-2.78</td>
+          <td style="text-align: left">Mitt Romney</td>
+          <td style="text-align: right">48.08</td>
+          <td style="text-align: right">48.04</td>
+          <td style="text-align: right">-0.04</td>
       </tr>
   </tbody>
 </table>
-<p>This shows two interesting conclusion. First, all of the closest predictions have underpredicted candidate performance. Second, recent polls haven&rsquo;t  always been more successful. In fact, polling from 1968, the earliest year in our dataset, makes our top 10. While many recent years make up our top 10, this may lend credence to the argument that there are certain &ldquo;fundamentals&rdquo; that can help predict voter performance, regardless of the degree of accurate data and statistical/computing power that pollsters may have access to (2).</p>
-<p>Given this, we also wanted to explore if polls at other times in an election cycle better predict actual election outcomes. To do so, we observed week-level poll data, aiming to identify which weeks were most predictive. To do so, we used the regularization method of Elastic Net, identifying the most predictive weeks.</p>
-<p>I trained this model using data from before 2020, evaluating it on the data from 2020. I did this because although we do have some data from 2024, the change in the Democratic presidential candidate midway through the cycle may complicate results, combined with the fact that we do not have a completed election, may complicate results.</p>
+<p>This shows two interesting conclusions. First, all of the closest predictions have underpredicted candidate performance, showing a similar conclusion to the scatterplot. But second, and more relevantly, this tentatively suggests that recent polls haven&rsquo;t necessarily been more successful. Of course, we cannot make a causal argument from just this data and many recent years make up our top 10, polling from 1968, the earliest year in our dataset, makes our top 10. This may lend credence to the argument that there are certain &ldquo;fundamentals&rdquo; that can help predict voter performance, regardless of data accuracy and statistical/computing power that pollsters may have access to (2).</p>
+<p>Keeping the relative inaccuracy of only using November polling to predict outcomes in mind, we also wanted to explore if including polls at other times in an election cycle can result in better prediction outcomes. To do so, we used the regularization method of Elastic Net, identifying the most predictive weeks based on historical polling and election outcome data.</p>
+<p>I trained this model using data from before 2020, evaluating it on the data from 2020. I did this because although we do have some data from 2024 and could reasonably make a prediction of this year&rsquo;s election using our polling-based model, the fact that the Democratic candidate changed midway through the year may reduce the likelihood of our model (which is largely trained on elections that did have a similar shift).</p>
 <table>
   <thead>
       <tr>
@@ -147,7 +147,7 @@ This data shows that polling averages shift over the months before the election,
       </tr>
   </tbody>
 </table>
-<p>Our model predicted that, based on polling trends from previous years, Biden would earn 54.4 % of the two-party popular vote, while Trump would earn 48.3%. While these predictions were slightly high for both candidates, the poll was off by over 2 percentage points for Biden. On one hand, this may be due to the substantial variations between this election and previous ones. However, it may lend further credence to the earlier point that polls tend to overpredict candidate performance.</p>
+<p>Our model predicted that, based on polling trends from previous years, Biden would earn 54.4 % of the two-party popular vote, while Trump would earn 48.3% in 2020. While these predictions were slightly high for both candidates, the poll was off by over 2 percentage points for Biden. On one hand, this may be due to the substantial variations between this election and previous ones. However, it may lend further credence to the earlier point that polls tend to overpredict candidate performance. Furthermore, it aligns with our earlier finding (using only November polling) that election forecasts tend to more accurately predict outcomes for Republican candidates.</p>
 <p>Given these findings, it is interesting to compare the perspectives that two major pollsters involved with FiveThirtyEight &ndash; Nate Silver and G. Elliot Morris &ndash; have proposed regarding election forecasting, an <em>extension</em> of our previous analytical work.</p>
 <p>In a June 2024 article (5), Silver highlights the changes in his 2024 prediction relative to his 2020 predictions. In this, he seems to focus on making minor tweaks to his previous model, saying that he &ldquo;tend[s] to be conservative about making changes to the election models. He appears to focus on very broad factors that affect election outcomes like party level turnout and incumbency. However, in an article released around the same time (6), Morris encourages considering the fundamentals, but takes a different perspective, considering, for example &ldquo;the rates of change of these indicators.&rdquo; In doing so, he also delves into greater specificity than Silver, observing characteristics like state effects on neighbors, seeming to stray away from a strict focus on &ldquo;fundamentals.&rdquo;</p>
 <h1 id="citations">Citations</h1>
@@ -176,8 +176,11 @@ This data shows that polling averages shift over the months before the election,
 <li>
 <p>“Build a Data Frame — Tibble.” Accessed September 22, 2024. <a href="https://tibble.tidyverse.org/reference/tibble.html">https://tibble.tidyverse.org/reference/tibble.html</a>.</p>
 </li>
+<li>
+<p>Daniel. “Answer to ‘Reverse the Scale of the x Axis in a Plot.’” Stack Overflow, March 28, 2019. <a href="https://stackoverflow.com/a/55390320">https://stackoverflow.com/a/55390320</a>.</p>
+</li>
 </ol>
-<p>Help documents for Model Summary, Top N, Slice_Max, Abs (Absolute Value)</p>
+<p>Help documents for Model Summary, Top N, Slice_Max, Abs (Absolute Value), Geom_vline, Left/Right/Full Join</p>
 <h1 id="data-sources">Data Sources</h1>
 <p>Poll Predictions from FiveThirtyEight and National Election Data (both provided by course)</p>
 

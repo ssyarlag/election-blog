@@ -1,6 +1,6 @@
 ---
 title: Week 3 - Polling
-author: Package Build
+author: Shriya Yarlagadda
 date: '2024-09-19'
 slug: week-3-polling
 categories: []
@@ -9,49 +9,48 @@ tags: []
 
 In this week's post, we focus on analyzing polling data, attempting to understand how they can best predict election outcomes. My thanks again to Matthew Dardet for his generous starter code.
 
-For the purpose of this analysis, we looked at polling data from the 2020 election (sourced from FiveThirtyEight). While election forecasting might benefit from more data, we reference 2020 here for simplicity. We began by visualizing the available data, helping us understand existing patterns.
+For the purpose of this analysis, we focus on polling data from FiveThirtyEight. We began by visualizing the available data from the past several elections, understanding how polling data changes relative to the actual election outcome.
 
 
 
 <img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-2-1.png" width="672" />
-This data shows that polling averages shift over the months before the election, perhaps being affected by events that happened during the election cycle. For example, we see a substantial decline in support for Donald Trump around June 2020 - perhaps corresponding to the murder of George Floyd (1).
+This data shows the polling averages at various stages of the election, benchmarked against the actual vote share earned by each candidate during that year's election (horizontal lines). This is very likely affected by events occurring during the election cycle and each campaign's response to them. For example, we see a substantial decline in support for Donald Trump around June 2020 - perhaps corresponding to the murder of George Floyd (1).
 
-However, it is interesting to see if election forecasts made using polling data in the few weeks prior to the election are necessarily more predictive of the final outcomes than prior weeks. Some, such Tien and Lewis-Beck, claim that "short-view forecasts," which solely rely on polling data, especially in the weeks prior to the election, tend to be inaccurate (2).
+However, it is interesting to see if election forecasts made using polling data in the few weeks prior to the election are necessarily more predictive of the final outcomes than those considering prior weeks. Some, such Tien and Lewis-Beck, claim that "short-view forecasts," which solely rely on polling data, especially in the weeks prior to the election, tend to be inaccurate (2). While some of these charts above show relatively accurate November predictions (eg: Biden's polling in 2020), many others are very inaccurate. For example, polling about 15 weeks before the election better predicted Trump's 2016 vote share than polling in the weeks immediately prior. 
 
-To test the accuracy of November polls, we computed several regressions of November polling averages on actual election outcomes between 1968 and 2020 (we have data as early as 1948, but we drop earlier years given that we do not have polling data from FiveThirtyEight). I calculated three separate regressions, highlighted in the table below, which model predictions for only Democratic candidates, only Republicans, and both parties. 
+To test the accuracy of November polls, we computed several regressions of November polling averages on actual election outcomes between 1968 and 2020 (we have data as early as 1948, but we drop earlier years given that we do not have polling data from FiveThirtyEight from 1948-1964). I calculated three separate regressions, highlighted in the table below, which model predictions for only Democratic candidates, only Republicans, and both parties respectively.
 
 
 
 ![](images/novpolls.jpg)
 
-
-Given that the Republican only model has an R^2 value of 0.727 while the Democrat only model has an R^2 value of 0.665 (with the combined model being in between), it appears that polling data from FiveThirtyEight has, on average, been more predictive of Republican outcomes. However, I also wanted to see if the relationship may have been skewed by earlier polling data, which was likely less accurate. 
+Given that the Republican only model has an R^2 value of 0.727 while the Democrat only model has an R^2 value of 0.665 (with the combined model being in between), it appears that polling data from FiveThirtyEight has, on average, been more predictive of Republican outcomes. However, I also wanted to see if the relationship may have been skewed by earlier polling data, which was likely less accurate. To explore this, I wanted to see if earlier polls tended to be more inaccurate than more recent ones, starting with a scatterplot. 
 
 <img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-4-1.png" width="672" />
 
-This scatterplot, which includes a line demonstrating perfect poll prediction, shows that November polls often underpredict candidate performance. This led me to calculate the years/candidates with the lowest November prediction error.
+This scatterplot, which includes a line demonstrating perfect poll prediction, shows that most November polls are somewhat inaccurate, often underpredicting candidate performance. However, given that it didn't clearly demonstrate trends in performance over the years, I calculated the years/candidates with the lowest November prediction error, including them in the table below.
 
 
 
-| Year|Party |Candidate         | Two-Party Vote Share| Final Poll Prediction of Vote Share| Prediction Error|
-|----:|:-----|:-----------------|--------------------:|-----------------------------------:|----------------:|
-| 2012|REP   |Romney, Mitt      |                48.08|                               47.75|            -0.34|
-| 2020|DEM   |Biden, Joseph R.  |                52.27|                               51.85|            -0.42|
-| 1988|REP   |Bush, George H.W. |                53.83|                               52.29|            -1.54|
-| 2004|DEM   |Kerry, John       |                48.73|                               46.98|            -1.75|
-| 1984|DEM   |Mondale, Walter   |                40.88|                               38.95|            -1.93|
-| 1984|REP   |Reagan, Ronald    |                59.12|                               56.92|            -2.20|
-| 2008|REP   |McCain, John      |                46.23|                               43.82|            -2.41|
-| 2004|REP   |Bush, George W.   |                51.27|                               48.60|            -2.67|
-| 1968|REP   |Nixon, Richard M. |                50.40|                               47.72|            -2.68|
-| 2008|DEM   |Obama, Barack H.  |                53.77|                               50.99|            -2.78|
+| Year|Party |Candidate          | Two-Party Vote Share| Final Poll Prediction of Vote Share| Prediction Error|
+|----:|:-----|:------------------|--------------------:|-----------------------------------:|----------------:|
+| 2012|REP   |Mitt Romney        |                48.08|                               48.08|             0.00|
+| 2004|DEM   |John Kerry         |                48.73|                               48.74|             0.01|
+| 2008|REP   |John McCain        |                46.23|                               46.21|            -0.02|
+| 2012|REP   |Mitt Romney        |                48.08|                               48.07|            -0.02|
+| 2008|REP   |John McCain        |                46.23|                               46.25|             0.02|
+| 2020|DEM   |NA                 |                52.27|                               52.25|            -0.02|
+| 2012|REP   |Mitt Romney        |                48.08|                               48.05|            -0.03|
+| 2012|REP   |Mitt Romney        |                48.08|                               48.12|             0.04|
+| 1988|DEM   |Michael S. Dukakis |                46.17|                               46.13|            -0.04|
+| 2012|REP   |Mitt Romney        |                48.08|                               48.04|            -0.04|
 
 
-This shows two interesting conclusion. First, all of the closest predictions have underpredicted candidate performance. Second, recent polls haven't  always been more successful. In fact, polling from 1968, the earliest year in our dataset, makes our top 10. While many recent years make up our top 10, this may lend credence to the argument that there are certain "fundamentals" that can help predict voter performance, regardless of the degree of accurate data and statistical/computing power that pollsters may have access to (2). 
+This shows two interesting conclusions. First, all of the closest predictions have underpredicted candidate performance, showing a similar conclusion to the scatterplot. But second, and more relevantly, this tentatively suggests that recent polls haven't necessarily been more successful. Of course, we cannot make a causal argument from just this data and many recent years make up our top 10, polling from 1968, the earliest year in our dataset, makes our top 10. This may lend credence to the argument that there are certain "fundamentals" that can help predict voter performance, regardless of data accuracy and statistical/computing power that pollsters may have access to (2). 
 
-Given this, we also wanted to explore if polls at other times in an election cycle better predict actual election outcomes. To do so, we observed week-level poll data, aiming to identify which weeks were most predictive. To do so, we used the regularization method of Elastic Net, identifying the most predictive weeks.
+Keeping the relative inaccuracy of only using November polling to predict outcomes in mind, we also wanted to explore if including polls at other times in an election cycle can result in better prediction outcomes. To do so, we used the regularization method of Elastic Net, identifying the most predictive weeks based on historical polling and election outcome data.
 
-I trained this model using data from before 2020, evaluating it on the data from 2020. I did this because although we do have some data from 2024, the change in the Democratic presidential candidate midway through the cycle may complicate results, combined with the fact that we do not have a completed election, may complicate results. 
+I trained this model using data from before 2020, evaluating it on the data from 2020. I did this because although we do have some data from 2024 and could reasonably make a prediction of this year's election using our polling-based model, the fact that the Democratic candidate changed midway through the year may reduce the likelihood of our model (which is largely trained on elections that did have a similar shift).
 
 
 | Prediction Error - Democratic Party (2020)| Prediction Error - Republican Party (2020)|
@@ -59,7 +58,7 @@ I trained this model using data from before 2020, evaluating it on the data from
 |                                   2.119166|                                  0.5729736|
 
 
-Our model predicted that, based on polling trends from previous years, Biden would earn 54.4 % of the two-party popular vote, while Trump would earn 48.3%. While these predictions were slightly high for both candidates, the poll was off by over 2 percentage points for Biden. On one hand, this may be due to the substantial variations between this election and previous ones. However, it may lend further credence to the earlier point that polls tend to overpredict candidate performance. 
+Our model predicted that, based on polling trends from previous years, Biden would earn 54.4 % of the two-party popular vote, while Trump would earn 48.3% in 2020. While these predictions were slightly high for both candidates, the poll was off by over 2 percentage points for Biden. On one hand, this may be due to the substantial variations between this election and previous ones. However, it may lend further credence to the earlier point that polls tend to overpredict candidate performance. Furthermore, it aligns with our earlier finding (using only November polling) that election forecasts tend to more accurately predict outcomes for Republican candidates.
 
 Given these findings, it is interesting to compare the perspectives that two major pollsters involved with FiveThirtyEight -- Nate Silver and G. Elliot Morris -- have proposed regarding election forecasting, an *extension* of our previous analytical work.
 
@@ -83,9 +82,9 @@ In a June 2024 article (5), Silver highlights the changes in his 2024 prediction
 
 8. “Build a Data Frame — Tibble.” Accessed September 22, 2024. https://tibble.tidyverse.org/reference/tibble.html.
 
+9. Daniel. “Answer to ‘Reverse the Scale of the x Axis in a Plot.’” Stack Overflow, March 28, 2019. https://stackoverflow.com/a/55390320.
 
-
-Help documents for Model Summary, Top N, Slice_Max, Abs (Absolute Value)
+Help documents for Model Summary, Top N, Slice_Max, Abs (Absolute Value), Geom_vline, Left/Right/Full Join
 
 # Data Sources
 
