@@ -28,71 +28,23 @@
 <main>
 <p>In this week&rsquo;s post, we focus on analyzing polling data, attempting to understand how they can best predict election outcomes. My thanks again to Matthew Dardet for his generous starter code.</p>
 <p>For the purpose of this analysis, we looked at polling data from the 2020 election (sourced from FiveThirtyEight). While election forecasting might benefit from more data, we reference 2020 here for simplicity. We began by visualizing the available data, helping us understand existing patterns.</p>
-<pre><code>## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
-## ✔ dplyr     1.1.4     ✔ readr     2.1.5
-## ✔ forcats   1.0.0     ✔ stringr   1.5.1
-## ✔ ggplot2   3.5.1     ✔ tibble    3.2.1
-## ✔ lubridate 1.9.3     ✔ tidyr     1.3.1
-## ✔ purrr     1.0.2     
-## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-## ✖ dplyr::filter() masks stats::filter()
-## ✖ dplyr::lag()    masks stats::lag()
-## ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors
-## Loading required package: Matrix
-## 
-## 
-## Attaching package: 'Matrix'
-## 
-## 
-## The following objects are masked from 'package:tidyr':
-## 
-##     expand, pack, unpack
-## 
-## 
-## Loaded glmnet 4.1-8
-## 
-## Rows: 7378 Columns: 9
-## ── Column specification ────────────────────────────────────────────────────────
-## Delimiter: &quot;,&quot;
-## chr  (3): state, party, candidate
-## dbl  (4): year, weeks_left, days_left, poll_support
-## lgl  (1): before_convention
-## date (1): poll_date
-## 
-## ℹ Use `spec()` to retrieve the full column specification for this data.
-## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
-</code></pre>
 <img src="https://example.org/post/2024/09/19/week-3-polling/index_files/figure-html/unnamed-chunk-2-1.png" width="672" />
 This data shows that polling averages shift over the months before the election, perhaps being affected by events that happened during the election cycle. For example, we see a substantial decline in support for Donald Trump around June 2020 - perhaps corresponding to the murder of George Floyd (1).
 <p>However, it is interesting to see if election forecasts made using polling data in the few weeks prior to the election are necessarily more predictive of the final outcomes than prior weeks. Some, such Tien and Lewis-Beck, claim that &ldquo;short-view forecasts,&rdquo; which solely rely on polling data, especially in the weeks prior to the election, tend to be inaccurate (2).</p>
 <p>To test the accuracy of November polls, we computed several regressions of November polling averages on actual election outcomes between 1968 and 2020 (we have data as early as 1948, but we drop earlier years given that we do not have polling data from FiveThirtyEight). I calculated three separate regressions, highlighted in the table below, which model predictions for only Democratic candidates, only Republicans, and both parties.</p>
-<pre><code>## Rows: 40 Columns: 9
-## ── Column specification ────────────────────────────────────────────────────────
-## Delimiter: &quot;,&quot;
-## chr (2): party, candidate
-## dbl (3): year, pv, pv2p
-## lgl (4): winner, incumbent, incumbent_party, prev_admin
-## 
-## ℹ Use `spec()` to retrieve the full column specification for this data.
-## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
-## save_kable will have the best result with magick installed.
-</code></pre>
 <p><img src="images/novpolls.jpg" alt=""></p>
 <p>Given that the Republican only model has an R^2 value of 0.727 while the Democrat only model has an R^2 value of 0.665 (with the combined model being in between), it appears that polling data from FiveThirtyEight has, on average, been more predictive of Republican outcomes. However, I also wanted to see if the relationship may have been skewed by earlier polling data, which was likely less accurate.</p>
-<pre><code>## Warning: Width not defined
-## ℹ Set with `position_dodge(width = ...)`
-</code></pre>
 <img src="https://example.org/post/2024/09/19/week-3-polling/index_files/figure-html/unnamed-chunk-4-1.png" width="672" />
-This scatterplot, which includes a line demonstrating perfect poll prediction, shows that November polls often underpredict candidate performance. This led me to calculate the years/candidates with the lowest November prediction error.
+<p>This scatterplot, which includes a line demonstrating perfect poll prediction, shows that November polls often underpredict candidate performance. This led me to calculate the years/candidates with the lowest November prediction error.</p>
 <table>
   <thead>
       <tr>
-          <th style="text-align: right">year</th>
-          <th style="text-align: left">party</th>
-          <th style="text-align: left">candidate</th>
-          <th style="text-align: right">pv2p</th>
-          <th style="text-align: right">final_poll</th>
-          <th style="text-align: right">pred_error</th>
+          <th style="text-align: right">Year</th>
+          <th style="text-align: left">Party</th>
+          <th style="text-align: left">Candidate</th>
+          <th style="text-align: right">Two-Party Vote Share</th>
+          <th style="text-align: right">Final Poll Prediction of Vote Share</th>
+          <th style="text-align: right">Prediction Error</th>
       </tr>
   </thead>
   <tbody>
@@ -100,106 +52,104 @@ This scatterplot, which includes a line demonstrating perfect poll prediction, s
           <td style="text-align: right">2012</td>
           <td style="text-align: left">REP</td>
           <td style="text-align: left">Romney, Mitt</td>
-          <td style="text-align: right">48.08474</td>
-          <td style="text-align: right">47.74572</td>
-          <td style="text-align: right">-0.3390220</td>
+          <td style="text-align: right">48.08</td>
+          <td style="text-align: right">47.75</td>
+          <td style="text-align: right">-0.34</td>
       </tr>
       <tr>
           <td style="text-align: right">2020</td>
           <td style="text-align: left">DEM</td>
           <td style="text-align: left">Biden, Joseph R.</td>
-          <td style="text-align: right">52.26986</td>
-          <td style="text-align: right">51.84996</td>
-          <td style="text-align: right">-0.4198991</td>
+          <td style="text-align: right">52.27</td>
+          <td style="text-align: right">51.85</td>
+          <td style="text-align: right">-0.42</td>
       </tr>
       <tr>
           <td style="text-align: right">1988</td>
           <td style="text-align: left">REP</td>
           <td style="text-align: left">Bush, George H.W.</td>
-          <td style="text-align: right">53.83246</td>
-          <td style="text-align: right">52.29280</td>
-          <td style="text-align: right">-1.5396523</td>
+          <td style="text-align: right">53.83</td>
+          <td style="text-align: right">52.29</td>
+          <td style="text-align: right">-1.54</td>
       </tr>
       <tr>
           <td style="text-align: right">2004</td>
           <td style="text-align: left">DEM</td>
           <td style="text-align: left">Kerry, John</td>
-          <td style="text-align: right">48.73068</td>
-          <td style="text-align: right">46.98262</td>
-          <td style="text-align: right">-1.7480690</td>
+          <td style="text-align: right">48.73</td>
+          <td style="text-align: right">46.98</td>
+          <td style="text-align: right">-1.75</td>
       </tr>
       <tr>
           <td style="text-align: right">1984</td>
           <td style="text-align: left">DEM</td>
           <td style="text-align: left">Mondale, Walter</td>
-          <td style="text-align: right">40.87665</td>
-          <td style="text-align: right">38.94761</td>
-          <td style="text-align: right">-1.9290398</td>
+          <td style="text-align: right">40.88</td>
+          <td style="text-align: right">38.95</td>
+          <td style="text-align: right">-1.93</td>
       </tr>
       <tr>
           <td style="text-align: right">1984</td>
           <td style="text-align: left">REP</td>
           <td style="text-align: left">Reagan, Ronald</td>
-          <td style="text-align: right">59.12335</td>
-          <td style="text-align: right">56.92206</td>
-          <td style="text-align: right">-2.2012912</td>
+          <td style="text-align: right">59.12</td>
+          <td style="text-align: right">56.92</td>
+          <td style="text-align: right">-2.20</td>
       </tr>
       <tr>
           <td style="text-align: right">2008</td>
           <td style="text-align: left">REP</td>
           <td style="text-align: left">McCain, John</td>
-          <td style="text-align: right">46.22923</td>
-          <td style="text-align: right">43.82069</td>
-          <td style="text-align: right">-2.4085387</td>
+          <td style="text-align: right">46.23</td>
+          <td style="text-align: right">43.82</td>
+          <td style="text-align: right">-2.41</td>
       </tr>
       <tr>
           <td style="text-align: right">2004</td>
           <td style="text-align: left">REP</td>
           <td style="text-align: left">Bush, George W.</td>
-          <td style="text-align: right">51.26932</td>
-          <td style="text-align: right">48.60406</td>
-          <td style="text-align: right">-2.6652600</td>
+          <td style="text-align: right">51.27</td>
+          <td style="text-align: right">48.60</td>
+          <td style="text-align: right">-2.67</td>
       </tr>
       <tr>
           <td style="text-align: right">1968</td>
           <td style="text-align: left">REP</td>
           <td style="text-align: left">Nixon, Richard M.</td>
-          <td style="text-align: right">50.40462</td>
-          <td style="text-align: right">47.72081</td>
-          <td style="text-align: right">-2.6838116</td>
+          <td style="text-align: right">50.40</td>
+          <td style="text-align: right">47.72</td>
+          <td style="text-align: right">-2.68</td>
       </tr>
       <tr>
           <td style="text-align: right">2008</td>
           <td style="text-align: left">DEM</td>
           <td style="text-align: left">Obama, Barack H.</td>
-          <td style="text-align: right">53.77077</td>
-          <td style="text-align: right">50.99017</td>
-          <td style="text-align: right">-2.7805933</td>
+          <td style="text-align: right">53.77</td>
+          <td style="text-align: right">50.99</td>
+          <td style="text-align: right">-2.78</td>
       </tr>
   </tbody>
 </table>
 <p>This shows two interesting conclusion. First, all of the closest predictions have underpredicted candidate performance. Second, recent polls haven&rsquo;t  always been more successful. In fact, polling from 1968, the earliest year in our dataset, makes our top 10. While many recent years make up our top 10, this may lend credence to the argument that there are certain &ldquo;fundamentals&rdquo; that can help predict voter performance, regardless of the degree of accurate data and statistical/computing power that pollsters may have access to (2).</p>
 <p>Given this, we also wanted to explore if polls at other times in an election cycle better predict actual election outcomes. To do so, we observed week-level poll data, aiming to identify which weeks were most predictive. To do so, we used the regularization method of Elastic Net, identifying the most predictive weeks.</p>
 <p>I trained this model using data from before 2020, evaluating it on the data from 2020. I did this because although we do have some data from 2024, the change in the Democratic presidential candidate midway through the cycle may complicate results, combined with the fact that we do not have a completed election, may complicate results.</p>
-<pre><code>## `summarise()` has grouped output by 'year', 'party'. You can override using the
-## `.groups` argument.
-</code></pre>
-<pre><code>## Warning: Option grouped=FALSE enforced in cv.glmnet, since &lt; 3 observations per
-## fold
-</code></pre>
-<pre><code>## [1] &quot;Democratic Prediction Error (2020):&quot;
-</code></pre>
-<pre><code>## [1] 2.119166
-</code></pre>
-<pre><code>## [1] &quot;----&quot;
-</code></pre>
-<pre><code>## [1] &quot;Republican Prediction Error (2020):&quot;
-</code></pre>
-<pre><code>## [1] 0.5729736
-</code></pre>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: right">Prediction Error - Democratic Party (2020)</th>
+          <th style="text-align: right">Prediction Error - Republican Party (2020)</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: right">2.119166</td>
+          <td style="text-align: right">0.5729736</td>
+      </tr>
+  </tbody>
+</table>
 <p>Our model predicted that, based on polling trends from previous years, Biden would earn 54.4 % of the two-party popular vote, while Trump would earn 48.3%. While these predictions were slightly high for both candidates, the poll was off by over 2 percentage points for Biden. On one hand, this may be due to the substantial variations between this election and previous ones. However, it may lend further credence to the earlier point that polls tend to overpredict candidate performance.</p>
 <p>Given these findings, it is interesting to compare the perspectives that two major pollsters involved with FiveThirtyEight &ndash; Nate Silver and G. Elliot Morris &ndash; have proposed regarding election forecasting, an <em>extension</em> of our previous analytical work.</p>
-<p>In a June 2024 article (3), Silver highlights the changes in his 2024 prediction relative to his 2020 predictions. In this, he seems to focus on making minor tweaks to his previous model, saying that he &ldquo;tend[s] to be conservative about making changes to the election models. He appears to focus on very broad factors that affect election outcomes like party level turnout and incumbency. However, in an article released around the same time (4), Morris encourages considering the fundamentals, but takes a different perspective, considering, for example &ldquo;the rates of change of these indicators.&rdquo; In doing so, he also delves into greater specificity than Silver, observing characteristics like state effects on neighbors, seeming to stray away from a strict focus on &ldquo;fundamentals.&rdquo;</p>
+<p>In a June 2024 article (5), Silver highlights the changes in his 2024 prediction relative to his 2020 predictions. In this, he seems to focus on making minor tweaks to his previous model, saying that he &ldquo;tend[s] to be conservative about making changes to the election models. He appears to focus on very broad factors that affect election outcomes like party level turnout and incumbency. However, in an article released around the same time (6), Morris encourages considering the fundamentals, but takes a different perspective, considering, for example &ldquo;the rates of change of these indicators.&rdquo; In doing so, he also delves into greater specificity than Silver, observing characteristics like state effects on neighbors, seeming to stray away from a strict focus on &ldquo;fundamentals.&rdquo;</p>
 <h1 id="citations">Citations</h1>
 <ol>
 <li>
@@ -214,11 +164,22 @@ This scatterplot, which includes a line demonstrating perfect poll prediction, s
 <li>
 <p>Posit Community. “Add X=y Geom_abline to Ggplot - General,” June 1, 2019. <a href="https://forum.posit.co/t/add-x-y-geom-abline-to-ggplot/32154">https://forum.posit.co/t/add-x-y-geom-abline-to-ggplot/32154</a>.</p>
 </li>
+<li>
+<p>Silver, Nate. “2024 Presidential Election Model Methodology Update,” June 26, 2024. <a href="https://www.natesilver.net/p/model-methodology-2024">https://www.natesilver.net/p/model-methodology-2024</a>.</p>
+</li>
+<li>
+<p>Morris, G. Elliott. “How 538’s 2024 Presidential Election Forecast Works.” ABC News, June 11, 2024. <a href="https://abcnews.go.com/538/538s-2024-presidential-election-forecast-works/story?id=110867585">https://abcnews.go.com/538/538s-2024-presidential-election-forecast-works/story?id=110867585</a>.</p>
+</li>
+<li>
+<p>GeeksforGeeks. “How to Create Tables in R?,” December 16, 2021. <a href="https://www.geeksforgeeks.org/how-to-create-tables-in-r/">https://www.geeksforgeeks.org/how-to-create-tables-in-r/</a>.</p>
+</li>
+<li>
+<p>“Build a Data Frame — Tibble.” Accessed September 22, 2024. <a href="https://tibble.tidyverse.org/reference/tibble.html">https://tibble.tidyverse.org/reference/tibble.html</a>.</p>
+</li>
 </ol>
 <p>Help documents for Model Summary, Top N, Slice_Max, Abs (Absolute Value)</p>
 <h1 id="data-sources">Data Sources</h1>
-<p>Poll Predictions from FiveThirtyEight
-National Election Data</p>
+<p>Poll Predictions from FiveThirtyEight and National Election Data (both provided by course)</p>
 
 </main>
 

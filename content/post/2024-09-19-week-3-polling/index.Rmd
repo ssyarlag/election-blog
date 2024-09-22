@@ -11,7 +11,7 @@ In this week's post, we focus on analyzing polling data, attempting to understan
 
 For the purpose of this analysis, we looked at polling data from the 2020 election (sourced from FiveThirtyEight). While election forecasting might benefit from more data, we reference 2020 here for simplicity. We began by visualizing the available data, helping us understand existing patterns.
 
-```{r echo = FALSE}
+```{r echo = FALSE, message = FALSE, warning = FALSE}
 # Load libraries and initial dataset
 library(tidyverse)
 library(modelsummary)
@@ -20,7 +20,7 @@ library(glmnet)
 nationalpoll_av <- read_csv("data/national_polls_1968-2024.csv")
 ```
 
-```{r echo = FALSE}
+```{r echo = FALSE, message = FALSE, warning = FALSE}
 # Plot 2020 data over time
 
 nationalpoll_av |>
@@ -39,7 +39,7 @@ However, it is interesting to see if election forecasts made using polling data 
 
 To test the accuracy of November polls, we computed several regressions of November polling averages on actual election outcomes between 1968 and 2020 (we have data as early as 1948, but we drop earlier years given that we do not have polling data from FiveThirtyEight). I calculated three separate regressions, highlighted in the table below, which model predictions for only Democratic candidates, only Republicans, and both parties. 
 
-```{r echo = FALSE}
+```{r echo = FALSE, message = FALSE, warning = FALSE}
 popvote_data <- read_csv("data/popvote_1948-2020.csv")
 popvote_data$party[popvote_data$party == "democrat"] <- "DEM"
 popvote_data$party[popvote_data$party == "republican"] <- "REP"
@@ -80,7 +80,7 @@ modelsummary(models = list(
 
 Given that the Republican only model has an R^2 value of 0.727 while the Democrat only model has an R^2 value of 0.665 (with the combined model being in between), it appears that polling data from FiveThirtyEight has, on average, been more predictive of Republican outcomes. However, I also wanted to see if the relationship may have been skewed by earlier polling data, which was likely less accurate. 
 
-```{r echo = FALSE}
+```{r echo = FALSE, message = FALSE, warning = FALSE}
 ggplot(data = poll_and_actual_data, mapping = aes(x = final_poll, y = pv2p, color = party)) +
   geom_point(position = "dodge") +
   geom_label(aes(label = c(year))) + 
@@ -93,17 +93,20 @@ ggplot(data = poll_and_actual_data, mapping = aes(x = final_poll, y = pv2p, colo
   geom_abline(slope = 1, intercept = 0) + # Referenced source 4
   theme_bw()
 ```
+
 This scatterplot, which includes a line demonstrating perfect poll prediction, shows that November polls often underpredict candidate performance. This led me to calculate the years/candidates with the lowest November prediction error.
 
-```{r echo = FALSE}
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
 poll_and_actual_data$pred_error = poll_and_actual_data$final_poll - poll_and_actual_data$pv2p
 
 top10_polls <- poll_and_actual_data |>
   slice_min(abs(pred_error), n = 10) |>
   select(year, party, candidate, pv2p, final_poll, pred_error)
 
-knitr::kable(top10_polls)
+knitr::kable(top10_polls, digits = 2, col.names = c("Year", "Party", "Candidate", "Two-Party Vote Share", "Final Poll Prediction of Vote Share", "Prediction Error"))
 ```
+
 
 This shows two interesting conclusion. First, all of the closest predictions have underpredicted candidate performance. Second, recent polls haven't  always been more successful. In fact, polling from 1968, the earliest year in our dataset, makes our top 10. While many recent years make up our top 10, this may lend credence to the argument that there are certain "fundamentals" that can help predict voter performance, regardless of the degree of accurate data and statistical/computing power that pollsters may have access to (2). 
 
@@ -111,7 +114,7 @@ Given this, we also wanted to explore if polls at other times in an election cyc
 
 I trained this model using data from before 2020, evaluating it on the data from 2020. I did this because although we do have some data from 2024, the change in the Democratic presidential candidate midway through the cycle may complicate results, combined with the fact that we do not have a completed election, may complicate results. 
 
-```{r echo = FALSE}
+```{r echo = FALSE, message = FALSE, warning = FALSE}
 
 # Find polling average by weeks left and merge with voting data
 poll_weeks <- nationalpoll_av |>
@@ -123,7 +126,6 @@ poll_weeks <- nationalpoll_av |>
 
 # Add more descriptive column names to polling data columns
 colnames(poll_weeks)[3:33] <- paste0("poll_weeks_left_", 0:30)
-
 
 # Find training and test data
 train_poll_weeks <- poll_weeks |>
@@ -162,22 +164,31 @@ outcome_2020 <- poll_and_actual_data |>
 dem_accuracy_2020 <- pred_2020[1] - outcome_2020$pv2p[1]
 rep_accuracy_2020 <- pred_2020[2] - outcome_2020$pv2p[2]
 
-print("Democratic Prediction Error (2020):") 
-dem_accuracy_2020
-print("----")
-print("Republican Prediction Error (2020):") 
-rep_accuracy_2020
+# Referenced source 7 and 8 
 
+accuracy_data = matrix(c(1:2), ncol = 2, byrow = TRUE)
+
+colnames(accuracy_data) = c('Prediction Error - Democratic Party (2020)', 'Prediction Error - Republican Party (2020)')
+
+accuracy_table = as_tibble(accuracy_data)
+
+accuracy_table$`Prediction Error - Democratic Party (2020)` = dem_accuracy_2020
+
+accuracy_table$`Prediction Error - Republican Party (2020)` = rep_accuracy_2020
+
+knitr::kable(accuracy_table)
 
 ```
+
 
 Our model predicted that, based on polling trends from previous years, Biden would earn 54.4 % of the two-party popular vote, while Trump would earn 48.3%. While these predictions were slightly high for both candidates, the poll was off by over 2 percentage points for Biden. On one hand, this may be due to the substantial variations between this election and previous ones. However, it may lend further credence to the earlier point that polls tend to overpredict candidate performance. 
 
 Given these findings, it is interesting to compare the perspectives that two major pollsters involved with FiveThirtyEight -- Nate Silver and G. Elliot Morris -- have proposed regarding election forecasting, an *extension* of our previous analytical work.
 
-In a June 2024 article (3), Silver highlights the changes in his 2024 prediction relative to his 2020 predictions. In this, he seems to focus on making minor tweaks to his previous model, saying that he "tend[s] to be conservative about making changes to the election models. He appears to focus on very broad factors that affect election outcomes like party level turnout and incumbency. However, in an article released around the same time (4), Morris encourages considering the fundamentals, but takes a different perspective, considering, for example "the rates of change of these indicators." In doing so, he also delves into greater specificity than Silver, observing characteristics like state effects on neighbors, seeming to stray away from a strict focus on "fundamentals."
+In a June 2024 article (5), Silver highlights the changes in his 2024 prediction relative to his 2020 predictions. In this, he seems to focus on making minor tweaks to his previous model, saying that he "tend[s] to be conservative about making changes to the election models. He appears to focus on very broad factors that affect election outcomes like party level turnout and incumbency. However, in an article released around the same time (6), Morris encourages considering the fundamentals, but takes a different perspective, considering, for example "the rates of change of these indicators." In doing so, he also delves into greater specificity than Silver, observing characteristics like state effects on neighbors, seeming to stray away from a strict focus on "fundamentals."
 
 # Citations
+
 1. Silverstein, Jason. “The Global Impact of George Floyd: How Black Lives Matter Protests Shaped Movements around the World - CBS News,” June 4, 2021. https://www.cbsnews.com/news/george-floyd-black-lives-matter-impact/.
 
 2. Tien, Charles, and Michael Lewis-Beck. “Evaluating the Long-View Forecasting Models of the 2016 Election.” OUPblog, January 11, 2017. https://blog.oup.com/2017/01/forecasting-models-2016-election/.
@@ -186,11 +197,19 @@ In a June 2024 article (3), Silver highlights the changes in his 2024 prediction
 
 4. Posit Community. “Add X=y Geom_abline to Ggplot - General,” June 1, 2019. https://forum.posit.co/t/add-x-y-geom-abline-to-ggplot/32154.
 
+5. Silver, Nate. “2024 Presidential Election Model Methodology Update,” June 26, 2024. https://www.natesilver.net/p/model-methodology-2024.
+
+6. Morris, G. Elliott. “How 538’s 2024 Presidential Election Forecast Works.” ABC News, June 11, 2024. https://abcnews.go.com/538/538s-2024-presidential-election-forecast-works/story?id=110867585.
+
+7. GeeksforGeeks. “How to Create Tables in R?,” December 16, 2021. https://www.geeksforgeeks.org/how-to-create-tables-in-r/.
+
+8. “Build a Data Frame — Tibble.” Accessed September 22, 2024. https://tibble.tidyverse.org/reference/tibble.html.
+
+
 
 Help documents for Model Summary, Top N, Slice_Max, Abs (Absolute Value)
 
 # Data Sources
 
-Poll Predictions from FiveThirtyEight
-National Election Data
+Poll Predictions from FiveThirtyEight and National Election Data (both provided by course)
 
