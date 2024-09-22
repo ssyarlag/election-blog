@@ -56,10 +56,6 @@ However, it is interesting to see if election forecasts made using polling data 
 To test the accuracy of November polls, we computed several regressions of November polling averages on actual election outcomes between 1968 and 2020 (we have data as early as 1948, but we drop earlier years given that we do not have polling data from FiveThirtyEight). I calculated three separate regressions, highlighted in the table below, which model predictions for only Democratic candidates, only Republicans, and both parties. 
 
 
-``` r
-popvote_data <- read_csv("data/popvote_1948-2020.csv")
-```
-
 ```
 ## Rows: 40 Columns: 9
 ## ── Column specification ────────────────────────────────────────────────────────
@@ -70,44 +66,6 @@ popvote_data <- read_csv("data/popvote_1948-2020.csv")
 ## 
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
-```
-
-``` r
-popvote_data$party[popvote_data$party == "democrat"] <- "DEM"
-popvote_data$party[popvote_data$party == "republican"] <- "REP"
-
-# Combine poll and actual data for each year from 1968-2020
-poll_and_actual_data <- popvote_data |>
-  left_join(nationalpoll_av |>
-              group_by(year, party) |>
-              top_n(1, poll_date) |>
-              select(-candidate),
-            by = c("year", "party")) |>
-  rename(final_poll = poll_support) |>
-  drop_na()
-
-
-# Regression for only democratic candidates
-
-ols.dem.nov <- lm(pv2p~final_poll,
-                  data = subset (poll_and_actual_data, party == "DEM"))
-
-# Regression for only republican candidates
-ols.rep.nov <- lm(pv2p~final_poll,
-                  data = subset (poll_and_actual_data, party == "REP"))
-
-# Regression for all candidates
-ols.all.nov <- lm(pv2p~final_poll,
-                  data = poll_and_actual_data)
-
-
-modelsummary(models = list(
-  "Democrats Only" = ols.dem.nov,
-  "Republicans Only" = ols.rep.nov,
-  "All Candidates" = ols.all.nov), output = "novpolls.jpg")
-```
-
-```
 ## save_kable will have the best result with magick installed.
 ```
 
@@ -157,9 +115,23 @@ I trained this model using data from before 2020, evaluating it on the data from
 ```
 
 ```
-##            s1
-## [1,] 54.38902
-## [2,] 48.30311
+## [1] "Democratic Prediction Error (2020):"
+```
+
+```
+## [1] 2.119166
+```
+
+```
+## [1] "----"
+```
+
+```
+## [1] "Republican Prediction Error (2020):"
+```
+
+```
+## [1] 0.5729736
 ```
 
 Our model predicted that, based on polling trends from previous years, Biden would earn 54.4 % of the two-party popular vote, while Trump would earn 48.3%. While these predictions were slightly high for both candidates, the poll was off by over 2 percentage points for Biden. On one hand, this may be due to the substantial variations between this election and previous ones. However, it may lend further credence to the earlier point that polls tend to overpredict candidate performance. 

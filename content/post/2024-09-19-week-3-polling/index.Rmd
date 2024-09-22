@@ -39,7 +39,7 @@ However, it is interesting to see if election forecasts made using polling data 
 
 To test the accuracy of November polls, we computed several regressions of November polling averages on actual election outcomes between 1968 and 2020 (we have data as early as 1948, but we drop earlier years given that we do not have polling data from FiveThirtyEight). I calculated three separate regressions, highlighted in the table below, which model predictions for only Democratic candidates, only Republicans, and both parties. 
 
-```{r}
+```{r echo = FALSE}
 popvote_data <- read_csv("data/popvote_1948-2020.csv")
 popvote_data$party[popvote_data$party == "democrat"] <- "DEM"
 popvote_data$party[popvote_data$party == "republican"] <- "REP"
@@ -155,14 +155,19 @@ lambda.min.enet <- cv.enet.pollweeks$lambda.min
 # Predict on 2020 data
 pred_2020 <- predict(cv.enet.pollweeks, s = lambda.min.enet, newx = x.test)
 
-pred_2020
-
 outcome_2020 <- poll_and_actual_data |>
   filter(year == 2020) |>
   select(year, party, pv2p)
 
 dem_accuracy_2020 <- pred_2020[1] - outcome_2020$pv2p[1]
 rep_accuracy_2020 <- pred_2020[2] - outcome_2020$pv2p[2]
+
+print("Democratic Prediction Error (2020):") 
+dem_accuracy_2020
+print("----")
+print("Republican Prediction Error (2020):") 
+rep_accuracy_2020
+
 
 ```
 

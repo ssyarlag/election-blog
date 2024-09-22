@@ -66,8 +66,6 @@
 This data shows that polling averages shift over the months before the election, perhaps being affected by events that happened during the election cycle. For example, we see a substantial decline in support for Donald Trump around June 2020 - perhaps corresponding to the murder of George Floyd (1).
 <p>However, it is interesting to see if election forecasts made using polling data in the few weeks prior to the election are necessarily more predictive of the final outcomes than prior weeks. Some, such Tien and Lewis-Beck, claim that &ldquo;short-view forecasts,&rdquo; which solely rely on polling data, especially in the weeks prior to the election, tend to be inaccurate (2).</p>
 <p>To test the accuracy of November polls, we computed several regressions of November polling averages on actual election outcomes between 1968 and 2020 (we have data as early as 1948, but we drop earlier years given that we do not have polling data from FiveThirtyEight). I calculated three separate regressions, highlighted in the table below, which model predictions for only Democratic candidates, only Republicans, and both parties.</p>
-<pre><code class="language-r">popvote_data &lt;- read_csv(&quot;data/popvote_1948-2020.csv&quot;)
-</code></pre>
 <pre><code>## Rows: 40 Columns: 9
 ## ── Column specification ────────────────────────────────────────────────────────
 ## Delimiter: &quot;,&quot;
@@ -77,41 +75,7 @@ This data shows that polling averages shift over the months before the election,
 ## 
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
-</code></pre>
-<pre><code class="language-r">popvote_data$party[popvote_data$party == &quot;democrat&quot;] &lt;- &quot;DEM&quot;
-popvote_data$party[popvote_data$party == &quot;republican&quot;] &lt;- &quot;REP&quot;
-
-# Combine poll and actual data for each year from 1968-2020
-poll_and_actual_data &lt;- popvote_data |&gt;
-  left_join(nationalpoll_av |&gt;
-              group_by(year, party) |&gt;
-              top_n(1, poll_date) |&gt;
-              select(-candidate),
-            by = c(&quot;year&quot;, &quot;party&quot;)) |&gt;
-  rename(final_poll = poll_support) |&gt;
-  drop_na()
-
-
-# Regression for only democratic candidates
-
-ols.dem.nov &lt;- lm(pv2p~final_poll,
-                  data = subset (poll_and_actual_data, party == &quot;DEM&quot;))
-
-# Regression for only republican candidates
-ols.rep.nov &lt;- lm(pv2p~final_poll,
-                  data = subset (poll_and_actual_data, party == &quot;REP&quot;))
-
-# Regression for all candidates
-ols.all.nov &lt;- lm(pv2p~final_poll,
-                  data = poll_and_actual_data)
-
-
-modelsummary(models = list(
-  &quot;Democrats Only&quot; = ols.dem.nov,
-  &quot;Republicans Only&quot; = ols.rep.nov,
-  &quot;All Candidates&quot; = ols.all.nov), output = &quot;novpolls.jpg&quot;)
-</code></pre>
-<pre><code>## save_kable will have the best result with magick installed.
+## save_kable will have the best result with magick installed.
 </code></pre>
 <p><img src="images/novpolls.jpg" alt=""></p>
 <p>Given that the Republican only model has an R^2 value of 0.727 while the Democrat only model has an R^2 value of 0.665 (with the combined model being in between), it appears that polling data from FiveThirtyEight has, on average, been more predictive of Republican outcomes. However, I also wanted to see if the relationship may have been skewed by earlier polling data, which was likely less accurate.</p>
@@ -223,9 +187,15 @@ This scatterplot, which includes a line demonstrating perfect poll prediction, s
 <pre><code>## Warning: Option grouped=FALSE enforced in cv.glmnet, since &lt; 3 observations per
 ## fold
 </code></pre>
-<pre><code>##            s1
-## [1,] 54.38902
-## [2,] 48.30311
+<pre><code>## [1] &quot;Democratic Prediction Error (2020):&quot;
+</code></pre>
+<pre><code>## [1] 2.119166
+</code></pre>
+<pre><code>## [1] &quot;----&quot;
+</code></pre>
+<pre><code>## [1] &quot;Republican Prediction Error (2020):&quot;
+</code></pre>
+<pre><code>## [1] 0.5729736
 </code></pre>
 <p>Our model predicted that, based on polling trends from previous years, Biden would earn 54.4 % of the two-party popular vote, while Trump would earn 48.3%. While these predictions were slightly high for both candidates, the poll was off by over 2 percentage points for Biden. On one hand, this may be due to the substantial variations between this election and previous ones. However, it may lend further credence to the earlier point that polls tend to overpredict candidate performance.</p>
 <p>Given these findings, it is interesting to compare the perspectives that two major pollsters involved with FiveThirtyEight &ndash; Nate Silver and G. Elliot Morris &ndash; have proposed regarding election forecasting, an <em>extension</em> of our previous analytical work.</p>
