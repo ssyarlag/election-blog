@@ -1,0 +1,191 @@
+---
+title: Week 3 - Polling
+author: Package Build
+date: '2024-09-19'
+slug: week-3-polling
+categories: []
+tags: []
+---
+
+In this week's post, we focus on analyzing polling data, attempting to understand how they can best predict election outcomes. My thanks again to Matthew Dardet for his generous starter code.
+
+For the purpose of this analysis, we looked at polling data from the 2020 election (sourced from FiveThirtyEight). While election forecasting might benefit from more data, we reference 2020 here for simplicity. We began by visualizing the available data, helping us understand existing patterns.
+
+```{r echo = FALSE}
+# Load libraries and initial dataset
+library(tidyverse)
+library(modelsummary)
+library(glmnet)
+
+nationalpoll_av <- read_csv("data/national_polls_1968-2024.csv")
+```
+
+```{r echo = FALSE}
+# Plot 2020 data over time
+
+nationalpoll_av |>
+  filter(year == 2020) |>
+  ggplot(mapping = aes(x = poll_date, y =  poll_support, color = party)) +
+  geom_line() +
+  scale_color_manual(values = c("dodgerblue4", "firebrick1")) +
+  labs(title = "2020 Election Polling Data",
+       x = "Poll Date",
+       y = "Support for Candidate") +
+  theme_minimal()
+```
+This data shows that polling averages shift over the months before the election, perhaps being affected by events that happened during the election cycle. For example, we see a substantial decline in support for Donald Trump around June 2020 - perhaps corresponding to the murder of George Floyd (1).
+
+However, it is interesting to see if election forecasts made using polling data in the few weeks prior to the election are necessarily more predictive of the final outcomes than prior weeks. Some, such Tien and Lewis-Beck, claim that "short-view forecasts," which solely rely on polling data, especially in the weeks prior to the election, tend to be inaccurate (2).
+
+To test the accuracy of November polls, we computed several regressions of November polling averages on actual election outcomes between 1968 and 2020 (we have data as early as 1948, but we drop earlier years given that we do not have polling data from FiveThirtyEight). I calculated three separate regressions, highlighted in the table below, which model predictions for only Democratic candidates, only Republicans, and both parties. 
+
+```{r}
+popvote_data <- read_csv("data/popvote_1948-2020.csv")
+popvote_data$party[popvote_data$party == "democrat"] <- "DEM"
+popvote_data$party[popvote_data$party == "republican"] <- "REP"
+
+# Combine poll and actual data for each year from 1968-2020
+poll_and_actual_data <- popvote_data |>
+  left_join(nationalpoll_av |>
+              group_by(year, party) |>
+              top_n(1, poll_date) |>
+              select(-candidate),
+            by = c("year", "party")) |>
+  rename(final_poll = poll_support) |>
+  drop_na()
+
+
+# Regression for only democratic candidates
+
+ols.dem.nov <- lm(pv2p~final_poll,
+                  data = subset (poll_and_actual_data, party == "DEM"))
+
+# Regression for only republican candidates
+ols.rep.nov <- lm(pv2p~final_poll,
+                  data = subset (poll_and_actual_data, party == "REP"))
+
+# Regression for all candidates
+ols.all.nov <- lm(pv2p~final_poll,
+                  data = poll_and_actual_data)
+
+
+modelsummary(models = list(
+  "Democrats Only" = ols.dem.nov,
+  "Republicans Only" = ols.rep.nov,
+  "All Candidates" = ols.all.nov), output = "novpolls.jpg")
+```
+
+![](images/novpolls.jpg)
+
+
+Given that the Republican only model has an R^2 value of 0.727 while the Democrat only model has an R^2 value of 0.665 (with the combined model being in between), it appears that polling data from FiveThirtyEight has, on average, been more predictive of Republican outcomes. However, I also wanted to see if the relationship may have been skewed by earlier polling data, which was likely less accurate. 
+
+```{r echo = FALSE}
+ggplot(data = poll_and_actual_data, mapping = aes(x = final_poll, y = pv2p, color = party)) +
+  geom_point(position = "dodge") +
+  geom_label(aes(label = c(year))) + 
+  scale_color_manual(values = c("dodgerblue4", "firebrick1")) + 
+  labs(x = "November Poll Prediction",
+       y = "Actual Vote Share",
+       title = "Actual Vote Share vs November Poll Predictions by Year and Party") +
+  scale_x_continuous(breaks = seq(30, 70, by = 10)) +
+  scale_y_continuous(breaks = seq(30, 70, by = 10)) + # Referenced source 3 for this line and previous
+  geom_abline(slope = 1, intercept = 0) + # Referenced source 4
+  theme_bw()
+```
+This scatterplot, which includes a line demonstrating perfect poll prediction, shows that November polls often underpredict candidate performance. This led me to calculate the years/candidates with the lowest November prediction error.
+
+```{r echo = FALSE}
+poll_and_actual_data$pred_error = poll_and_actual_data$final_poll - poll_and_actual_data$pv2p
+
+top10_polls <- poll_and_actual_data |>
+  slice_min(abs(pred_error), n = 10) |>
+  select(year, party, candidate, pv2p, final_poll, pred_error)
+
+knitr::kable(top10_polls)
+```
+
+This shows two interesting conclusion. First, all of the closest predictions have underpredicted candidate performance. Second, recent polls haven't  always been more successful. In fact, polling from 1968, the earliest year in our dataset, makes our top 10. While many recent years make up our top 10, this may lend credence to the argument that there are certain "fundamentals" that can help predict voter performance, regardless of the degree of accurate data and statistical/computing power that pollsters may have access to (2). 
+
+Given this, we also wanted to explore if polls at other times in an election cycle better predict actual election outcomes. To do so, we observed week-level poll data, aiming to identify which weeks were most predictive. To do so, we used the regularization method of Elastic Net, identifying the most predictive weeks.
+
+I trained this model using data from before 2020, evaluating it on the data from 2020. I did this because although we do have some data from 2024, the change in the Democratic presidential candidate midway through the cycle may complicate results, combined with the fact that we do not have a completed election, may complicate results. 
+
+```{r echo = FALSE}
+
+# Find polling average by weeks left and merge with voting data
+poll_weeks <- nationalpoll_av |>
+  group_by(year, party, weeks_left) |>
+  summarize(mean_poll_week = mean(poll_support)) |> 
+  filter(weeks_left <= 30) |> 
+  pivot_wider(names_from = weeks_left, values_from = mean_poll_week) |> 
+  left_join(popvote_data, by = c("year", "party"))
+
+# Add more descriptive column names to polling data columns
+colnames(poll_weeks)[3:33] <- paste0("poll_weeks_left_", 0:30)
+
+
+# Find training and test data
+train_poll_weeks <- poll_weeks |>
+  filter(year < 2020)
+
+x.train <- train_poll_weeks |>
+  ungroup() |>
+  select(all_of(starts_with("poll_weeks_left"))) |>
+  as.matrix()
+
+y.train <- train_poll_weeks$pv2p
+
+
+test_poll_weeks <- poll_weeks |>
+  filter(year == 2020)
+
+x.test <- test_poll_weeks |>
+  ungroup() |>
+  select(all_of(starts_with("poll_weeks_left"))) |>
+  as.matrix()
+
+# Create cross-validated prediction equation
+set.seed(91534827)
+cv.enet.pollweeks <- cv.glmnet(x=x.train, y = y.train, alpha = 0.5)
+
+# Find minimum lambda value
+lambda.min.enet <- cv.enet.pollweeks$lambda.min
+
+# Predict on 2020 data
+pred_2020 <- predict(cv.enet.pollweeks, s = lambda.min.enet, newx = x.test)
+
+pred_2020
+
+outcome_2020 <- poll_and_actual_data |>
+  filter(year == 2020) |>
+  select(year, party, pv2p)
+
+dem_accuracy_2020 <- pred_2020[1] - outcome_2020$pv2p[1]
+rep_accuracy_2020 <- pred_2020[2] - outcome_2020$pv2p[2]
+
+```
+
+Our model predicted that, based on polling trends from previous years, Biden would earn 54.4 % of the two-party popular vote, while Trump would earn 48.3%. While these predictions were slightly high for both candidates, the poll was off by over 2 percentage points for Biden. On one hand, this may be due to the substantial variations between this election and previous ones. However, it may lend further credence to the earlier point that polls tend to overpredict candidate performance. 
+
+Given these findings, it is interesting to compare the perspectives that two major pollsters involved with FiveThirtyEight -- Nate Silver and G. Elliot Morris -- have proposed regarding election forecasting, an *extension* of our previous analytical work.
+
+In a June 2024 article (3), Silver highlights the changes in his 2024 prediction relative to his 2020 predictions. In this, he seems to focus on making minor tweaks to his previous model, saying that he "tend[s] to be conservative about making changes to the election models. He appears to focus on very broad factors that affect election outcomes like party level turnout and incumbency. However, in an article released around the same time (4), Morris encourages considering the fundamentals, but takes a different perspective, considering, for example "the rates of change of these indicators." In doing so, he also delves into greater specificity than Silver, observing characteristics like state effects on neighbors, seeming to stray away from a strict focus on "fundamentals."
+
+# Citations
+1. Silverstein, Jason. “The Global Impact of George Floyd: How Black Lives Matter Protests Shaped Movements around the World - CBS News,” June 4, 2021. https://www.cbsnews.com/news/george-floyd-black-lives-matter-impact/.
+
+2. Tien, Charles, and Michael Lewis-Beck. “Evaluating the Long-View Forecasting Models of the 2016 Election.” OUPblog, January 11, 2017. https://blog.oup.com/2017/01/forecasting-models-2016-election/.
+
+3. chemdork123. “Answer to ‘Change Scale on X Axis in Ggplot in R.’” Stack Overflow, July 20, 2020. https://stackoverflow.com/a/63003636.
+
+4. Posit Community. “Add X=y Geom_abline to Ggplot - General,” June 1, 2019. https://forum.posit.co/t/add-x-y-geom-abline-to-ggplot/32154.
+
+
+Help documents for Model Summary, Top N, Slice_Max, Abs (Absolute Value)
+
+# Data Sources
+
+Poll Predictions from FiveThirtyEight
+National Election Data
+

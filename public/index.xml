@@ -6,8 +6,15 @@
     <description>Recent content in Home on A minimal Hugo website</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 11 Sep 2024 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 19 Sep 2024 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://example.org/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Week 3 - Polling</title>
+      <link>https://example.org/post/2024/09/19/week-3-polling/</link>
+      <pubDate>Thu, 19 Sep 2024 00:00:00 +0000</pubDate>
+      <guid>https://example.org/post/2024/09/19/week-3-polling/</guid>
+      <description>&lt;p&gt;In this week&amp;rsquo;s post, we focus on analyzing polling data, attempting to understand how they can best predict election outcomes. My thanks again to Matthew Dardet for his generous starter code.&lt;/p&gt;&#xA;&lt;p&gt;For the purpose of this analysis, we looked at polling data from the 2020 election (sourced from FiveThirtyEight). While election forecasting might benefit from more data, we reference 2020 here for simplicity. We began by visualizing the available data, helping us understand existing patterns.&lt;/p&gt;</description>
+    </item>
     <item>
       <title>Week 2: Elections and the Economy</title>
       <link>https://example.org/post/2024/09/11/week-2-elections-and-the-economy/</link>
