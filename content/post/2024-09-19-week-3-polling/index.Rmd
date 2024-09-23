@@ -71,27 +71,30 @@ ols.all.nov <- lm(pv2p~final_poll,
                   data = poll_and_actual_data)
 
 
-all_regressions <- modelsummary(models = list(
+regression_summary <- modelsummary(models = list(
   "Democrats Only" = ols.dem.nov,
   "Republicans Only" = ols.rep.nov,
-  "All Candidates" = ols.all.nov), output = "markdown")
+  "All Candidates" = ols.all.nov), output = "tinytable")
 
-all_regressions
+regression_summary
 ```
 
 
 Given that the Republican only model has an R^2 value of 0.727 while the Democrat only model has an R^2 value of 0.665 (with the combined model being in between), it appears that polling data from FiveThirtyEight has, on average, been more predictive of Republican outcomes. However, I also wanted to see if the relationship may have been skewed by earlier polling data, which was likely less accurate. To explore this, I wanted to see if earlier polls tended to be more inaccurate than more recent ones, starting with a scatterplot. 
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
-ggplot(data = poll_and_actual_data, mapping = aes(x = final_poll, y = pv2p, color = party)) +
+
+poll_and_actual_data |>
+  select(year, pv2p, final_poll, party, poll_date) |>
+  group_by(year) |>
+  top_n(1, poll_date) |>
+  ggplot(mapping = aes(x = final_poll, y = pv2p, color = party)) +
   geom_point(position = "dodge") +
   geom_label(aes(label = c(year))) + 
   scale_color_manual(values = c("dodgerblue4", "firebrick1")) + 
   labs(x = "November Poll Prediction",
        y = "Actual Vote Share",
        title = "Actual Vote Share vs November Poll Predictions by Year and Party") +
-  scale_x_continuous(breaks = seq(30, 70, by = 10)) +
-  scale_y_continuous(breaks = seq(30, 70, by = 10)) + # Referenced source 3 for this line and previous
   geom_abline(slope = 1, intercept = 0) + # Referenced source 4
   theme_bw()
 ```
@@ -209,7 +212,7 @@ In a June 2024 article (5), Silver highlights the changes in his 2024 prediction
 
 9. Daniel. “Answer to ‘Reverse the Scale of the x Axis in a Plot.’” Stack Overflow, March 28, 2019. https://stackoverflow.com/a/55390320.
 
-Help documents for Model Summary, Top N, Slice_Max, Abs (Absolute Value), Geom_vline, Left/Right/Full Join, Linetype, kbl
+Help documents for Model Summary, Top N, Slice_Max, Abs (Absolute Value), Geom_vline, Left/Right/Full Join, Linetype, kbl, Summarize
 
 # Data Sources
 
