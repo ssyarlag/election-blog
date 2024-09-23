@@ -71,14 +71,12 @@ ols.all.nov <- lm(pv2p~final_poll,
                   data = poll_and_actual_data)
 
 
-regression_summary <- modelsummary(models = list(
+modelsummary(models = list(
   "Democrats Only" = ols.dem.nov,
   "Republicans Only" = ols.rep.nov,
-  "All Candidates" = ols.all.nov), output = "tinytable")
-
-regression_summary
+  "All Candidates" = ols.all.nov), output = "novpolls.jpg")
 ```
-
+![](images/novpolls.jpg)
 
 Given that the Republican only model has an R^2 value of 0.727 while the Democrat only model has an R^2 value of 0.665 (with the combined model being in between), it appears that polling data from FiveThirtyEight has, on average, been more predictive of Republican outcomes. However, I also wanted to see if the relationship may have been skewed by earlier polling data, which was likely less accurate. To explore this, I wanted to see if earlier polls tended to be more inaccurate than more recent ones, starting with a scatterplot. 
 
