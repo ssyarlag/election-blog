@@ -7,9 +7,9 @@ categories: []
 tags: []
 ---
 
-In this week's post, we focus on analyzing polling data, attempting to understand how they can best predict election outcomes. My thanks again to Matthew Dardet for his generous starter code.
+In this week's post, we focus on analyzing polling data. Our research question is "How can we best use polls to predict election outcomes?". My thanks again to Matthew Dardet for his generous starter code.
 
-For the purpose of this analysis, we focus on polling data from FiveThirtyEight. We began by visualizing the available data from the past several elections, understanding how polling data changes relative to the actual election outcome.
+For the purpose of this analysis, we focus on polling data from FiveThirtyEight. We began by visualizing the available data from the past several presidential elections to help understand how polls changes relative to the actual election outcome.
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 # Load libraries and initial dataset
@@ -40,7 +40,7 @@ polls_by_year <- poll_and_actual_data |>
   scale_color_manual(values = c("dodgerblue4", "firebrick1")) +
   scale_x_reverse() +
   geom_hline(mapping = aes(yintercept = pv2p, color = party), linetype = "dotdash", legend = "Election Results") + 
-  labs(title = "Polling Data across Weeks vs. Election Results",
+  labs(title = "Polling Data across Weeks vs. Presidential Election Results",
        x = "Weeks Left til Election",
        y = "Support for Candidate") +
   theme_minimal() +
@@ -49,9 +49,9 @@ polls_by_year <- poll_and_actual_data |>
 polls_by_year
 ```
 
-This data shows the polling averages at various stages of the election, benchmarked against the actual vote share earned by each candidate during that year's election (horizontal lines). This is very likely affected by events occurring during the election cycle and each campaign's response to them. For example, we see a substantial decline in support for Donald Trump around June 2020 - perhaps corresponding to the murder of George Floyd (1).
+These data show two-party polling averages at various stages of the election cycle, benchmarked against the actual vote share earned by each candidate during that year's election (horizontal lines). These averages are very likely affected by events occurring during the election cycle and each campaign's response to them. For example, we see a substantial decline in support for Donald Trump around June 2020 - perhaps corresponding to the murder of George Floyd (1).
 
-However, it is interesting to see if election forecasts made using polling data in the few weeks prior to the election are necessarily more predictive of the final outcomes than those considering prior weeks. Some, such Tien and Lewis-Beck, claim that "short-view forecasts," which solely rely on polling data, especially in the weeks prior to the election, tend to be inaccurate (2). While some of these charts above show relatively accurate November predictions (eg: Biden's polling in 2020), many others are very inaccurate. For example, polling about 15 weeks before the election better predicted Trump's 2016 vote share than polling in the weeks immediately prior. 
+However, it is interesting to see if election forecasts made using polling data in the few weeks prior to the election tend to be more predictive of the final outcomes than those considering prior weeks. Some, such Tien and Lewis-Beck, claim that "short-view forecasts," which solely rely on polling data, especially in the weeks prior to the election, tend to be inaccurate (2). While some of the charts above suggest relatively accurate November predictions (eg: Biden's polling in 2020), many others are very inaccurate. For example, polling about 15 weeks before the election better predicted Trump's 2016 vote share than polling in the weeks immediately prior. 
 
 To test the accuracy of November polls, we computed several regressions of November polling averages on actual election outcomes between 1968 and 2020 (we have data as early as 1948, but we drop earlier years given that we do not have polling data from FiveThirtyEight from 1948-1964). I calculated three separate regressions, highlighted in the table below, which model predictions for only Democratic candidates, only Republicans, and both parties respectively.
 
@@ -78,7 +78,7 @@ modelsummary(models = list(
 ```
 ![](images/novpolls.jpg)
 
-Given that the Republican only model has an R^2 value of 0.727 while the Democrat only model has an R^2 value of 0.665 (with the combined model being in between), it appears that polling data from FiveThirtyEight has, on average, been more predictive of Republican outcomes. However, I also wanted to see if the relationship may have been skewed by earlier polling data, which was likely less accurate. To explore this, I wanted to see if earlier polls tended to be more inaccurate than more recent ones, starting with a scatterplot. 
+Given that the Republican only model has an R^2 value of 0.727 while the Democrat only model has an R^2 value of 0.665 (with the combined model being in between), it appears that November polling data from FiveThirtyEight has, on average, been more predictive of Republican outcomes. However, I also wanted to see if the relationship may have been skewed by polling data from earlier years, which could be less accurate. To explore this, I wanted to see if polls from earlier years tended to be more inaccurate than more recent ones, starting with a scatterplot. 
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 
@@ -98,7 +98,7 @@ poll_and_actual_data |>
   theme_bw()
 ```
 
-This scatterplot, which includes a line demonstrating perfect poll prediction, shows that most November polls are somewhat inaccurate, often underpredicting candidate performance. However, given that it didn't clearly demonstrate trends in performance over the years, I calculated the years/candidates with the lowest November prediction error, including them in the table below.
+This scatterplot, which includes a line demonstrating perfect poll prediction, shows that most November polls are somewhat inaccurate, often *underpredicting* candidate performance. However, given that it didn't clearly demonstrate trends in performance over the years, I calculated the ten years/candidates with the lowest November prediction error, including them in the table below.
 
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
@@ -116,11 +116,11 @@ knitr::kable(top10_polls, digits = 4, col.names = c("Year", "Party", "Two-Party 
 ```
 
 
-This shows two interesting conclusions. First, all of the closest predictions have underpredicted candidate performance, showing a similar conclusion to the scatterplot. But second, and more relevantly, this tentatively suggests that recent polls haven't necessarily been more successful. Of course, we cannot make a causal argument from just this data and many recent years make up our top 10, polling from 1968, the earliest year in our dataset, makes our top 10. This may lend credence to the argument that there are certain "fundamentals" that can help predict voter performance, regardless of data accuracy and statistical/computing power that pollsters may have access to (2). 
+This shows two interesting conclusions. First, all of the closest predictions have underpredicted candidate performance, showing a similar conclusion to the scatterplot. But second, and more relevantly, this tentatively suggests that recent polls haven't necessarily been more successful. Of course, we cannot make a causal argument from just these data and many recent years make up our top 10, but polling from 1968, the earliest year in our dataset, makes our top 10. This may lend credence to the argument that there are certain "fundamentals" that can help predict voter performance, regardless of data accuracy and statistical/computing power that pollsters may have access to (2). 
 
-Keeping the relative inaccuracy of only using November polling to predict outcomes in mind, we also wanted to explore if including polls at other times in an election cycle can result in better prediction outcomes. To do so, we used the regularization method of Elastic Net, identifying the most predictive weeks based on historical polling and election outcome data.
+Keeping the relative inaccuracy of only using November polling to predict outcomes in mind, we also wanted to explore if considering polls at other times in an election cycle can result in better prediction outcomes. To do so, we used the regularization method of Elastic Net, identifying the most predictive combination of weeks based on historical polling and election outcome data.
 
-I trained this model using data from before 2020, evaluating it on the data from 2020. I did this because although we do have some data from 2024 and could reasonably make a prediction of this year's election using our polling-based model, the fact that the Democratic candidate changed midway through the year may reduce the likelihood of our model (which is largely trained on elections that did have a similar shift).
+I trained this model using data from before 2020, evaluating it on the data from 2020. I did this because although we do have some data from 2024 and could make a prediction of this year's election using our polling-based model, the fact that the Democratic candidate changed midway through the year may reduce the accuracy of our prediction (since our model is largely trained on elections that did not have a similar shift).
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 
@@ -165,15 +165,18 @@ lambda.min.enet <- cv.enet.pollweeks$lambda.min
 # Predict on 2020 data
 pred_2020 <- predict(cv.enet.pollweeks, s = lambda.min.enet, newx = x.test)
 
+# Access actual data from 2020
 outcome_2020 <- poll_and_actual_data |>
   filter(year == 2020) |>
   select(year, party, pv2p)
 
+# Calculate accuracy compared to actual prediction
 dem_accuracy_2020 <- pred_2020[1] - outcome_2020$pv2p[1]
 rep_accuracy_2020 <- pred_2020[2] - outcome_2020$pv2p[2]
 
 # Referenced source 7 and 8 
 
+# Make accuracy data table
 accuracy_data = matrix(c(1:2), ncol = 2, byrow = TRUE)
 
 colnames(accuracy_data) = c('Prediction Error - Democratic Party (2020)', 'Prediction Error - Republican Party (2020)')
@@ -189,11 +192,11 @@ knitr::kable(accuracy_table, align = 'c')
 ```
 
 
-Our model predicted that, based on polling trends from previous years, Biden would earn 54.4 % of the two-party popular vote, while Trump would earn 48.3% in 2020. While these predictions were slightly high for both candidates, the poll was off by over 2 percentage points for Biden. On one hand, this may be due to the substantial variations between this election and previous ones. However, it may lend further credence to the earlier point that polls tend to overpredict candidate performance. Furthermore, it aligns with our earlier finding (using only November polling) that election forecasts tend to more accurately predict outcomes for Republican candidates.
+Our model predicted that, based on polling trends from previous years, Biden would earn 54.4 % of the two-party popular vote, while Trump would earn 48.3% in 2020. While these predictions were slightly high for both candidates, the poll was off by over 2 percentage points for Biden. Furthermore, they align with our earlier finding (using only November polling) that election forecasts tend to more accurately predict outcomes for Republican candidates. However, it is also interesting that this model *overpredicts* performance for both candidates. 
 
 Given these findings, it is interesting to compare the perspectives that two major pollsters involved with FiveThirtyEight -- Nate Silver and G. Elliot Morris -- have proposed regarding election forecasting, an *extension* of our previous analytical work.
 
-In a June 2024 article (5), Silver highlights the changes in his 2024 prediction relative to his 2020 predictions. In this, he seems to focus on making minor tweaks to his previous model, saying that he "tend[s] to be conservative about making changes to the election models. He appears to focus on very broad factors that affect election outcomes like party level turnout and incumbency. However, in an article released around the same time (6), Morris encourages considering the fundamentals, but takes a different perspective, considering, for example "the rates of change of these indicators." In doing so, he also delves into greater specificity than Silver, observing characteristics like state effects on neighbors, seeming to stray away from a strict focus on "fundamentals."
+In a June 2024 article (5), Silver highlights the changes in his 2024 prediction relative to his 2020 predictions. In this, he seems to focus on making minor tweaks to his previous model, saying that he "tend[s] to be conservative about making changes to the election models." He appears to focus on very broad factors that affect election outcomes like party level turnout and incumbency. However, in an article released around the same time (6), Morris encourages considering the fundamentals, but takes a different perspective, considering, for example "the rates of change of these indicators." In doing so, he also delves into greater specificity than Silver, observing characteristics like state effects on neighbors, seeming to stray away from a strict focus on "fundamentals."
 
 # Citations
 
