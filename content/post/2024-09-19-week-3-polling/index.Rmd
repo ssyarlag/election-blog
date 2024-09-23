@@ -31,10 +31,10 @@ poll_and_actual_data <- nationalpoll_av |>
 ```
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
-# Plot recent presidential polling data over time - reference (9)
+# Plot recent presidential polling data over time, with dashed horizontal lines representing actual outcomes - reference (9)
 
 polls_by_year <- poll_and_actual_data |>
-  filter(year < 2024 & year > 2000) |>
+  filter(year < 2024 & year > 1999) |>
   ggplot(mapping = aes(x = weeks_left, y =  final_poll, color = party)) +
   geom_line() +
   scale_color_manual(values = c("dodgerblue4", "firebrick1")) +
