@@ -107,7 +107,7 @@ top10_polls <- poll_and_actual_data |>
   slice_min(abs(pred_error), n = 10) |>
   select(year, party, candidate, pv2p, final_poll, pred_error)
 
-knitr::kable(top10_polls, digits = 2, col.names = c("Year", "Party", "Candidate", "Two-Party Vote Share", "Final Poll Prediction of Vote Share", "Prediction Error"), align = 'c')
+knitr::kable(top10_polls, digits = 4, col.names = c("Year", "Party", "Candidate", "Two-Party Vote Share", "Final Poll Prediction of Vote Share", "Prediction Error"), align = 'c')
 ```
 
 
