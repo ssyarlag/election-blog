@@ -82,6 +82,7 @@ Given that the Republican only model has an R^2 value of 0.727 while the Democra
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 
+# Creating scatterplot of predictions vs polling data, categorized by party and labeled by year
 poll_and_actual_data |>
   select(year, pv2p, final_poll, party, poll_date) |>
   group_by(year) |>
@@ -101,13 +102,17 @@ This scatterplot, which includes a line demonstrating perfect poll prediction, s
 
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
+
+# calculating prediction error for each value
 poll_and_actual_data$pred_error = poll_and_actual_data$final_poll - poll_and_actual_data$pv2p
 
+# Finding top 10 most accurate polls
 top10_polls <- poll_and_actual_data |>
   slice_min(abs(pred_error), n = 10) |>
-  select(year, party, candidate, pv2p, final_poll, pred_error)
+  select(year, party, pv2p, final_poll, pred_error)
 
-knitr::kable(top10_polls, digits = 4, col.names = c("Year", "Party", "Candidate", "Two-Party Vote Share", "Final Poll Prediction of Vote Share", "Prediction Error"), align = 'c')
+# Formatting polls nicely
+knitr::kable(top10_polls, digits = 4, col.names = c("Year", "Party", "Two-Party Vote Share", "Final Poll Prediction of Vote Share", "Prediction Error"), align = 'c')
 ```
 
 
@@ -202,7 +207,7 @@ In a June 2024 article (5), Silver highlights the changes in his 2024 prediction
 
 5. Silver, Nate. “2024 Presidential Election Model Methodology Update,” June 26, 2024. https://www.natesilver.net/p/model-methodology-2024.
 
-6. Morris, G. Elliott. “How 538’s 2024 Presidential Election Forecast Works.” ABC News, June 11, 2024. https://abcnews.go.com/538/538s-2024-presidential-election-forecast-works/story?id=110867585.
+6. Morris, G. Elliott. “How 538’s 2024 Presidential Election Forecast Works.” ABC News, June 11, 2024. https://abcnews.go.com/538/538s-2024-presidential-election-forecast-works/story?id=110867585
 
 7. GeeksforGeeks. “How to Create Tables in R?,” December 16, 2021. https://www.geeksforgeeks.org/how-to-create-tables-in-r/.
 

@@ -32,18 +32,18 @@ This scatterplot, which includes a line demonstrating perfect poll prediction, s
 
 
 
-| Year | Party |     Candidate      | Two-Party Vote Share | Final Poll Prediction of Vote Share | Prediction Error |
-|:----:|:-----:|:------------------:|:--------------------:|:-----------------------------------:|:----------------:|
-| 2012 |  REP  |    Mitt Romney     |       48.0847        |               48.0837               |     -0.0011      |
-| 2004 |  DEM  |     John Kerry     |       48.7307        |               48.7377               |      0.0070      |
-| 2008 |  REP  |    John McCain     |       46.2292        |               46.2130               |     -0.0163      |
-| 2012 |  REP  |    Mitt Romney     |       48.0847        |               48.0672               |     -0.0175      |
-| 2008 |  REP  |    John McCain     |       46.2292        |               46.2483               |      0.0190      |
-| 2020 |  DEM  |         NA         |       52.2699        |               52.2495               |     -0.0204      |
-| 2012 |  REP  |    Mitt Romney     |       48.0847        |               48.0519               |     -0.0329      |
-| 2012 |  REP  |    Mitt Romney     |       48.0847        |               48.1219               |      0.0371      |
-| 1988 |  DEM  | Michael S. Dukakis |       46.1675        |               46.1279               |     -0.0397      |
-| 2012 |  REP  |    Mitt Romney     |       48.0847        |               48.0439               |     -0.0409      |
+| Year | Party | Two-Party Vote Share | Final Poll Prediction of Vote Share | Prediction Error |
+|:----:|:-----:|:--------------------:|:-----------------------------------:|:----------------:|
+| 2012 |  REP  |       48.0847        |               48.0837               |     -0.0011      |
+| 2004 |  DEM  |       48.7307        |               48.7377               |      0.0070      |
+| 2008 |  REP  |       46.2292        |               46.2130               |     -0.0163      |
+| 2012 |  REP  |       48.0847        |               48.0672               |     -0.0175      |
+| 2008 |  REP  |       46.2292        |               46.2483               |      0.0190      |
+| 2020 |  DEM  |       52.2699        |               52.2495               |     -0.0204      |
+| 2012 |  REP  |       48.0847        |               48.0519               |     -0.0329      |
+| 2012 |  REP  |       48.0847        |               48.1219               |      0.0371      |
+| 1988 |  DEM  |       46.1675        |               46.1279               |     -0.0397      |
+| 2012 |  REP  |       48.0847        |               48.0439               |     -0.0409      |
 
 
 This shows two interesting conclusions. First, all of the closest predictions have underpredicted candidate performance, showing a similar conclusion to the scatterplot. But second, and more relevantly, this tentatively suggests that recent polls haven't necessarily been more successful. Of course, we cannot make a causal argument from just this data and many recent years make up our top 10, polling from 1968, the earliest year in our dataset, makes our top 10. This may lend credence to the argument that there are certain "fundamentals" that can help predict voter performance, regardless of data accuracy and statistical/computing power that pollsters may have access to (2). 
