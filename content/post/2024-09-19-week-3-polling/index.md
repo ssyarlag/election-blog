@@ -58,7 +58,7 @@ I trained this model using data from before 2020, evaluating it on the data from
 |                  2.119166                  |                 0.5729736                  |
 
 
-Our model predicted that, based on polling trends from previous years, Biden would earn 54.4 % of the two-party popular vote, while Trump would earn 48.3% in 2020. While these predictions were slightly high for both candidates, the poll was off by over 2 percentage points for Biden. Furthermore, they align with our earlier finding (using only November polling) that election forecasts tend to more accurately predict outcomes for Republican candidates. However, it is also interesting that this model *overpredicts* performance for both candidates. 
+Our model predicted that, based on polling trends from previous years, Biden would earn 54.4 % of the two-party popular vote, while Trump would earn 48.3% in 2020. While these predictions were slightly high for both candidates, the poll was off by over 2 percentage points for Biden. Furthermore, they align with our earlier finding (using only November polling) that election forecasts tend to more accurately predict outcomes for Republican candidates. However, it is also interesting that this model *overpredicts* performance for both candidates, even leading to a total value of over 100%.
 
 Given these findings, it is interesting to compare the perspectives that two major pollsters involved with FiveThirtyEight -- Nate Silver and G. Elliot Morris -- have proposed regarding election forecasting, an *extension* of our previous analytical work.
 
