@@ -2,38 +2,38 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Home on A minimal Hugo website</title>
-    <link>http://localhost:4321/</link>
+    <link>https://example.org/</link>
     <description>Recent content in Home on A minimal Hugo website</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Wed, 25 Sep 2024 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://localhost:4321/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://example.org/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Week 4: Incumbency</title>
-      <link>http://localhost:4321/post/2024/09/25/week-4-incumbency/</link>
+      <link>https://example.org/post/2024/09/25/week-4-incumbency/</link>
       <pubDate>Wed, 25 Sep 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:4321/post/2024/09/25/week-4-incumbency/</guid>
-      <description>&lt;p&gt;In this week&amp;rsquo;s lab, we explore the impact of candidate or party incumbency on presidential election outcomes. More specifically, we ask &amp;ldquo;How should we treat the incumbency advantage in our 2024 electoral foreasts?&amp;rdquo;. As always, my thanks to Matthew Dardet for his helpful starter code.&lt;/p&gt;&#xA;&lt;p&gt;This week, we reviewed a canonically successful model used to predict the advantage of incumbency: the Time for Change Model by Alan Abramowitz. This relatively simple model &amp;ndash; an OLS regression with independent variables of Quarter 2 GDP, June Gallup poll approval, and whether or not one is an incumbent &amp;ndash; is modeled and tested here.&lt;/p&gt;</description>
+      <guid>https://example.org/post/2024/09/25/week-4-incumbency/</guid>
+      <description>&lt;script src=&#34;https://example.org/post/2024/09/25/week-4-incumbency/index_files/kePrint/kePrint.js&#34;&gt;&lt;/script&gt;&#xA;&lt;link href=&#34;https://example.org/post/2024/09/25/week-4-incumbency/index_files/lightable/lightable.css&#34; rel=&#34;stylesheet&#34; /&gt;&#xA;&lt;p&gt;In this week&amp;rsquo;s lab, we explore the impact of candidate or party incumbency on presidential election outcomes. More specifically, we ask &amp;ldquo;How should we treat the incumbency advantage in our 2024 electoral foreasts?&amp;rdquo;. As always, my thanks to Matthew Dardet for his helpful starter code.&lt;/p&gt;&#xA;&lt;p&gt;This week, we reviewed a canonically successful model used to predict the advantage of incumbency: the Time for Change Model by Alan Abramowitz. This relatively simple model &amp;ndash; an OLS regression with independent variables of Quarter 2 GDP, June Gallup poll approval, and whether or not one is an incumbent &amp;ndash; is modeled and tested here.&lt;/p&gt;</description>
     </item>
     <item>
       <title>Week 3 - Polling</title>
-      <link>http://localhost:4321/post/2024/09/19/week-3-polling/</link>
+      <link>https://example.org/post/2024/09/19/week-3-polling/</link>
       <pubDate>Thu, 19 Sep 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:4321/post/2024/09/19/week-3-polling/</guid>
+      <guid>https://example.org/post/2024/09/19/week-3-polling/</guid>
       <description>&lt;p&gt;In this week&amp;rsquo;s post, we focus on analyzing polling data. Our research question is &amp;ldquo;How can we best use polls to predict election outcomes?&amp;rdquo;. My thanks again to Matthew Dardet for his generous starter code.&lt;/p&gt;&#xA;&lt;p&gt;For the purpose of this analysis, we focus on polling data from FiveThirtyEight. We began by visualizing the available data from the past several presidential elections to help understand how polls changes relative to the actual election outcome.&lt;/p&gt;</description>
     </item>
     <item>
       <title>Week 2: Elections and the Economy</title>
-      <link>http://localhost:4321/post/2024/09/11/week-2-elections-and-the-economy/</link>
+      <link>https://example.org/post/2024/09/11/week-2-elections-and-the-economy/</link>
       <pubDate>Wed, 11 Sep 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:4321/post/2024/09/11/week-2-elections-and-the-economy/</guid>
+      <guid>https://example.org/post/2024/09/11/week-2-elections-and-the-economy/</guid>
       <description>&lt;p&gt;In this week&amp;rsquo;s lab, we focus on understanding how well the status of the economy predicts the outcome of an election. In particular, we aim to quantify this uncertainty. My thanks again to Matt Dardet for his generous starter code in section, much of which I have used/adapted here.&lt;/p&gt;&#xA;&lt;p&gt;First, we explored how well the economy &lt;em&gt;correlated&lt;/em&gt; with election outcomes by computing the bivariate correlation between quarterly GDP growth and incumbent two-party vote share. We began by reviewing a scatterplot of this data.&lt;/p&gt;</description>
     </item>
     <item>
       <title>Week 1 - Initial Analyses</title>
-      <link>http://localhost:4321/post/2024/09/07/week-1-initial-analyses/</link>
+      <link>https://example.org/post/2024/09/07/week-1-initial-analyses/</link>
       <pubDate>Sat, 07 Sep 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:4321/post/2024/09/07/week-1-initial-analyses/</guid>
+      <guid>https://example.org/post/2024/09/07/week-1-initial-analyses/</guid>
       <description>&lt;p&gt;In this first blog post, I conduct some initial analyses of historical American presidential elections. Using &lt;em&gt;popular vote data from 1948-2020 (provided by the course)&lt;/em&gt;, I analyze how competitive elections are and the proportion of states that vote blue/red. My thanks to Matt Dardet for writing much of this code during and before our weekly section, as well as ShuXin Ho for helping me identify latitude/longitude loading bugs in my maps when we were initially building them in section.&lt;/p&gt;</description>
     </item>
   </channel>

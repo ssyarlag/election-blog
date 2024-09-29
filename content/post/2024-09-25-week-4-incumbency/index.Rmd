@@ -12,7 +12,7 @@ In this week's lab, we explore the impact of candidate or party incumbency on pr
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 # Loading data/libraries and cleaning
 library(tidyverse)
-library(stargazer)
+library(modelsummary)
 
 d_vote <- read_csv("week4data/popvote_1948-2020.csv")
 d_econ <- read_csv("week4data/fred_econ.csv") |> 
@@ -37,13 +37,17 @@ d_tfc_train <- d_vote |>
 tfc_mod_2016 <- lm(pv2p ~ GDP_growth_quarterly + incumbent + juneapp, 
                    data = subset(d_tfc_train, year < 2020))
 
-stargazer(tfc_mod_2016, out = "tfc.html") # (1)
+modelsummary(list("Time For Change" = tfc_mod_2016), output = "kableExtra", 
+             coef_rename = c("GDP_growth_quarterly" = "Quarterly GDP Growth",
+                             "incumbent" = "Incumbency Status",
+                             "juneapp" = "June Approval Rating"),
+             stars = TRUE) # (1), (2)
 
 ```
 
-![](images/Screenshot 2024-09-29 at 9.05.39 AM.png)
 
 # Citations:
  
  (1) Hlavac, Marek (2022). stargazer: Well-Formatted Regression and Summary Statistics Tables.
  R package version 5.2.3. https://CRAN.R-project.org/package=stargazer 
+ (2): Model Summary Package

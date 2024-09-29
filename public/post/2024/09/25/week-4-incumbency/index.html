@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en-us">
-  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=4321&amp;path=livereload" data-no-instant defer></script>
+  <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Week 4: Incumbency | A minimal Hugo website</title>
@@ -26,49 +26,90 @@
 </div>
 
 <main>
+<script src="https://example.org/post/2024/09/25/week-4-incumbency/index_files/kePrint/kePrint.js"></script>
+<link href="https://example.org/post/2024/09/25/week-4-incumbency/index_files/lightable/lightable.css" rel="stylesheet" />
 <p>In this week&rsquo;s lab, we explore the impact of candidate or party incumbency on presidential election outcomes. More specifically, we ask &ldquo;How should we treat the incumbency advantage in our 2024 electoral foreasts?&rdquo;. As always, my thanks to Matthew Dardet for his helpful starter code.</p>
 <p>This week, we reviewed a canonically successful model used to predict the advantage of incumbency: the Time for Change Model by Alan Abramowitz. This relatively simple model &ndash; an OLS regression with independent variables of Quarter 2 GDP, June Gallup poll approval, and whether or not one is an incumbent &ndash; is modeled and tested here.</p>
-<pre><code>## 
-## % Table created by stargazer v.5.2.3 by Marek Hlavac, Social Policy Institute. E-mail: marek.hlavac at gmail.com
-## % Date and time: Sun, Sep 29, 2024 - 09:11:15
-## \begin{table}[!htbp] \centering 
-##   \caption{} 
-##   \label{} 
-## \begin{tabular}{@{\extracolsep{5pt}}lc} 
-## \\[-1.8ex]\hline 
-## \hline \\[-1.8ex] 
-##  &amp; \multicolumn{1}{c}{\textit{Dependent variable:}} \\ 
-## \cline{2-2} 
-## \\[-1.8ex] &amp; pv2p \\ 
-## \hline \\[-1.8ex] 
-##  GDP\_growth\_quarterly &amp; 0.465$^{***}$ \\ 
-##   &amp; (0.155) \\ 
-##   &amp; \\ 
-##  incumbent &amp; 2.220$^{*}$ \\ 
-##   &amp; (1.244) \\ 
-##   &amp; \\ 
-##  juneapp &amp; 0.132$^{***}$ \\ 
-##   &amp; (0.025) \\ 
-##   &amp; \\ 
-##  Constant &amp; 48.212$^{***}$ \\ 
-##   &amp; (1.070) \\ 
-##   &amp; \\ 
-## \hline \\[-1.8ex] 
-## Observations &amp; 18 \\ 
-## R$^{2}$ &amp; 0.817 \\ 
-## Adjusted R$^{2}$ &amp; 0.777 \\ 
-## Residual Std. Error &amp; 2.486 (df = 14) \\ 
-## F Statistic &amp; 20.783$^{***}$ (df = 3; 14) \\ 
-## \hline 
-## \hline \\[-1.8ex] 
-## \textit{Note:}  &amp; \multicolumn{1}{r}{$^{*}$p$&lt;$0.1; $^{**}$p$&lt;$0.05; $^{***}$p$&lt;$0.01} \\ 
-## \end{tabular} 
-## \end{table}
-</code></pre>
-<p>![](images/Screenshot 2024-09-29 at 9.05.39 AM.png)</p>
+<table style="NAborder-bottom: 0; width: auto !important; margin-left: auto; margin-right: auto;" class="table">
+ <thead>
+  <tr>
+   <th style="text-align:left;">   </th>
+   <th style="text-align:center;"> Time For Change </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> (Intercept) </td>
+   <td style="text-align:center;"> 48.212*** </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:center;"> (1.070) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Quarterly GDP Growth </td>
+   <td style="text-align:center;"> 0.465** </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:center;"> (0.155) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Incumbency Status </td>
+   <td style="text-align:center;"> 2.220+ </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:center;"> (1.244) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> June Approval Rating </td>
+   <td style="text-align:center;"> 0.132*** </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;box-shadow: 0px 1.5px">  </td>
+   <td style="text-align:center;box-shadow: 0px 1.5px"> (0.025) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Num.Obs. </td>
+   <td style="text-align:center;"> 18 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> R2 </td>
+   <td style="text-align:center;"> 0.817 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> R2 Adj. </td>
+   <td style="text-align:center;"> 0.777 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> AIC </td>
+   <td style="text-align:center;"> 89.3 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> BIC </td>
+   <td style="text-align:center;"> 93.8 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Log.Lik. </td>
+   <td style="text-align:center;"> −39.673 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> F </td>
+   <td style="text-align:center;"> 20.783 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> RMSE </td>
+   <td style="text-align:center;"> 2.19 </td>
+  </tr>
+</tbody>
+<tfoot><tr><td style="padding: 0; " colspan="100%">
+<sup></sup> + p &lt; 0.1, * p &lt; 0.05, ** p &lt; 0.01, *** p &lt; 0.001</td></tr></tfoot>
+</table>
 <h1 id="citations">Citations:</h1>
 <p>(1) Hlavac, Marek (2022). stargazer: Well-Formatted Regression and Summary Statistics Tables.
-R package version 5.2.3. <a href="https://CRAN.R-project.org/package=stargazer">https://CRAN.R-project.org/package=stargazer</a></p>
+R package version 5.2.3. <a href="https://CRAN.R-project.org/package=stargazer">https://CRAN.R-project.org/package=stargazer</a>
+(2): Model Summary Package</p>
 
 </main>
 
