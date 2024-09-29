@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=4321&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Week 4: Incumbency | A minimal Hugo website</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/fonts.css" />
+    
+  </head>
+
+  <body>
+    <nav>
+    <ul class="menu">
+      
+      <li><a href="/">Home</a></li>
+      
+    </ul>
+    <hr/>
+    </nav>
+
+<div class="article-meta">
+<h1><span class="title">Week 4: Incumbency</span></h1>
+<h2 class="author">Package Build</h2>
+<h2 class="date">2024/09/25</h2>
+</div>
+
+<main>
+<p>In this week&rsquo;s lab, we explore the impact of candidate or party incumbency on presidential election outcomes. More specifically, we ask &ldquo;How should we treat the incumbency advantage in our 2024 electoral foreasts?&rdquo;. As always, my thanks to Matthew Dardet for his helpful starter code.</p>
+<p>This week, we reviewed a canonically successful model used to predict the advantage of incumbency: the Time for Change Model by Alan Abramowitz. This relatively simple model &ndash; an OLS regression with independent variables of Quarter 2 GDP, June Gallup poll approval, and whether or not one is an incumbent &ndash; is modeled and tested here.</p>
+<pre><code>## 
+## % Table created by stargazer v.5.2.3 by Marek Hlavac, Social Policy Institute. E-mail: marek.hlavac at gmail.com
+## % Date and time: Sun, Sep 29, 2024 - 09:11:15
+## \begin{table}[!htbp] \centering 
+##   \caption{} 
+##   \label{} 
+## \begin{tabular}{@{\extracolsep{5pt}}lc} 
+## \\[-1.8ex]\hline 
+## \hline \\[-1.8ex] 
+##  &amp; \multicolumn{1}{c}{\textit{Dependent variable:}} \\ 
+## \cline{2-2} 
+## \\[-1.8ex] &amp; pv2p \\ 
+## \hline \\[-1.8ex] 
+##  GDP\_growth\_quarterly &amp; 0.465$^{***}$ \\ 
+##   &amp; (0.155) \\ 
+##   &amp; \\ 
+##  incumbent &amp; 2.220$^{*}$ \\ 
+##   &amp; (1.244) \\ 
+##   &amp; \\ 
+##  juneapp &amp; 0.132$^{***}$ \\ 
+##   &amp; (0.025) \\ 
+##   &amp; \\ 
+##  Constant &amp; 48.212$^{***}$ \\ 
+##   &amp; (1.070) \\ 
+##   &amp; \\ 
+## \hline \\[-1.8ex] 
+## Observations &amp; 18 \\ 
+## R$^{2}$ &amp; 0.817 \\ 
+## Adjusted R$^{2}$ &amp; 0.777 \\ 
+## Residual Std. Error &amp; 2.486 (df = 14) \\ 
+## F Statistic &amp; 20.783$^{***}$ (df = 3; 14) \\ 
+## \hline 
+## \hline \\[-1.8ex] 
+## \textit{Note:}  &amp; \multicolumn{1}{r}{$^{*}$p$&lt;$0.1; $^{**}$p$&lt;$0.05; $^{***}$p$&lt;$0.01} \\ 
+## \end{tabular} 
+## \end{table}
+</code></pre>
+<p>![](images/Screenshot 2024-09-29 at 9.05.39 AM.png)</p>
+<h1 id="citations">Citations:</h1>
+<p>(1) Hlavac, Marek (2022). stargazer: Well-Formatted Regression and Summary Statistics Tables.
+R package version 5.2.3. <a href="https://CRAN.R-project.org/package=stargazer">https://CRAN.R-project.org/package=stargazer</a></p>
+
+</main>
+
+  <footer>
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<script src="//cdn.jsdelivr.net/combine/npm/katex/dist/katex.min.js,npm/katex/dist/contrib/auto-render.min.js,npm/@xiee/utils/js/render-katex.js" defer></script>
+
+<script src="//cdn.jsdelivr.net/npm/@xiee/utils/js/center-img.min.js" defer></script>
+
+  
+  </footer>
+  </body>
+</html>
+

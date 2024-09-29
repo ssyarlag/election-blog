@@ -1,0 +1,49 @@
+---
+title: 'Week 4: Incumbency'
+author: Package Build
+date: '2024-09-25'
+slug: week-4-incumbency
+categories: []
+tags: []
+---
+
+In this week's lab, we explore the impact of candidate or party incumbency on presidential election outcomes. More specifically, we ask "How should we treat the incumbency advantage in our 2024 electoral foreasts?". As always, my thanks to Matthew Dardet for his helpful starter code.
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+# Loading data/libraries and cleaning
+library(tidyverse)
+library(stargazer)
+
+d_vote <- read_csv("week4data/popvote_1948-2020.csv")
+d_econ <- read_csv("week4data/fred_econ.csv") |> 
+  filter(quarter == 2)
+
+d_vote$party[d_vote$party == "democrat"] <- "DEM"
+d_vote$party[d_vote$party == "republican"] <- "REP"
+```
+
+
+This week, we reviewed a canonically successful model used to predict the advantage of incumbency: the Time for Change Model by Alan Abramowitz. This relatively simple model -- an OLS regression with independent variables of Quarter 2 GDP, June Gallup poll approval, and whether or not one is an incumbent -- is modeled and tested here.
+
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+# Join data for time for change model.
+d_tfc_train <- d_vote |> 
+  left_join(d_econ, by = "year") |> 
+  filter(incumbent_party) |>
+  mutate(incumbent = as.numeric(incumbent))
+
+# Estimate time for change model through 2016.
+tfc_mod_2016 <- lm(pv2p ~ GDP_growth_quarterly + incumbent + juneapp, 
+                   data = subset(d_tfc_train, year < 2020))
+
+stargazer(tfc_mod_2016, out = "tfc.html") # (1)
+
+```
+
+![](images/Screenshot 2024-09-29 at 9.05.39 AM.png)
+
+# Citations:
+ 
+ (1) Hlavac, Marek (2022). stargazer: Well-Formatted Regression and Summary Statistics Tables.
+ R package version 5.2.3. https://CRAN.R-project.org/package=stargazer 
