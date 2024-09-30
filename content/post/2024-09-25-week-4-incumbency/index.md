@@ -128,12 +128,13 @@ Once again, the GDP only model predicts that Harris will earn a plurality of vot
  (1) Hlavac, Marek (2022). stargazer: Well-Formatted Regression and Summary Statistics Tables.
  R package version 5.2.3. https://CRAN.R-project.org/package=stargazer 
  
- (2): Model Summary Package
+ (2): Model Summary Package - Help Page
  
  (3): Pivot Longer help page, AndrewGB. 2022. “Answer to ‘Pivot Longer for Only Selected Columns.’” Stack Overflow. https://stackoverflow.com/a/71689942.
-sbha. 2020. “Answer to ‘Converting Rows into Columns and Columns into Rows Using R.’” Stack Overflow. https://stackoverflow.com/a/60251029.
+sbha. 2020. “Answer to ‘Converting Rows into Columns and Columns into Rows Using R.’” Stack Overflow. https://stackoverflow.com/a/60251029.; “How to Convert Columns of an R Data Frame into Rows?” n.d. Accessed September 29, 2024. https://www.tutorialspoint.com/how-to-convert-columns-of-an-r-data-frame-into-rows. - used in a piece that I ended up removing
 
-(4) joran. 2011. “Answer to ‘How Do I Combine Two Data-Frames Based on Two Columns?’” Stack Overflow. https://stackoverflow.com/a/6709335.
+
+(4) joran. 2011. “Answer to ‘How Do I Combine Two Data-Frames Based on Two Columns?’” Stack Overflow. https://stackoverflow.com/a/6709335. - used in a piece I ended up removing
 
 (5) Smith, David. 2024. “‘Running Away from Good News’: Why Is Harris Distancing Herself from Biden’s Record?” The Guardian, September 29, 2024, sec. US news. https://www.theguardian.com/us-news/2024/sep/29/election-biden-harris-administration-record.
 
