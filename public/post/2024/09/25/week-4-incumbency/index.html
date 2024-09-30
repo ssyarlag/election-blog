@@ -29,7 +29,7 @@
 <script src="https://example.org/post/2024/09/25/week-4-incumbency/index_files/kePrint/kePrint.js"></script>
 <link href="https://example.org/post/2024/09/25/week-4-incumbency/index_files/lightable/lightable.css" rel="stylesheet" />
 <p>In this week&rsquo;s lab, we explore the impact of candidate or party incumbency on presidential election outcomes. More specifically, we ask &ldquo;How should we treat the incumbency advantage in our 2024 electoral forecasts?&rdquo;. As always, my thanks to Matthew Dardet for his helpful starter code.</p>
-<p>This week, we reviewed a canonically successful model used to predict the advantage of incumbency: the Time for Change Model (TFC) by Alan Abramowitz. This relatively simple model &ndash; an OLS regression with independent variables of Quarter 2 GDP, June Gallup poll approval, and whether or not one is an incumbent &ndash; is modeled here. We exclude 2020 data here, given that (as we have shown in previous blogs) the year is an outlier in terms of GDP growth.</p>
+<p>This week, we reviewed a canonically successful model used to predict the advantage of incumbency: the Time for Change Model (TFC) by Alan Abramowitz. This relatively simple model &ndash; an OLS regression with independent variables of Quarter 2 GDP Growth, June Gallup poll approval, and whether or not one is an incumbent &ndash; is modeled here. We exclude 2020 data here, given that (as we have shown in previous blogs) the year is an outlier in terms of GDP growth.</p>
 <table style="NAborder-bottom: 0; width: auto !important; margin-left: auto; margin-right: auto;" class="table">
  <thead>
   <tr>
@@ -110,7 +110,7 @@
 <img src="https://example.org/post/2024/09/25/week-4-incumbency/index_files/figure-html/unnamed-chunk-3-1.png" width="672" />
 <p>This plot demonstrates that the model generally tends to produce an accurate prediction of the truth, with most measures of error collecting around 0</p>
 <p>Given this, I was interested to see how this model would predict the outcome of the 2024 presidential election. Here, I first assume that Harris maintains the incumbency advantage. Although she is not a sitting president, many still associate Harris with the Biden administration, considering the Biden administration&rsquo;s legacy as hers as well (5). Therefore, it may be reasonable to consider her an incumbent as well. This is especially true if we see the TFC model as a quantification of Achen and Bartels&rsquo;s conception of blame attribution &ndash; the association of an incumbent candidate with the economic situation of their administration, even if they were not directly responsible for that outcome (6). If voters do not seem to care much about direct responsibility, it is conceivable that they could even perceive of those close to a &ldquo;true&rdquo; incumbent president as being an incumbent themselves.</p>
-<p>However, it is also important to acknowledge that Harris&rsquo; campaign is actively trying to distance itself from Biden&rsquo;s legacy (5). Their success appears reflected in Harris&rsquo; relative popularity compared to Biden (7).</p>
+<p>However, it is also important to acknowledge that Harris&rsquo; campaign is actively trying to distance itself from Biden&rsquo;s legacy (5). Their success appears reflected in Harris&rsquo; relative popularity compared to Biden (7). Therefore, I also consider how the model would predict Harris&rsquo;s vote share even if she does not have &ldquo;incumbent&rdquo; status.</p>
 <table>
   <thead>
       <tr>
@@ -125,10 +125,10 @@
       </tr>
   </tbody>
 </table>
-<p>These results suggest that, if Harris has the incumbent advantage, she will earn 48.93% of the two-party popular vote share, meaning that Trump would earn the remaining 51.07% of the popular vote. However, especially given the extent of variation that was shown in the cross-validation testing, it isn&rsquo;t clear that this is strong evidence of a Trump popular vote victory prediction.</p>
-<p>Even if we were to assume that Harris and her campaign are able to distance herself from the Biden administration as she hopes to, this model suggests that she would still fail to gain a plurality of the two-party vote share. In fact, she would earn even less, with a predicted two party popular vote share of 46.71, implying that Trump would earn 53.29%.</p>
+<p>These results suggest that, if Harris has incumbent status, she will earn 48.93% of the two-party popular vote share, meaning that Trump would earn the remaining 51.07% of the popular vote. However, especially given the extent of variation that was shown in the cross-validation testing, it isn&rsquo;t clear that this is strong evidence of a Trump popular vote victory prediction.</p>
+<p>Even if we were to assume that Harris and her campaign are able to distance herself from the Biden administration as she hopes to, this model suggests that she would still fail to gain a plurality of the two-party vote share. In fact, she would earn even less, with a predicted two party popular vote share of 46.71, implying that Trump would earn 53.29%. This shows a greater likelihood of a Trump popular vote victory.</p>
 <h1 id="extension">Extension</h1>
-<p>Interestingly, this is the first of my models to predict a Trump victory. I was interested in directly comparing my results to the GDP-Growth only model that we built in Week 2. This model was somewhat successful in predicting vote share in previous elections, especially in comparison to other economic variables that we tested. However, it also offers an interesting comparison, given that TFC is also partially based on GDP growth. While our analysis from week 2 predicted a two-party vote share 51.58% for the Democrats, I trained a slightly different model, training on only incumbent party candidates to parallel my TFC model.</p>
+<p>Interestingly, this is the first of my models to predict a Trump victory. I was interested in directly comparing my results to the GDP-Growth only model that we built in Week 2. This model was somewhat successful in predicting vote share in previous elections, especially in comparison to other economic variables that we tested. However, it also offers an interesting comparison, given that TFC is also partially based on GDP growth.</p>
 <table>
   <thead>
       <tr>
@@ -145,7 +145,7 @@
       </tr>
   </tbody>
 </table>
-<p>Once again, the GDP only model predicts that Harris will earn a plurality of votes. This seems to highlight the importance of voter approval to the TFC model &ndash; something that is also highlighted in the 2020 version of the model, as discussed in our section materials. However, it is also important to note that the June approval ratings that we are using in this model data reflects a time before Harris was the Democratic presidential candidate, meaning that it may not be an entirely predictive model. However, it is interesting that this model found a different result than my previous models.</p>
+<p>Once again, the GDP only model predicts that Harris will earn a plurality of votes. This seems to highlight the importance of voter approval to the TFC model &ndash; something that is also highlighted in the 2020 version of the model, as discussed in our section materials. However, it is also important to note that the June approval ratings that we are using in this model data reflects a time before Harris was the Democratic presidential candidate, meaning that it may not be an entirely predictive model (7). However, it is still interesting that this model found a different result than my previous models.</p>
 <h1 id="citations">Citations:</h1>
 <p>(1) Hlavac, Marek (2022). stargazer: Well-Formatted Regression and Summary Statistics Tables.
 R package version 5.2.3. <a href="https://CRAN.R-project.org/package=stargazer">https://CRAN.R-project.org/package=stargazer</a></p>

@@ -23,7 +23,7 @@ d_vote$party[d_vote$party == "republican"] <- "REP"
 ```
 
 
-This week, we reviewed a canonically successful model used to predict the advantage of incumbency: the Time for Change Model (TFC) by Alan Abramowitz. This relatively simple model -- an OLS regression with independent variables of Quarter 2 GDP, June Gallup poll approval, and whether or not one is an incumbent -- is modeled here. We exclude 2020 data here, given that (as we have shown in previous blogs) the year is an outlier in terms of GDP growth.
+This week, we reviewed a canonically successful model used to predict the advantage of incumbency: the Time for Change Model (TFC) by Alan Abramowitz. This relatively simple model -- an OLS regression with independent variables of Quarter 2 GDP Growth, June Gallup poll approval, and whether or not one is an incumbent -- is modeled here. We exclude 2020 data here, given that (as we have shown in previous blogs) the year is an outlier in terms of GDP growth.
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 # Join data for time for change model.
@@ -65,7 +65,7 @@ This plot demonstrates that the model generally tends to produce an accurate pre
 
 Given this, I was interested to see how this model would predict the outcome of the 2024 presidential election. Here, I first assume that Harris maintains the incumbency advantage. Although she is not a sitting president, many still associate Harris with the Biden administration, considering the Biden administration's legacy as hers as well (5). Therefore, it may be reasonable to consider her an incumbent as well. This is especially true if we see the TFC model as a quantification of Achen and Bartels's conception of blame attribution -- the association of an incumbent candidate with the economic situation of their administration, even if they were not directly responsible for that outcome (6). If voters do not seem to care much about direct responsibility, it is conceivable that they could even perceive of those close to a "true" incumbent president as being an incumbent themselves.
 
-However, it is also important to acknowledge that Harris' campaign is actively trying to distance itself from Biden's legacy (5). Their success appears reflected in Harris' relative popularity compared to Biden (7). 
+However, it is also important to acknowledge that Harris' campaign is actively trying to distance itself from Biden's legacy (5). Their success appears reflected in Harris' relative popularity compared to Biden (7). Therefore, I also consider how the model would predict Harris's vote share even if she does not have "incumbent" status. 
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 
@@ -87,23 +87,24 @@ nonincumbent_pred <-predict(tfc_mod_2016, data_2024_non_incumbent)[1]
 knitr::kable(tibble_row("Incumbent" = incumbent_pred, "Non-Incumbent" = nonincumbent_pred), digits = 2)
 ```
 
-These results suggest that, if Harris has the incumbent advantage, she will earn 48.93% of the two-party popular vote share, meaning that Trump would earn the remaining 51.07% of the popular vote. However, especially given the extent of variation that was shown in the cross-validation testing, it isn't clear that this is strong evidence of a Trump popular vote victory prediction.
+These results suggest that, if Harris has incumbent status, she will earn 48.93% of the two-party popular vote share, meaning that Trump would earn the remaining 51.07% of the popular vote. However, especially given the extent of variation that was shown in the cross-validation testing, it isn't clear that this is strong evidence of a Trump popular vote victory prediction.
 
-Even if we were to assume that Harris and her campaign are able to distance herself from the Biden administration as she hopes to, this model suggests that she would still fail to gain a plurality of the two-party vote share. In fact, she would earn even less, with a predicted two party popular vote share of 46.71, implying that Trump would earn 53.29%. 
+Even if we were to assume that Harris and her campaign are able to distance herself from the Biden administration as she hopes to, this model suggests that she would still fail to gain a plurality of the two-party vote share. In fact, she would earn even less, with a predicted two party popular vote share of 46.71, implying that Trump would earn 53.29%. This shows a greater likelihood of a Trump popular vote victory.
 
 # Extension 
 
-Interestingly, this is the first of my models to predict a Trump victory. I was interested in directly comparing my results to the GDP-Growth only model that we built in Week 2. This model was somewhat successful in predicting vote share in previous elections, especially in comparison to other economic variables that we tested. However, it also offers an interesting comparison, given that TFC is also partially based on GDP growth. While our analysis from week 2 predicted a two-party vote share 51.58% for the Democrats, I trained a slightly different model, training on only incumbent party candidates to parallel my TFC model. 
+Interestingly, this is the first of my models to predict a Trump victory. I was interested in directly comparing my results to the GDP-Growth only model that we built in Week 2. This model was somewhat successful in predicting vote share in previous elections, especially in comparison to other economic variables that we tested. However, it also offers an interesting comparison, given that TFC is also partially based on GDP growth. 
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
-
+# Re-run GDP only regression
 gdp_only <- predict(lm(pv2p ~ GDP_growth_quarterly, data = d_tfc_train), data_2024_incumbent)
 
+# Make new tibble with GDP only measure for comparison
 knitr::kable(tibble_row("Incumbent (TFC)" = incumbent_pred, "Non-Incumbent (TFC)" = nonincumbent_pred, "GDP Only" = gdp_only), digits = 2)
 
 ```
 
-Once again, the GDP only model predicts that Harris will earn a plurality of votes. This seems to highlight the importance of voter approval to the TFC model -- something that is also highlighted in the 2020 version of the model, as discussed in our section materials. However, it is also important to note that the June approval ratings that we are using in this model data reflects a time before Harris was the Democratic presidential candidate, meaning that it may not be an entirely predictive model. However, it is interesting that this model found a different result than my previous models.
+Once again, the GDP only model predicts that Harris will earn a plurality of votes. This seems to highlight the importance of voter approval to the TFC model -- something that is also highlighted in the 2020 version of the model, as discussed in our section materials. However, it is also important to note that the June approval ratings that we are using in this model data reflects a time before Harris was the Democratic presidential candidate, meaning that it may not be an entirely predictive model (7). However, it is still interesting that this model found a different result than my previous models.
 
 # Citations:
  
@@ -114,7 +115,6 @@ Once again, the GDP only model predicts that Harris will earn a plurality of vot
  
  (3): Pivot Longer help page, AndrewGB. 2022. “Answer to ‘Pivot Longer for Only Selected Columns.’” Stack Overflow. https://stackoverflow.com/a/71689942.
 sbha. 2020. “Answer to ‘Converting Rows into Columns and Columns into Rows Using R.’” Stack Overflow. https://stackoverflow.com/a/60251029.; “How to Convert Columns of an R Data Frame into Rows?” n.d. Accessed September 29, 2024. https://www.tutorialspoint.com/how-to-convert-columns-of-an-r-data-frame-into-rows. - used in a piece that I ended up removing
-
 
 (4) joran. 2011. “Answer to ‘How Do I Combine Two Data-Frames Based on Two Columns?’” Stack Overflow. https://stackoverflow.com/a/6709335. - used in a piece I ended up removing
 
