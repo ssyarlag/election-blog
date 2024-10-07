@@ -68,10 +68,6 @@ library(kableExtra)
 library(dostats)
 library(corrplot)
 
-# Popular vote data
-d_popvote <- read_csv("data/popvote_1948_2020.csv")
-d_state_popvote <- read_csv("data/state_popvote_1948_2020.csv")
-
 # ANES data
 anes <- read_csv("data/anes_2016.csv")
 anes <- anes |>
@@ -92,9 +88,9 @@ mysubset_swing <- d_swing_combined |>
 
 This week, we explore the impact of demographics on voter turnout, asking "What are the connections, if any, between demographics and voter turnout? Can demographics and turnout be used to predict election outcomes? If so, how and how well?" Thank you, as always, to Matthew Dardet for his starter code and coding assistance. I also thank Jacqui Schlesinger, my partner for this week's in-class presentation, for her valuable thoughts and advice on interesting visualizations.
 
-To answer this question, we worked to replicate the work of Kim and Zilinsky (2023) (3). This work sought to determine if certain demographic factors were actually predictive of voter behavior. While they also considered "tree-based machine learning models" (1. pg. 67), some code for which is included in a comment in my code for this blog, I focused on creating a logistic regression model here. In particular, I trained models to predict both presidential vote, as well as the act of turning out to vote itself, based on available demographic data from the 2016 American National Election Survey (ANES) for this work, separating it into two separate datasets (one for each model). The first dataset dropped all datapoints where a survey respondent's vote was not available (indicating that they did not vote). The second included all datapoints from the original ANES subset that we used, but created a separate variable indicating turnout, where all responses not including their choice of candidate were marked as not having turned out to vote and those with any response marked as having turned out.
+To answer this question, we worked to replicate the work of Kim and Zilinsky (2023) to a degree (3). This work sought to determine if certain demographic factors were actually predictive of voter behavior. While they also considered "tree-based machine learning models" (pg. 67), some code for which is included in a comment in my code for this blog, I focused on creating a logistic regression model here. In particular, I trained models to predict both presidential vote, as well as the act of turning out to vote itself, based on available demographic data from the 2016 American National Election Survey (ANES). I separated this data into two separate datasets (one for each model). The first dataset dropped all datapoints where a survey respondent's vote was not available (indicating that they did not vote). The second included all datapoints from the original ANES data that we used, but created a separate variable indicating turnout, where all responses not including their choice of candidate were marked as not having turned out to vote and those with any response marked as having turned out.
 
-Importantly, building this model required creating numerous factor variables. Given that certain demographic variables like gender naturally exist in categories, rather than a numeric value that can increase in value in conjunction with an outcome like vote choice, I created separate dummies to represent each category of several model inputs.
+Importantly, building this model required creating numerous factor variables. Given that certain demographic variables like gender naturally exist in categories, rather than a numeric value that can increase in value in conjunction with an outcome like vote choice, I created separate dummies to represent each category of several model inputs, namely gender, race, religion, marriage status, homeownership status, and work status. 
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 # How well do demographics predict vote choice
