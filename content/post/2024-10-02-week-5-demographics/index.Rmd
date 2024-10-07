@@ -181,9 +181,11 @@ cm.rf.logit.oos.presvote <- confusionMatrix(logit_pred_presvote, anes_test_presv
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 
+# Making nice-looking output for regression results
 modelsummary(list("Turnout" = logit_fit_turnout, "Presidential Vote" = logit_fit_presvote), stars = T, method = "scroll", output = "kableExtra")
 # modelsummary(list("Turnout" = logit_fit_turnout, "Presidential Vote" = logit_fit_presvote), stars = T, output = "modeloutput.png")
 
+# Manually creating nice-looking table to show prediction accuracy
 #(5)
 turnout_val <- tibble_row(value = "Turnout", in_sample = 0.6711, out_of_sample = 0.6615)
 pres_vote_val <- tibble_row(value = "Presidential Vote", in_sample = 0.737, out_of_sample = 0.7354)
@@ -191,7 +193,7 @@ pres_vote_val <- tibble_row(value = "Presidential Vote", in_sample = 0.737, out_
 knitr::kable(rbind(turnout_val, pres_vote_val), col.names = c("Value", "In-Sample Accuracy", "Out-of-Sample Accuracy"))
 ```
 
-It appears that a logistic regression of these selected variables only predicts both a voter's decision to turn out and the likelihood of their vote for a particular party about 65-75% of the time. This provides relatively low certainty of an accurate prediction, aligning with Kim and Zilinsky's findings, though the model that I specify here (slightly different from theirs) provides a bit more accuracy. However, these regressions appeared to have some statistically significant coefficients. Interestingly, education level and identification as someone of multiple races (or one that was not otherwise identified by the ANES) or Black were the only variables that were statistically significant predictors of both turnout and vote choice (assuming an alpha level of 0.05). Turnout was also largely predicted by income, unemployment status, and age above 45, while vote choice was predicted by identification as Hispanic, Catholicism, Judaism, other religion, church attendance frequency, location in the US South, status as a homemaker, homeownership, and marriage status
+It appears that a logistic regression of these selected variables only predicts both a voter's decision to turn out and the likelihood of their vote for a particular party about 65-75% of the time. This provides relatively low certainty of an accurate prediction, aligning with Kim and Zilinsky's findings, though the model that I specify here (slightly different from theirs) provides a bit more accuracy. However, these regressions appeared to have some statistically significant coefficients. Interestingly, education level and identification as someone of multiple races (or one that was not otherwise identified by the ANES) or Black were the only variables that were statistically significant predictors of both turnout and vote choice (assuming an alpha level of 0.05). Turnout was also largely predicted by income, unemployment status, and age above 45, while vote choice was predicted by identification as Hispanic, Catholicism, Judaism, other religion, church attendance frequency, location in the US South, status as a homemaker, homeownership, and marriage status. Most interesting to me, though, is that gender does not appear to significantly predict either variable.
 
 Given these results, I wanted to visualize how several of these characteristics have played out in several key battleground states, using voter roll data generously provided by Statara. I produced graphs for Arizona, Michigan, Georgia, and Nevada, while my partner for this week's in-class presentation, Jacqui, has focused on making maps for Wisconsin, Pennsylvania, and North Carolina.
 
@@ -199,7 +201,7 @@ While I could not visualize how these demographics related to vote choice, as th
 
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
-
+# Cleaning data from voter files to make graphs. more readable
 d_swing_combined_clean <- mysubset_swing |>
   filter(sii_deceased == 0,
          sii_gender != "U",
@@ -237,6 +239,7 @@ d_swing_combined_clean <- mysubset_swing |>
                                sii_urbanicity == "U6" ~ "More Dense"),
          voted_2020 = if_else(svi_vh_2020g != "", 1, 0))
 
+# Making barplots for several significant demographic variables
 gender_plot <- d_swing_combined_clean |> # (6)
   group_by(gender, sii_state) |>
   summarize(mean_turnout = mean(voted_2020, na.rm = T)) |>
@@ -343,7 +346,9 @@ These results show that females and older people consistently turn out at higher
 
 (1) Ahorn. 2020. “Answer to ‘Export R Data to Csv.’” Stack Overflow. https://stackoverflow.com/a/62006344.
 
-(2)  dickoa. 2012. “Answer to ‘Read All Files in a Folder and Apply a Function to Each Data Frame.’” Stack Overflow. https://stackoverflow.com/a/9565134;Guidance from Matt Dardet in office hours
+(2)  dickoa. 2012. “Answer to ‘Read All Files in a Folder and Apply a Function to Each Data Frame.’” Stack Overflow. https://stackoverflow.com/a/9565134; Guidance from Matt Dardet in office hours
+
+(3) Kim, Seo-young Silvia, and Jan Zilinsky. 2024. “Division Does Not Imply Predictability: Demographics Continue to Reveal Little About Voting and Partisanship.” Political Behavior 46 (1): 67–87. https://doi.org/10.1007/s11109-022-09816-z.
 
 (4) GLM help page
 
