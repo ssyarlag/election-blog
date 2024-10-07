@@ -1,13 +1,13 @@
 ---
 title: Week 5 - Demographics
-author: Package Build
+author: Shriya Yarlagadda
 date: '2024-10-02'
 slug: week-5-demographics
 categories: []
 tags: []
 ---
 
-```{r}
+```{r echo = FALSE, message = FALSE, warning = FALSE}
 # Initial saving of 2016 ANES data, as opposed to all data
 
 # ANES data
@@ -181,8 +181,8 @@ cm.rf.logit.oos.presvote <- confusionMatrix(logit_pred_presvote, anes_test_presv
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 
-modelsummary(list("Turnout" = logit_fit_turnout, "Presidential Vote" = logit_fit_presvote), stars = T, output = "kableExtra")
-modelsummary(list("Turnout" = logit_fit_turnout, "Presidential Vote" = logit_fit_presvote), stars = T, output = "modeloutput.png")
+modelsummary(list("Turnout" = logit_fit_turnout, "Presidential Vote" = logit_fit_presvote), stars = T, method = "scroll", output = "kableExtra")
+# modelsummary(list("Turnout" = logit_fit_turnout, "Presidential Vote" = logit_fit_presvote), stars = T, output = "modeloutput.png")
 
 #(5)
 turnout_val <- tibble_row(value = "Turnout", in_sample = 0.6711, out_of_sample = 0.6615)
@@ -205,7 +205,10 @@ d_swing_combined_clean <- mysubset_swing |>
          sii_gender != "U",
          sii_race != "U",
          sii_education_level != "U") |>
-  mutate(age_subset = case_when(sii_age > 18 & sii_age <= 29 ~ "18-29",
+  mutate(gender = case_when(sii_gender == "F" ~ "Female",
+                            sii_gender == "M" ~ "Male",
+                            sii_gender == "X" ~ "Other"),
+         age_subset = case_when(sii_age > 18 & sii_age <= 29 ~ "18-29",
                                 sii_age > 30 & sii_age <= 44 ~ "30-44",
                                 sii_age > 45 & sii_age <= 59 ~ "45-59",
                                 sii_age > 60 ~ "60+"),
@@ -235,13 +238,13 @@ d_swing_combined_clean <- mysubset_swing |>
          voted_2020 = if_else(svi_vh_2020g != "", 1, 0))
 
 gender_plot <- d_swing_combined_clean |> # (6)
-  group_by(sii_gender, sii_state) |>
+  group_by(gender, sii_state) |>
   summarize(mean_turnout = mean(voted_2020, na.rm = T)) |>
-  ggplot(mapping = aes(x = sii_gender, y = mean_turnout, color = sii_state)) +
+  ggplot(mapping = aes(x = gender, y = mean_turnout, color = sii_state)) +
   geom_col(show.legend = FALSE) + 
   geom_label(aes(label = round(mean_turnout,digits = 2))) + 
   theme_minimal() +
-  labs(x = "Gender", y = "Turnout Proportion", title = "Turnout by Gender and State") +
+  labs(x = "Gender", y = "Turnout Proportion", title = "2020 General Election Turnout by Gender and State") +
   facet_wrap(~sii_state)
 
 age_plot <- d_swing_combined_clean |> 
@@ -252,7 +255,7 @@ age_plot <- d_swing_combined_clean |>
   geom_col() + 
   geom_label(aes(label = round(mean_turnout, digits = 2))) + 
   theme_minimal() +
-  labs(x = "Age Group", y = "Turnout Proportion", title = "Turnout by Age and State") +
+  labs(x = "Age Group", y = "Turnout Proportion", title = "2020 General Election Turnout by Age and State") +
   facet_wrap(~sii_state)
 
 race_plot <- d_swing_combined_clean |> 
@@ -263,7 +266,7 @@ race_plot <- d_swing_combined_clean |>
   geom_col() +
   geom_label(aes(label = round(mean_turnout,digits = 2))) + 
   theme_minimal() +
-  labs(x = "Race", y = "Turnout Proportion", title = "Turnout by Race and State") +
+  labs(x = "Race", y = "Turnout Proportion", title = "2020 General Election Turnout by Race and State") +
   facet_wrap(~sii_state)
 
 educ_plot <- d_swing_combined_clean |> 
@@ -274,7 +277,7 @@ educ_plot <- d_swing_combined_clean |>
   geom_col() +
   geom_label(aes(label = round(mean_turnout,digits = 2))) + 
   theme_minimal() +
-  labs(x = "Education Level", y = "Turnout Proportion", title = "Turnout by Education Level and State") +
+  labs(x = "Education Level", y = "Turnout Proportion", title = "2020 General Election Turnout by Education Level and State") +
   facet_wrap(~sii_state)
 
 urbanicity_plot <- d_swing_combined_clean |> # (7)
@@ -287,7 +290,7 @@ urbanicity_plot <- d_swing_combined_clean |> # (7)
   scale_fill_manual(values = c("lightgrey", "darkgrey")) +
   geom_label(aes(label = round(mean_turnout,digits = 2)), position = position_dodge(width = 1)) + 
   theme_minimal() +
-  labs(x = "Education Level", y = "Turnout Proportion", title = "Turnout by Urbanicity and State") +
+  labs(x = "Education Level", y = "Turnout Proportion", title = "2020 General Election Turnout by Urbanicity and State") +
   facet_wrap(~sii_state)
 
 gender_plot

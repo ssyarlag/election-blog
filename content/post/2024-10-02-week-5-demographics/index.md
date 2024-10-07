@@ -1,6 +1,6 @@
 ---
 title: Week 5 - Demographics
-author: Package Build
+author: Shriya Yarlagadda
 date: '2024-10-02'
 slug: week-5-demographics
 categories: []
@@ -10,50 +10,6 @@ tags: []
 <link href="{{< blogdown/postref >}}index_files/lightable/lightable.css" rel="stylesheet" />
 
 
-``` r
-# Initial saving of 2016 ANES data, as opposed to all data
-
-# ANES data
-# anes <- read_dta("anes_timeseries_cdf_stata_20220916.dta") # Total ANES Cumulative Data File. 
-# 
-# anes <- anes |> 
-#   mutate(year = VCF0004,
-#          pres_vote = case_when(VCF0704a == 1 ~ 1, 
-#                                VCF0704a == 2 ~ 2, 
-#                                .default = NA), 
-#          # Demographics
-#          age = VCF0101, 
-#          gender = VCF0104, # 1 = Male; 2 = Female; 3 = Other
-#          race = VCF0105b, # 1 = White non-Hispanic; 2 = Black non-Hispanic, 3 == Hispanic; 4 = Other or multiple races, non-Hispanic; 9 = missing/DK
-#          educ = VCF0110, # 0 = DK; 1 = Less than high school; 2. High school; 3 = Some college; 4 = College+ 
-#          income = VCF0114, # 1 = 0-16 percentile; 2 = 17-33 percentile; 3 = 34-67; 4 = 68 to 95; 5 = 96 to 100. 
-#          religion = VCF0128, # 0 = DK; 1 = Protestant; 2 = Catholic; 3 = Jewish; 4 = Other
-#          attend_church = case_when(
-#            VCF0004 < 1972 ~ as.double(as.character(VCF0131)),
-#            TRUE ~ as.double(as.character(VCF0130))
-#          ), # 1 = every week - regularly; 2 = almost every week - often; 3 = once or twice a month; 4 = a few times a year - seldom; 5 = never ; 6 = no religious preference
-#          southern = VCF0113,
-#          region = VCF0113, 
-#          work_status = VCF0118,
-#          homeowner = VCF0146, 
-#          married = VCF0147,
-#         
-#          # 7-point PID
-#          pid7 = VCF0301, # 0 = DK; 1 = Strong Democrat; 2 = Weak Democrat; 3 = Independent - Democrat; 4 = Independent - Independent; 5 = Independent - Republican; 6 = Weak Republican; 7 = Strong Republican
-#          
-#          # 3-point PID
-#          pid3 = VCF0303, # 0 = DK; 1 = Democrats; 2 = Independents; 3 = Republicans. 
-#          
-#          # 3-point ideology. 
-#          ideo = VCF0804 # 0, 9 = DK; 1 = Liberal; 2 = Moderate; 3 = Conservative
-#          ) |> 
-#   select(year, pres_vote, age, gender, race, educ, income, religion, attend_church, southern, 
-#          region, work_status, homeowner, married, pid7, pid3, ideo)
-
-# anes_2016 <- anes[anes$year == 2016,] 
-# 
-# write.csv(anes_2016, "anes_2016.csv") # (1)
-```
 
 
 
