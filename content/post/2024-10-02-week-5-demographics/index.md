@@ -386,13 +386,6 @@ Importantly, building this model required creating numerous factor variables. Gi
 
 
 
-``` r
-# Print table after a few lines to have gap
-knitr::kable(rbind(turnout_val, pres_vote_val), col.names = c("Value", "In-Sample Accuracy", "Out-of-Sample Accuracy"))
-```
-
-
-
 |Value             | In-Sample Accuracy| Out-of-Sample Accuracy|
 |:-----------------|------------------:|----------------------:|
 |Turnout           |             0.6711|                 0.6615|

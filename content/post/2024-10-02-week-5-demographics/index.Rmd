@@ -191,7 +191,7 @@ pres_vote_val <- tibble_row(value = "Presidential Vote", in_sample = 0.737, out_
 
 
 
-```{r}
+```{r echo = FALSE, message = FALSE, warning = FALSE}
 # Print table after a few lines to have gap
 knitr::kable(rbind(turnout_val, pres_vote_val), col.names = c("Value", "In-Sample Accuracy", "Out-of-Sample Accuracy"))
 ```
