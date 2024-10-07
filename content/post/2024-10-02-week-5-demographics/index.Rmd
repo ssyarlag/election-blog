@@ -296,8 +296,8 @@ urbanicity_plot <- d_swing_combined_clean |> # (8)
   summarize(mean_turnout = mean(voted_2020, na.rm = T, digits = 2)) |>
   filter(!is.na(urb_rural)) |>
   filter(!is.na(density)) |>
-  ggplot(mapping = aes(x = urb_rural, y = mean_turnout, fill = density, color = sii_state)) +
-  geom_bar(stat = "identity", position = "dodge") +
+  ggplot(mapping = aes(x = urb_rural, y = mean_turnout, fill = density)) +
+  geom_bar(aes(color = sii_state), stat = "identity", position = "dodge") +
   guides(color = "none") + 
   scale_fill_manual(values = c("lightgrey", "grey")) +
   geom_label(aes(label = round(mean_turnout,digits = 2)), position = position_dodge(width = 1)) + 
