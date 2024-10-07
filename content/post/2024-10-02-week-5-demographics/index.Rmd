@@ -240,9 +240,10 @@ d_swing_combined_clean <- mysubset_swing |>
 gender_plot <- d_swing_combined_clean |> # (6)
   group_by(gender, sii_state) |>
   summarize(mean_turnout = mean(voted_2020, na.rm = T)) |>
-  ggplot(mapping = aes(x = gender, y = mean_turnout, color = sii_state)) +
+  ggplot(mapping = aes(x = gender, y = mean_turnout, color = sii_state), show.legend = FALSE) +
   geom_col(show.legend = FALSE) + 
   geom_label(aes(label = round(mean_turnout,digits = 2))) + 
+  guides(color = "none") + 
   theme_minimal() +
   labs(x = "Gender", y = "Turnout Proportion", title = "2020 General Election Turnout by Gender and State") +
   facet_wrap(~sii_state)
@@ -254,6 +255,7 @@ age_plot <- d_swing_combined_clean |>
   ggplot(mapping = aes(x = age_subset, y = mean_turnout, color = sii_state)) +
   geom_col() + 
   geom_label(aes(label = round(mean_turnout, digits = 2))) + 
+  guides(color = "none") + 
   theme_minimal() +
   labs(x = "Age Group", y = "Turnout Proportion", title = "2020 General Election Turnout by Age and State") +
   facet_wrap(~sii_state)
@@ -265,6 +267,7 @@ race_plot <- d_swing_combined_clean |>
   ggplot(mapping = aes(x = race, y = mean_turnout, color = sii_state)) +
   geom_col() +
   geom_label(aes(label = round(mean_turnout,digits = 2))) + 
+  guides(color = "none") + 
   theme_minimal() +
   labs(x = "Race", y = "Turnout Proportion", title = "2020 General Election Turnout by Race and State") +
   facet_wrap(~sii_state)
@@ -276,6 +279,7 @@ educ_plot <- d_swing_combined_clean |>
   ggplot(mapping = aes(x = educ, y = mean_turnout, color = sii_state)) +
   geom_col() +
   geom_label(aes(label = round(mean_turnout,digits = 2))) + 
+  guides(color = "none") + 
   theme_minimal() +
   labs(x = "Education Level", y = "Turnout Proportion", title = "2020 General Election Turnout by Education Level and State") +
   facet_wrap(~sii_state)
@@ -285,9 +289,10 @@ urbanicity_plot <- d_swing_combined_clean |> # (7)
   summarize(mean_turnout = mean(voted_2020, na.rm = T, digits = 2)) |>
   filter(!is.na(urb_rural)) |>
   filter(!is.na(density)) |>
-  ggplot(mapping = aes(x = urb_rural, y = mean_turnout, fill = density)) +
+  ggplot(mapping = aes(x = urb_rural, y = mean_turnout, fill = density, color = sii_state)) +
   geom_bar(stat = "identity", position = "dodge") +
-  scale_fill_manual(values = c("lightgrey", "darkgrey")) +
+  guides(color = "none") + 
+  scale_fill_manual(values = c("lightgrey", "grey")) +
   geom_label(aes(label = round(mean_turnout,digits = 2)), position = position_dodge(width = 1)) + 
   theme_minimal() +
   labs(x = "Education Level", y = "Turnout Proportion", title = "2020 General Election Turnout by Urbanicity and State") +
@@ -304,7 +309,7 @@ urbanicity_plot
 These results show that females and older people consistently turn out at higher rates than males and younger people in each of the selected states. Similarly, voters of a racial category other than the ones identified in voter files appear to have higher turnout rates than any other category in all of these states. Interestingly, Hispanic voters have the lowest turnout rates in each of these states except Nevada, voters with a vocational education tend to turn out more than those with only some college education, and there does not appear to be a strong difference between turnout for rural and suburban voters in each of these states. 
 
 
-```{r}
+```{r echo = FALSE, message = FALSE, warning = FALSE}
 # Additional code for Random Forest
 
 
@@ -345,9 +350,11 @@ These results show that females and older people consistently turn out at higher
 (5) Tibble Row help page - as used in previous blogs
 
 (6) aosmith. 2014. “Answer to ‘Why Are My Dplyr Group_by & Summarize Not Working Properly? (Name-Collision with Plyr).’” Stack Overflow. https://stackoverflow.com/a/26933112.; GGPlot help page; 
-stevec. 2020. “Answer to ‘Adding Data Labels above Geom_col() Chart with Ggplot2.’” Stack Overflow. https://stackoverflow.com/a/61574728.; GeomText Help Page; Geom_Col help page
+stevec. 2020. “Answer to ‘Adding Data Labels above Geom_col() Chart with Ggplot2.’” Stack Overflow. https://stackoverflow.com/a/61574728.; GeomText Help Page; Geom_Col help page; duhaime. 2018. “Answer to ‘Remove Legend Ggplot 2.2.’” Stack Overflow. https://stackoverflow.com/a/51923574.
 
-(7) Scale Manual Help Page; Geom Label Help Page; stefan. 2021. “Answer to ‘How to Center Labels over Side-by-Side Bar Chart in Ggplot2.’” Stack Overflow. https://stackoverflow.com/a/70197229.
+
+(7) Scale Manual Help Page; Geom Label Help Page; stefan. 2021. “Answer to ‘How to Center Labels over Side-by-Side Bar Chart in Ggplot2.’” Stack Overflow. https://stackoverflow.com/a/70197229.; duhaime. 2018. “Answer to ‘Remove Legend Ggplot 2.2.’” Stack Overflow. https://stackoverflow.com/a/51923574.
+
 
 
 # Data Sources

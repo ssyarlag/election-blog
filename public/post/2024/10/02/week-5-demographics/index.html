@@ -415,29 +415,6 @@
 <p>While I could not visualize how these demographics related to vote choice, as this information is not captured in voter rolls, I visualized variations in the proportion of people in each group who turned out to vote in the 2020 presidential election. This is not a perfect measure of turnout, especially for the 2024 election. Aside from the 2020 election being impacted by the COVID-19 pandemic, my use of voter roll data precludes me from accessing the most accurate measure of national turnout, because those who take the time to register on the voter roll (a necessary step to even vote) are logically more likely to turn out to vote at any given election than those who do not. However, keeping in mind that this data only represents those who have registered to vote, these results show some interesting conclusions.</p>
 <p><img src="https://example.org/post/2024/10/02/week-5-demographics/index_files/figure-html/unnamed-chunk-5-1.png" width="672" /><img src="https://example.org/post/2024/10/02/week-5-demographics/index_files/figure-html/unnamed-chunk-5-2.png" width="672" /><img src="https://example.org/post/2024/10/02/week-5-demographics/index_files/figure-html/unnamed-chunk-5-3.png" width="672" /><img src="https://example.org/post/2024/10/02/week-5-demographics/index_files/figure-html/unnamed-chunk-5-4.png" width="672" /><img src="https://example.org/post/2024/10/02/week-5-demographics/index_files/figure-html/unnamed-chunk-5-5.png" width="672" /></p>
 <p>These results show that females and older people consistently turn out at higher rates than males and younger people in each of the selected states. Similarly, voters of a racial category other than the ones identified in voter files appear to have higher turnout rates than any other category in all of these states. Interestingly, Hispanic voters have the lowest turnout rates in each of these states except Nevada, voters with a vocational education tend to turn out more than those with only some college education, and there does not appear to be a strong difference between turnout for rural and suburban voters in each of these states.</p>
-<pre><code class="language-r"># Additional code for Random Forest
-
-
-# # Random Forest
-# rf_fit &lt;- ranger(pres_vote ~ ., 
-#                  mtry = floor(n_features/3), 
-#                  respect.unordered.factors = &quot;order&quot;, 
-#                  seed &lt;- 02138,
-#                  classification = TRUE,
-#                  importance = &quot;permutation&quot;,
-#                  data = anes_train)
-
-# # Random Forest
-# # In-sample accuracy.
-# (cm.rf.is &lt;- confusionMatrix(rf_fit$predictions, anes_train$pres_vote))
-# 
-# # Out-of-sample accuracy. 
-# rf_pred &lt;- predict(rf_fit, data = anes_test)
-# (cm.rf.oos &lt;- confusionMatrix(rf_pred$predictions, anes_test$pres_vote))
-
-# rf_is &lt;- as.table(as.matrix(cm.rf.is))
-# rf_oos &lt;- as.table(as.matrix(cm.rf.oos))
-</code></pre>
 <h1 id="references">References:</h1>
 <p>“Answer to ‘How Do I Undo the Most Recent Local Commits in Git?’” 2009. Stack Overflow. <a href="https://stackoverflow.com/a/927386">https://stackoverflow.com/a/927386</a>.</p>
 <p>(1) Ahorn. 2020. “Answer to ‘Export R Data to Csv.’” Stack Overflow. <a href="https://stackoverflow.com/a/62006344">https://stackoverflow.com/a/62006344</a>.</p>
@@ -445,8 +422,8 @@
 <p>(4) GLM help page</p>
 <p>(5) Tibble Row help page - as used in previous blogs</p>
 <p>(6) aosmith. 2014. “Answer to ‘Why Are My Dplyr Group_by &amp; Summarize Not Working Properly? (Name-Collision with Plyr).’” Stack Overflow. <a href="https://stackoverflow.com/a/26933112.;">https://stackoverflow.com/a/26933112.;</a> GGPlot help page;
-stevec. 2020. “Answer to ‘Adding Data Labels above Geom_col() Chart with Ggplot2.’” Stack Overflow. <a href="https://stackoverflow.com/a/61574728.;">https://stackoverflow.com/a/61574728.;</a> GeomText Help Page; Geom_Col help page</p>
-<p>(7) Scale Manual Help Page; Geom Label Help Page; stefan. 2021. “Answer to ‘How to Center Labels over Side-by-Side Bar Chart in Ggplot2.’” Stack Overflow. <a href="https://stackoverflow.com/a/70197229">https://stackoverflow.com/a/70197229</a>.</p>
+stevec. 2020. “Answer to ‘Adding Data Labels above Geom_col() Chart with Ggplot2.’” Stack Overflow. <a href="https://stackoverflow.com/a/61574728.;">https://stackoverflow.com/a/61574728.;</a> GeomText Help Page; Geom_Col help page; duhaime. 2018. “Answer to ‘Remove Legend Ggplot 2.2.’” Stack Overflow. <a href="https://stackoverflow.com/a/51923574">https://stackoverflow.com/a/51923574</a>.</p>
+<p>(7) Scale Manual Help Page; Geom Label Help Page; stefan. 2021. “Answer to ‘How to Center Labels over Side-by-Side Bar Chart in Ggplot2.’” Stack Overflow. <a href="https://stackoverflow.com/a/70197229.;">https://stackoverflow.com/a/70197229.;</a> duhaime. 2018. “Answer to ‘Remove Legend Ggplot 2.2.’” Stack Overflow. <a href="https://stackoverflow.com/a/51923574">https://stackoverflow.com/a/51923574</a>.</p>
 <h1 id="data-sources">Data Sources</h1>
 <p>American National Election Survey (ANES)
 Subsetted version of state voter files</p>

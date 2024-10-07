@@ -401,30 +401,6 @@ These results show that females and older people consistently turn out at higher
 
 
 
-``` r
-# Additional code for Random Forest
-
-
-# # Random Forest
-# rf_fit <- ranger(pres_vote ~ ., 
-#                  mtry = floor(n_features/3), 
-#                  respect.unordered.factors = "order", 
-#                  seed <- 02138,
-#                  classification = TRUE,
-#                  importance = "permutation",
-#                  data = anes_train)
-
-# # Random Forest
-# # In-sample accuracy.
-# (cm.rf.is <- confusionMatrix(rf_fit$predictions, anes_train$pres_vote))
-# 
-# # Out-of-sample accuracy. 
-# rf_pred <- predict(rf_fit, data = anes_test)
-# (cm.rf.oos <- confusionMatrix(rf_pred$predictions, anes_test$pres_vote))
-
-# rf_is <- as.table(as.matrix(cm.rf.is))
-# rf_oos <- as.table(as.matrix(cm.rf.oos))
-```
 
 
 # References:
@@ -440,9 +416,11 @@ These results show that females and older people consistently turn out at higher
 (5) Tibble Row help page - as used in previous blogs
 
 (6) aosmith. 2014. “Answer to ‘Why Are My Dplyr Group_by & Summarize Not Working Properly? (Name-Collision with Plyr).’” Stack Overflow. https://stackoverflow.com/a/26933112.; GGPlot help page; 
-stevec. 2020. “Answer to ‘Adding Data Labels above Geom_col() Chart with Ggplot2.’” Stack Overflow. https://stackoverflow.com/a/61574728.; GeomText Help Page; Geom_Col help page
+stevec. 2020. “Answer to ‘Adding Data Labels above Geom_col() Chart with Ggplot2.’” Stack Overflow. https://stackoverflow.com/a/61574728.; GeomText Help Page; Geom_Col help page; duhaime. 2018. “Answer to ‘Remove Legend Ggplot 2.2.’” Stack Overflow. https://stackoverflow.com/a/51923574.
 
-(7) Scale Manual Help Page; Geom Label Help Page; stefan. 2021. “Answer to ‘How to Center Labels over Side-by-Side Bar Chart in Ggplot2.’” Stack Overflow. https://stackoverflow.com/a/70197229.
+
+(7) Scale Manual Help Page; Geom Label Help Page; stefan. 2021. “Answer to ‘How to Center Labels over Side-by-Side Bar Chart in Ggplot2.’” Stack Overflow. https://stackoverflow.com/a/70197229.; duhaime. 2018. “Answer to ‘Remove Legend Ggplot 2.2.’” Stack Overflow. https://stackoverflow.com/a/51923574.
+
 
 
 # Data Sources
