@@ -16,9 +16,11 @@ tags: []
 
 This week, we explore the impact of demographics on voter turnout, asking "What are the connections, if any, between demographics and voter turnout? Can demographics and turnout be used to predict election outcomes? If so, how and how well?" Thank you, as always, to Matthew Dardet for his starter code and coding assistance. I also thank Jacqui Schlesinger, my partner for this week's in-class presentation, for her valuable thoughts and advice on interesting visualizations.
 
-To answer this question, we worked to replicate the work of Kim and Zilinsky (2023) to a degree (3). This work sought to determine if certain demographic factors were actually predictive of voter behavior. While they also considered "tree-based machine learning models" (pg. 67), some code for which is included in a comment in my code for this blog, I focused on creating a logistic regression model here. In particular, I trained models to predict both presidential vote, as well as the act of turning out to vote itself, based on available demographic data from the 2016 American National Election Survey (ANES). I separated this data into two separate datasets (one for each model). The first dataset dropped all datapoints where a survey respondent's vote was not available (indicating that they did not vote). The second included all datapoints from the original ANES data that we used, but created a separate variable indicating turnout, where all responses not including their choice of candidate were marked as not having turned out to vote and those with any response marked as having turned out.
+To answer this question, we worked to replicate the work of Kim and Zilinsky (2023) to a degree (3). Their work sought to determine if certain demographic factors were actually predictive of voter behavior. While they also considered "tree-based machine learning models" (pg. 67), some code for which is included in a comment in my code for this blog, I focused on building a logistic regression model here. In particular, I trained models to predict both presidential vote and the act of turning out to vote itself, based on available demographic data from the 2016 American National Election Survey (ANES). 
 
-Importantly, building this model required creating numerous factor variables. Given that certain demographic variables like gender naturally exist in categories, rather than a numeric value that can increase in value in conjunction with an outcome like vote choice, I created separate dummies to represent each category of several model inputs, namely gender, race, religion, marriage status, homeownership status, and work status. 
+I separated this data into two datasets (one for each model). The first dataset, used for my presidential vote choice model, dropped all datapoints where a survey respondent's vote was not available (indicating that they did not vote). The second, used for my turnout model, incorporated all datapoints from the original ANES data that we used, but included a separate variable indicating turnout, where all responses not including their choice of candidate were marked as not having turned out to vote and those with any response marked as having turned out.
+
+Importantly, building this model required creating numerous factor variables. Given that certain demographic variables like gender naturally exist in categories, rather than as a numeric quantity that can increase in value in conjunction with an outcome like vote choice, I created separate dummies to represent each category of several model inputs, namely gender, race, religion, marriage status, homeownership status, and work status. 
 
 
 
@@ -383,21 +385,30 @@ Importantly, building this model required creating numerous factor variables. Gi
 
 
 
+
+``` r
+# Print table after a few lines to have gap
+knitr::kable(rbind(turnout_val, pres_vote_val), col.names = c("Value", "In-Sample Accuracy", "Out-of-Sample Accuracy"))
+```
+
+
+
 |Value             | In-Sample Accuracy| Out-of-Sample Accuracy|
 |:-----------------|------------------:|----------------------:|
 |Turnout           |             0.6711|                 0.6615|
 |Presidential Vote |             0.7370|                 0.7354|
 
-It appears that a logistic regression of these selected variables only predicts both a voter's decision to turn out and the likelihood of their vote for a particular party about 65-75% of the time. This provides relatively low certainty of an accurate prediction, aligning with Kim and Zilinsky's findings, though the model that I specify here (slightly different from theirs) provides a bit more accuracy. However, these regressions appeared to have some statistically significant coefficients. Interestingly, education level and identification as someone of multiple races (or one that was not otherwise identified by the ANES) or Black were the only variables that were statistically significant predictors of both turnout and vote choice (assuming an alpha level of 0.05). Turnout was also largely predicted by income, unemployment status, and age above 45, while vote choice was predicted by identification as Hispanic, Catholicism, Judaism, other religion, church attendance frequency, location in the US South, status as a homemaker, homeownership, and marriage status. Most interesting to me, though, is that gender does not appear to significantly predict either variable.
 
-Given these results, I wanted to visualize how several of these characteristics have played out in several key battleground states, using voter roll data generously provided by Statara. I produced graphs for Arizona, Michigan, Georgia, and Nevada, while my partner for this week's in-class presentation, Jacqui, has focused on making maps for Wisconsin, Pennsylvania, and North Carolina.
+It appears that a logistic regression of these selected variables only predicts both a voter's decision to turn out and the likelihood of their vote for a particular party about 65-75% of the time. Although these models are slightly different from Kim and Zilinsky's and are slightly more accurate, they nonetheless provide relatively low certainty of an accurate prediction. However, these regressions appeared to have some statistically significant coefficients. Interestingly, education level and identification as someone of multiple races (or one that was not otherwise identified by the ANES) or Black were the only variables that were statistically significant predictors of both turnout and vote choice (assuming an alpha level of 0.05). Turnout was also largely predicted by income, unemployment status, and age above 45, while vote choice was predicted by identification as Hispanic, Catholicism, Judaism, other religion, church attendance frequency, location in the US South, status as a homemaker, homeownership, and marriage status. Most interesting to me, though, is that gender does not appear to significantly predict either outcome.
 
-While I could not visualize how these demographics related to vote choice, as this information is not captured in voter rolls, I visualized variations in the proportion of people in each group who turned out to vote in the 2020 presidential election. This is not a perfect measure of turnout, especially for the 2024 election. Aside from the 2020 election being impacted by the COVID-19 pandemic, my use of voter roll data precludes me from accessing the most accurate measure of national turnout, because those who take the time to register on the voter roll (a necessary step to even vote) are logically more likely to turn out to vote at any given election than those who do not. However, keeping in mind that this data only represents those who have registered to vote, these results show some interesting conclusions.
+Given these results, I wanted to visualize how several of these characteristics have played out in key battleground states, using voter roll data generously provided by Statara. This information could theoretically provide important information regarding how my findings from survey data could translate into the real world. I produced graphs for Arizona, Michigan, Georgia, and Nevada, while my partner for this week's in-class presentation, Jacqui, focused on making graphs for Wisconsin, Pennsylvania, and North Carolina.
+
+While I could not visualize how these demographics related to vote choice, as this information is not captured in voter rolls, I visualized variations in the proportion of people in each group who turned out to vote in the 2020 presidential election. This is not a perfect measure of turnout, especially for the 2024 election. Aside from the 2020 election being impacted by the COVID-19 pandemic, my use of voter roll data precludes me from accessing the most accurate measure of national turnout, because those who take the time to register on the voter roll (a necessary step to even vote) are logically more likely to turn out to vote at any given election than those who do not (6). However, keeping in mind that this data only represents those who have registered to vote, these results show some interesting conclusions.
 
 
-<img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-5-1.png" width="672" /><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-5-2.png" width="672" /><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-5-3.png" width="672" /><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-5-4.png" width="672" /><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-5-5.png" width="672" />
+<img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-6-1.png" width="672" /><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-6-2.png" width="672" /><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-6-3.png" width="672" /><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-6-4.png" width="672" /><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-6-5.png" width="672" />
 
-These results show that females and older people consistently turn out at higher rates than males and younger people in each of the selected states. Similarly, voters of a racial category other than the ones identified in voter files appear to have higher turnout rates than any other category in all of these states. Interestingly, Hispanic voters have the lowest turnout rates in each of these states except Nevada, voters with a vocational education tend to turn out more than those with only some college education, and there does not appear to be a strong difference between turnout for rural and suburban voters in each of these states. 
+These results show that females and older people consistently turn out at higher rates than males and younger people in each of the selected states. This is interesting when considering that our logistic regression found this difference to not be statistically significant in a national sample. Similarly, voters of a racial category other than the ones identified in voter files appear to have higher turnout rates than any other category in all of these states. Interestingly, Hispanic voters have the lowest turnout rates in each of these states except Nevada, voters with a vocational education tend to turn out more than those with only some college education, and there does not appear to be a strong difference between turnout for rural and suburban voters in each of these states. 
 
 
 
@@ -417,15 +428,19 @@ These results show that females and older people consistently turn out at higher
 
 (5) Tibble Row help page - as used in previous blogs
 
-(6) aosmith. 2014. “Answer to ‘Why Are My Dplyr Group_by & Summarize Not Working Properly? (Name-Collision with Plyr).’” Stack Overflow. https://stackoverflow.com/a/26933112.; GGPlot help page; 
+(6) Hartig, Hannah, Andrew Daniller, Scott Keeter, and Ted Van Green. 2023. “1. Voter Turnout, 2018-2022.” Pew Research Center (blog). July 12, 2023. https://www.pewresearch.org/politics/2023/07/12/voter-turnout-2018-2022/.
+
+
+(7) aosmith. 2014. “Answer to ‘Why Are My Dplyr Group_by & Summarize Not Working Properly? (Name-Collision with Plyr).’” Stack Overflow. https://stackoverflow.com/a/26933112.; GGPlot help page; 
 stevec. 2020. “Answer to ‘Adding Data Labels above Geom_col() Chart with Ggplot2.’” Stack Overflow. https://stackoverflow.com/a/61574728.; GeomText Help Page; Geom_Col help page; duhaime. 2018. “Answer to ‘Remove Legend Ggplot 2.2.’” Stack Overflow. https://stackoverflow.com/a/51923574.
 
 
-(7) Scale Manual Help Page; Geom Label Help Page; stefan. 2021. “Answer to ‘How to Center Labels over Side-by-Side Bar Chart in Ggplot2.’” Stack Overflow. https://stackoverflow.com/a/70197229.; duhaime. 2018. “Answer to ‘Remove Legend Ggplot 2.2.’” Stack Overflow. https://stackoverflow.com/a/51923574.
+(8) Scale Manual Help Page; Geom Label Help Page; stefan. 2021. “Answer to ‘How to Center Labels over Side-by-Side Bar Chart in Ggplot2.’” Stack Overflow. https://stackoverflow.com/a/70197229.; duhaime. 2018. “Answer to ‘Remove Legend Ggplot 2.2.’” Stack Overflow. https://stackoverflow.com/a/51923574.
 
 
 
 # Data Sources
 
 American National Election Survey (ANES)
-Subsetted version of state voter files
+
+Subsetted version of state voter files (Statara)
