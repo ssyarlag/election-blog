@@ -12,11 +12,12 @@ tags: []
 
 
 
-This week, we explore the impact of campaign ads on election outcomes, implementing a Bayesian prediction model. My thanks as always to Matthew Dardet for his generous starter code, especially in the implementation of the Bayesian prediction model. 
+This week, we explore the impact of campaign ads on election outcomes. My thanks as always to Matthew Dardet for his generous starter code. 
 
 I start by including some visualizations and charts, also originally put together by Matt, to help better understand advertising trends.
 
 <img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-2-1.png" width="672" />
+
 It appears that economic themes, including employment, budget, and taxes, are common themes in ads nationwide, potentially suggesting that campaigns believe that information related to the economy is a key topic in the minds of many voters and therefore must be addressed. I was interested, though, in seeing how this translated into social media ads in more recent elections. Using Facebook data from the most recent presidential election, subsetted to only include advertisements directly launched by the Biden or Trump campaigns, I produced a visualization that compared the number of ads launched, the amount of spending, and polling support over time.
 
 
@@ -26,7 +27,7 @@ It appears that economic themes, including employment, budget, and taxes, are co
 <img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-4-1.png" width="672" />
 
 
---- 
+When comparing the graphs, it seems that although the Trump campaign launched more ads over time, they were significantly outspent by the Biden campaign, which may indicate differences in the ad strategies that were used for outreach. However, from a cursory visual view, it doesn't appear that these trends substantially affect polling outcomes. To address this further, I ran a regression of both advertising indicators on polling support for each party.
 
 
 <table style="NAborder-bottom: 0; width: auto !important; margin-left: auto; margin-right: auto;" class="table">
@@ -114,7 +115,7 @@ It appears that economic themes, including employment, budget, and taxes, are co
 </table>
 
 
-When comparing the graphs, it seems that although the Trump campaign launched more ads over time, they were significantly outspend across the election by the Biden campaign, which may indicate differences in the ad strategies that were used for outreach. However, from a cursory visual view, it doesn't appear that these trends substantially affect polling outcomes. To address this further, I ran a regression of both advertising indicators on polling support for each party. Though increased spending appeared to affect Republican support and an increase in total number of ads affected support for both candidates significantly, the magnitude of this change appeared very very small. Though the competitiveness of elections could mean that even very small changes are meaningful (a point mentioned in our recent course lectures), the fact that we polling support is not a perfect predictor of election outcomes and our lack of data for other important variables like voter use of Facebook in this situation means that it is hard to draw any meaningful conclusions. A potential future analysis may want to try analyzing this relationship at the state level to increase the power of these conclusions. While our course has access to overall campaign ad coverage and spending data by state and candidate, as well as state level polling data, analyzing this problem in the context of social media is even more difficult, because a social media ad may not hew to geographic boundaries as effectively as a TV or radio ad. In other words, while we could develop a proxy for Biden campaign spending in Wisconsin by measuring spending on the page "Wisconsin for Biden," it is unclear if ads from national-level pages may have been more effective in certain geographic regions. 
+Though increased spending appeared to affect Republican support and an increase in total number of ads affected support for both candidates significantly, the magnitude of this change appeared very very small. While the competitiveness of elections could mean that even very small changes are meaningful (a point mentioned in our recent course lectures), the fact that we polling support is not a perfect predictor of election outcomes and our lack of data for other important variables like voter use of Facebook in this situation means that it is hard to draw any meaningful conclusions. A potential future analysis may want to try analyzing this relationship at the state level to increase the power of these conclusions. While our course has access to overall campaign ad coverage and spending data by state and candidate, as well as state level polling data, analyzing this problem in the context of social media is even more difficult, because a social media ad may not hew to geographic boundaries as effectively as a TV or radio ad. In other words, while we could develop a proxy for Biden campaign spending in Wisconsin by measuring spending on the page "Wisconsin for Biden," it is unclear if ads from national-level pages may have been more effective in certain geographic regions. 
 
 However, given the data that we do have, if we were to assume that advertising had a limited effect on national level outcomes, this would further the hypothesis (mentioned in our most recent Videocast lecture by Professor Enos, as well as implied by Huber and Arcenaux- 5) that broad methods of advertising may not drive campaign outcomes. Instead, if there is to be a deviation from predictions based on "fundamentals" at all, outreach to voters may need to be more targeted. It is also important to acknowledge, though, that we only have access to data from 2020 Facebook Campaign ads for the purpose of this course. Perhaps these trends may be different in other elections or if incorporating other forms of online advertising, which notably has the potential to be very targeted (6). 
 

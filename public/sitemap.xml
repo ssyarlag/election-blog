@@ -2,32 +2,32 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://example.org/</loc>
+    <loc>http://localhost:4321/</loc>
     <lastmod>2024-10-09T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://example.org/post/</loc>
+    <loc>http://localhost:4321/post/</loc>
     <lastmod>2024-10-09T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://example.org/post/2024/10/09/week-6-campaign-ads/</loc>
+    <loc>http://localhost:4321/post/2024/10/09/week-6-campaign-ads/</loc>
     <lastmod>2024-10-09T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://example.org/post/2024/10/02/week-5-demographics/</loc>
+    <loc>http://localhost:4321/post/2024/10/02/week-5-demographics/</loc>
     <lastmod>2024-10-02T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://example.org/post/2024/09/25/week-4-incumbency/</loc>
+    <loc>http://localhost:4321/post/2024/09/25/week-4-incumbency/</loc>
     <lastmod>2024-09-25T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://example.org/post/2024/09/19/week-3-polling/</loc>
+    <loc>http://localhost:4321/post/2024/09/19/week-3-polling/</loc>
     <lastmod>2024-09-19T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://example.org/post/2024/09/11/week-2-elections-and-the-economy/</loc>
+    <loc>http://localhost:4321/post/2024/09/11/week-2-elections-and-the-economy/</loc>
     <lastmod>2024-09-11T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://example.org/post/2024/09/07/week-1-initial-analyses/</loc>
+    <loc>http://localhost:4321/post/2024/09/07/week-1-initial-analyses/</loc>
     <lastmod>2024-09-07T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://example.org/categories/</loc>
+    <loc>http://localhost:4321/categories/</loc>
   </url><url>
-    <loc>https://example.org/tags/</loc>
+    <loc>http://localhost:4321/tags/</loc>
   </url>
 </urlset>
