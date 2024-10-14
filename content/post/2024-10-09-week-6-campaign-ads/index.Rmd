@@ -1,0 +1,229 @@
+---
+title: Week 6 - Campaign Ads
+author: Shriya Yarlagadda
+date: '2024-10-09'
+slug: week-6-campaign-ads
+categories: []
+tags: []
+---
+
+```{r echo = FALSE, message = FALSE, warning = FALSE }
+# Load packages and data
+library(car)
+library(caret)
+library(cowplot)
+library(curl)
+library(CVXR)
+library(foreign)
+library(geofacet)
+library(glmnet)
+library(haven)
+library(Hmisc)
+library(janitor)
+library(kableExtra)
+library(lmtest)
+library(maps)
+library(mlr3)
+library(modelsummary)
+library(patchwork)
+library(PerformanceAnalytics)
+library(randomForest)
+library(ranger)
+library(RColorBrewer)
+library(rstan)
+library(scales)
+library(sf)
+library(shinystan)
+library(tidyverse)
+library(viridis)
+
+# Read ads datasets. 
+ad_campaigns <- read_csv("ad_campaigns_2000-2012.csv")
+ad_creative <- read_csv("ad_creative_2000-2012.csv")
+ads_2020 <- read_csv("ads_2020.csv")
+facebook_ads_2020 <- read_csv("facebook_ads_2020.csv")
+facebook_ads_biden_2020 <- read_csv("facebook_ads_biden_2020.csv")
+campaign_spending <- read_csv("FEC_contributions_by_state_2008_2024.csv")
+
+# Read polling data. 
+d_polls <- read_csv("national_polls_1968-2024.csv")
+d_state_polls <- read_csv("state_polls_1968-2024.csv")
+
+# Read turnout data. 
+d_turnout <- read_csv("state_turnout_1980_2022.csv")
+
+# Read popular vote datasets. 
+d_popvote <- read_csv("popvote_1948_2020.csv")
+d_state_popvote <- read_csv("state_popvote_1948_2020.csv")
+
+# Read elector distribution dataset. 
+d_ec <- read_csv("corrected_ec_1948_2024.csv")
+```
+
+
+This week, we explore the impact of campaign ads on election outcomes, implementing a Bayesian prediction model. My thanks as always to Matthew Dardet for his generous starter code, especially in the implementation of the Bayesian prediction model. 
+
+I start by including some visualizations and charts, also originally put together by Matt, to help better understand advertising trends.
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+# (1)
+
+## The Elections and Their Issues
+top_issues <- ad_campaigns |> 
+  left_join(ad_creative) |>
+  filter(!grepl("None|Other", ad_issue)) |>
+  group_by(cycle, ad_issue) |> summarise(n=n()) |> top_n(5, n)
+
+### making each plot in a grid to have its own x-axis (issue name)
+### is tricky with `facet_wrap`, so we use this package `cowplot`
+### which allows us to take a list of separate plots and grid them together
+
+plist <- lapply(c(2000,2004,2008,2012), function(c) {
+  top_issues |> filter(cycle == c) |> 
+    ggplot(aes(x = reorder(ad_issue, n), y = n)) +
+    geom_bar(stat = "identity") + coord_flip() +
+    xlab("") + ylab("Number of Ads Aired") + ggtitle(paste("Top 5 Ad\nIssues in",c)) + theme_bw()
+  
+})
+
+cowplot::plot_grid(plotlist = plist, nrow = 2, ncol = 2, align = "hv")
+
+
+```
+It appears that economic themes, including employment, budget, and taxes, are common themes in ads nationwide, potentially suggesting that campaigns believe that information related to the economy is a key topic in the minds of many voters and therefore must be addressed. I was interested, though, in seeing how this translated into social media ads in more recent elections. Using Facebook data from the most recent presidential election, subsetted to only include advertisements directly launched by the Biden or Trump campaigns, I produced a visualization that compared the number of ads launched, the amount of spending, and polling support over time.
+
+
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+# Make Trump and Biden campaign ads dataset
+# (2)
+trump_fb_ads <- facebook_ads_2020 |>
+  filter(str_detect(page_name, "Trump"))
+
+# Initial step to explore what Trump's campaign fund name is
+
+trump_campaign_ads <- trump_fb_ads |>
+  filter(str_detect(disclaimer, "DONALD J. TRUMP FOR PRESIDENT, INC.")) 
+  
+trump_campaign_ads$party = "Trump"
+facebook_ads_biden_2020$party = "Biden"
+
+trump_biden_fb_ads <- bind_rows(trump_campaign_ads,facebook_ads_biden_2020)
+```
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+
+# (3)
+
+# Save dates where spending data is available
+trump_campaign_ads_st_dates <- trump_campaign_ads$from_date
+
+# Save polling data only for those dates
+polls_2020 <- d_polls |>
+  filter(poll_date %in% trump_campaign_ads_st_dates)
+
+# Clean Combined Ad Dataset
+trump_biden_fb_ads <- trump_biden_fb_ads |>
+  mutate(party = ifelse(party == "Biden", "DEM", "REP"))
+
+# ----
+
+# Calculate number of ads, visualize ads over time
+ad_count_graph <- trump_biden_fb_ads |>
+  group_by(from_date, party) |>
+  summarize(count = sum(num_of_new_ads)) |>
+  ggplot(aes(x = from_date, y = count, color = party)) +
+  geom_line() +
+  scale_color_manual(values = c("steelblue1", "red2")) +
+  theme_light() +
+  labs(x = "Date (2020)", y = "Number of Ads") + 
+  theme(legend.position = "none")
+
+
+# Group FB spending information by date and summarize mean spending, plotting over time
+ad_spend_graph <- trump_biden_fb_ads |>
+  group_by(from_date, party) |>
+  summarize(spend = sum(new_spend)) |>
+  ggplot(aes(x = from_date, y = spend, color = party)) +
+  geom_line() +
+  scale_color_manual(values = c("steelblue1", "red2")) +
+  theme_light() +
+  labs(x = "Date (2020)", y = "Ad Spending in Dollars", title = "Number of Facebook Campaign Ads, Facebook Campaign Ad Spending, and Poll Support Over Time") +
+  theme(plot.title = element_text(hjust = 0.5),
+        legend.position = "none")
+
+# Graph polling support over time
+poll_plot <- polls_2020 |>
+  ggplot(aes(x = poll_date, color = party)) +
+  geom_line(aes(y = poll_support)) +
+  scale_color_manual(values = c("steelblue1", "red2")) +
+  theme_light() +
+  ylim(40, 60) + 
+  labs(x = "Date (2020)", y = "Poll Support per Candidate")
+
+
+ad_count_graph + ad_spend_graph + poll_plot
+
+# Combine summarized spending and ad total data with polling data
+
+sum_spend_ads <- trump_biden_fb_ads |>
+  group_by(from_date, party) |>
+  summarize(count = sum(num_of_new_ads),
+            spend = sum(new_spend))
+
+poll_sum_spend_ads <- left_join(sum_spend_ads, polls_2020, join_by(from_date == poll_date, party))
+
+```
+
+
+
+
+--- 
+
+
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+# (4)
+# Regress number of ads and spending on polls support for each party
+
+dem_ads_polls <- poll_sum_spend_ads |>
+  filter(party == "DEM",
+         count != 0,
+         spend != 0)
+
+rep_ads_polls <- poll_sum_spend_ads |>
+  filter(party == "REP",
+         count != 0,
+         spend != 0)
+
+dem_reg <- lm(poll_support ~ spend + count, data = dem_ads_polls)
+
+rep_reg <- lm(poll_support ~ spend + count, data = rep_ads_polls)
+
+modelsummary(list("Democratic Party" = dem_reg, "Republican Party" = rep_reg), stars = TRUE, output = "kableExtra")
+```
+
+
+
+
+
+
+
+
+
+References:
+“Answer to ‘How Do I Undo the Most Recent Local Commits in Git?’” 2009. Stack Overflow. https://stackoverflow.com/a/927386.
+
+(1) Pivot Longer Help Page
+(2) Firke, Sam. 2015. “Answer to ‘Selecting Data Frame Rows Based on Partial String Match in a Column.’” Stack Overflow. https://stackoverflow.com/a/31273659; 17 Merging | Data Wrangling with R. n.d. Accessed October 13, 2024. https://users.ssc.wisc.edu/~hemken/Rworkshops/dwr/merge-tidy.html.
+(3) Left Join help page; “Dual Y Axis with R and Ggplot2 – the R Graph Gallery.” n.d. Accessed October 14, 2024. https://r-graph-gallery.com/line-chart-dual-Y-axis-ggplot2.html.; “Visualizing Time Series Data with Ggplot2 - Tilburg Science Hub.” n.d. Accessed October 13, 2024. https://tilburgsciencehub.com/topics/visualization/data-visualization/graphs-charts/time-series-ggplot2/.; ale_ish. 2022. “Answer to ‘Correlation of Multiple Time Series among the Same Variables in R.’” Stack Overflow. https://stackoverflow.com/a/71892869.; Sec_Axis help page; Scale Y Manual help page; Stibu. 2017. “Answer to ‘Center Plot Title in Ggplot2.’” Stack Overflow. https://stackoverflow.com/a/42556457.; user3490026. 2016. “Answer to ‘Remove Legend Ggplot 2.2.’” Stack Overflow. https://stackoverflow.com/a/35622358.
+
+(4)
+
+
+
+Data Sources:
+
+(1) Wesleyan Media Project - Ad Data
+
+(2) 
