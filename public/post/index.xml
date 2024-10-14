@@ -2,52 +2,52 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Posts on A minimal Hugo website</title>
-    <link>http://localhost:4321/post/</link>
+    <link>https://example.org/post/</link>
     <description>Recent content in Posts on A minimal Hugo website</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Wed, 09 Oct 2024 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://localhost:4321/post/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://example.org/post/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Week 6 - Campaign Ads</title>
-      <link>http://localhost:4321/post/2024/10/09/week-6-campaign-ads/</link>
+      <link>https://example.org/post/2024/10/09/week-6-campaign-ads/</link>
       <pubDate>Wed, 09 Oct 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:4321/post/2024/10/09/week-6-campaign-ads/</guid>
-      <description>&lt;script src=&#34;http://localhost:4321/post/2024/10/09/week-6-campaign-ads/index_files/kePrint/kePrint.js&#34;&gt;&lt;/script&gt;&#xA;&lt;link href=&#34;http://localhost:4321/post/2024/10/09/week-6-campaign-ads/index_files/lightable/lightable.css&#34; rel=&#34;stylesheet&#34; /&gt;&#xA;&lt;p&gt;This week, we explore the impact of campaign ads on election outcomes. My thanks as always to Matthew Dardet for his generous starter code.&lt;/p&gt;&#xA;&lt;p&gt;I start by including some visualizations and charts, also originally put together by Matt, to help better understand advertising trends.&lt;/p&gt;&#xA;&lt;img src=&#34;http://localhost:4321/post/2024/10/09/week-6-campaign-ads/index_files/figure-html/unnamed-chunk-2-1.png&#34; width=&#34;672&#34; /&gt;&#xA;&lt;p&gt;It appears that economic themes, including employment, budget, and taxes, are common themes in ads nationwide, potentially suggesting that campaigns believe that information related to the economy is a key topic in the minds of many voters and therefore must be addressed. I was interested, though, in seeing how this translated into social media ads in more recent elections. Using Facebook data from the most recent presidential election, subsetted to only include advertisements directly launched by the Biden or Trump campaigns, I produced a visualization that compared the number of ads launched, the amount of spending, and polling support over time.&lt;/p&gt;</description>
+      <guid>https://example.org/post/2024/10/09/week-6-campaign-ads/</guid>
+      <description>&lt;script src=&#34;https://example.org/post/2024/10/09/week-6-campaign-ads/index_files/kePrint/kePrint.js&#34;&gt;&lt;/script&gt;&#xA;&lt;link href=&#34;https://example.org/post/2024/10/09/week-6-campaign-ads/index_files/lightable/lightable.css&#34; rel=&#34;stylesheet&#34; /&gt;&#xA;&lt;p&gt;This week, we explore the impact of campaign ads on election outcomes. My thanks as always to Matthew Dardet for his generous starter code.&lt;/p&gt;&#xA;&lt;p&gt;I start by including some visualizations, originally put together by Matt, to help better understand advertising trends.&lt;/p&gt;&#xA;&lt;img src=&#34;https://example.org/post/2024/10/09/week-6-campaign-ads/index_files/figure-html/unnamed-chunk-2-1.png&#34; width=&#34;672&#34; /&gt;&#xA;&lt;p&gt;It appears that economic themes, including employment, budget, and taxes, are common themes in ads nationwide, potentially suggesting that campaigns believe that information related to the economy is a key topic in the minds of many voters and therefore must be addressed. I was interested, though, in seeing trends in social media ads in more recent elections. Using Facebook data from the most recent presidential election, subsetted to only include advertisements directly launched by the Biden or Trump campaigns, I produced a visualization that compared the number of ads launched, the amount of spending, and polling support over time.&lt;/p&gt;</description>
     </item>
     <item>
       <title>Week 5 - Demographics</title>
-      <link>http://localhost:4321/post/2024/10/02/week-5-demographics/</link>
+      <link>https://example.org/post/2024/10/02/week-5-demographics/</link>
       <pubDate>Wed, 02 Oct 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:4321/post/2024/10/02/week-5-demographics/</guid>
-      <description>&lt;script src=&#34;http://localhost:4321/post/2024/10/02/week-5-demographics/index_files/kePrint/kePrint.js&#34;&gt;&lt;/script&gt;&#xA;&lt;link href=&#34;http://localhost:4321/post/2024/10/02/week-5-demographics/index_files/lightable/lightable.css&#34; rel=&#34;stylesheet&#34; /&gt;&#xA;&lt;p&gt;This week, we explore the impact of demographics on voter turnout, asking &amp;ldquo;What are the connections, if any, between demographics and voter turnout? Can demographics and turnout be used to predict election outcomes? If so, how and how well?&amp;rdquo; Thank you, as always, to Matthew Dardet for his starter code and coding assistance. I also thank Jacqui Schlesinger, my partner for this week&amp;rsquo;s in-class presentation, for her valuable thoughts and advice on interesting visualizations.&lt;/p&gt;</description>
+      <guid>https://example.org/post/2024/10/02/week-5-demographics/</guid>
+      <description>&lt;script src=&#34;https://example.org/post/2024/10/02/week-5-demographics/index_files/kePrint/kePrint.js&#34;&gt;&lt;/script&gt;&#xA;&lt;link href=&#34;https://example.org/post/2024/10/02/week-5-demographics/index_files/lightable/lightable.css&#34; rel=&#34;stylesheet&#34; /&gt;&#xA;&lt;p&gt;This week, we explore the impact of demographics on voter turnout, asking &amp;ldquo;What are the connections, if any, between demographics and voter turnout? Can demographics and turnout be used to predict election outcomes? If so, how and how well?&amp;rdquo; Thank you, as always, to Matthew Dardet for his starter code and coding assistance. I also thank Jacqui Schlesinger, my partner for this week&amp;rsquo;s in-class presentation, for her valuable thoughts and advice on interesting visualizations.&lt;/p&gt;</description>
     </item>
     <item>
       <title>Week 4: Incumbency</title>
-      <link>http://localhost:4321/post/2024/09/25/week-4-incumbency/</link>
+      <link>https://example.org/post/2024/09/25/week-4-incumbency/</link>
       <pubDate>Wed, 25 Sep 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:4321/post/2024/09/25/week-4-incumbency/</guid>
-      <description>&lt;script src=&#34;http://localhost:4321/post/2024/09/25/week-4-incumbency/index_files/kePrint/kePrint.js&#34;&gt;&lt;/script&gt;&#xA;&lt;link href=&#34;http://localhost:4321/post/2024/09/25/week-4-incumbency/index_files/lightable/lightable.css&#34; rel=&#34;stylesheet&#34; /&gt;&#xA;&lt;p&gt;In this week&amp;rsquo;s lab, we explore the impact of candidate or party incumbency on presidential election outcomes. More specifically, we ask &amp;ldquo;How should we treat the incumbency advantage in our 2024 electoral forecasts?&amp;rdquo;. As always, my thanks to Matthew Dardet for his helpful starter code.&lt;/p&gt;&#xA;&lt;p&gt;This week, we reviewed a canonically successful model used to predict the advantage of incumbency: the Time for Change Model (TFC) by Alan Abramowitz. This relatively simple model &amp;ndash; an OLS regression with independent variables of Quarter 2 GDP Growth, June Gallup poll approval, and whether or not one is an incumbent &amp;ndash; is modeled here. We exclude 2020 data here, given that (as we have shown in previous blogs) the year is an outlier in terms of GDP growth.&lt;/p&gt;</description>
+      <guid>https://example.org/post/2024/09/25/week-4-incumbency/</guid>
+      <description>&lt;script src=&#34;https://example.org/post/2024/09/25/week-4-incumbency/index_files/kePrint/kePrint.js&#34;&gt;&lt;/script&gt;&#xA;&lt;link href=&#34;https://example.org/post/2024/09/25/week-4-incumbency/index_files/lightable/lightable.css&#34; rel=&#34;stylesheet&#34; /&gt;&#xA;&lt;p&gt;In this week&amp;rsquo;s lab, we explore the impact of candidate or party incumbency on presidential election outcomes. More specifically, we ask &amp;ldquo;How should we treat the incumbency advantage in our 2024 electoral forecasts?&amp;rdquo;. As always, my thanks to Matthew Dardet for his helpful starter code.&lt;/p&gt;&#xA;&lt;p&gt;This week, we reviewed a canonically successful model used to predict the advantage of incumbency: the Time for Change Model (TFC) by Alan Abramowitz. This relatively simple model &amp;ndash; an OLS regression with independent variables of Quarter 2 GDP Growth, June Gallup poll approval, and whether or not one is an incumbent &amp;ndash; is modeled here. We exclude 2020 data here, given that (as we have shown in previous blogs) the year is an outlier in terms of GDP growth.&lt;/p&gt;</description>
     </item>
     <item>
       <title>Week 3 - Polling</title>
-      <link>http://localhost:4321/post/2024/09/19/week-3-polling/</link>
+      <link>https://example.org/post/2024/09/19/week-3-polling/</link>
       <pubDate>Thu, 19 Sep 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:4321/post/2024/09/19/week-3-polling/</guid>
+      <guid>https://example.org/post/2024/09/19/week-3-polling/</guid>
       <description>&lt;p&gt;In this week&amp;rsquo;s post, we focus on analyzing polling data. Our research question is &amp;ldquo;How can we best use polls to predict election outcomes?&amp;rdquo;. My thanks again to Matthew Dardet for his generous starter code.&lt;/p&gt;&#xA;&lt;p&gt;For the purpose of this analysis, we focus on polling data from FiveThirtyEight. We began by visualizing the available data from the past several presidential elections to help understand how polls changes relative to the actual election outcome.&lt;/p&gt;</description>
     </item>
     <item>
       <title>Week 2: Elections and the Economy</title>
-      <link>http://localhost:4321/post/2024/09/11/week-2-elections-and-the-economy/</link>
+      <link>https://example.org/post/2024/09/11/week-2-elections-and-the-economy/</link>
       <pubDate>Wed, 11 Sep 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:4321/post/2024/09/11/week-2-elections-and-the-economy/</guid>
+      <guid>https://example.org/post/2024/09/11/week-2-elections-and-the-economy/</guid>
       <description>&lt;p&gt;In this week&amp;rsquo;s lab, we focus on understanding how well the status of the economy predicts the outcome of an election. In particular, we aim to quantify this uncertainty. My thanks again to Matt Dardet for his generous starter code in section, much of which I have used/adapted here.&lt;/p&gt;&#xA;&lt;p&gt;First, we explored how well the economy &lt;em&gt;correlated&lt;/em&gt; with election outcomes by computing the bivariate correlation between quarterly GDP growth and incumbent two-party vote share. We began by reviewing a scatterplot of this data.&lt;/p&gt;</description>
     </item>
     <item>
       <title>Week 1 - Initial Analyses</title>
-      <link>http://localhost:4321/post/2024/09/07/week-1-initial-analyses/</link>
+      <link>https://example.org/post/2024/09/07/week-1-initial-analyses/</link>
       <pubDate>Sat, 07 Sep 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:4321/post/2024/09/07/week-1-initial-analyses/</guid>
+      <guid>https://example.org/post/2024/09/07/week-1-initial-analyses/</guid>
       <description>&lt;p&gt;In this first blog post, I conduct some initial analyses of historical American presidential elections. Using &lt;em&gt;popular vote data from 1948-2020 (provided by the course)&lt;/em&gt;, I analyze how competitive elections are and the proportion of states that vote blue/red. My thanks to Matt Dardet for writing much of this code during and before our weekly section, as well as ShuXin Ho for helping me identify latitude/longitude loading bugs in my maps when we were initially building them in section.&lt;/p&gt;</description>
     </item>
   </channel>
