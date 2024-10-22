@@ -1,0 +1,424 @@
+---
+title: Week 7 - Ground Game
+author: Shriya Yarlagadda
+date: '2024-10-16'
+slug: week-7-ground-game
+categories: []
+tags: []
+---
+
+This week, we focus on exploring the impacts of the "ground game" -- a campaign's strategy of individually reaching out to voters in person. Thank you again to Matt Dardet for his helpful starter code.
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+library(ggpubr)
+library(glmnet)
+library(haven)
+library(kableExtra)
+library(maps)
+library(modelsummary)
+library(sf)
+library(tigris)
+library(tidyverse)
+library(urbnmapr)
+library(viridis)
+
+# Read popular vote datasets. 
+d_popvote <- read_csv("popvote_1948_2020.csv")
+d_state_popvote <- read_csv("state_popvote_1948_2020.csv")
+d_state_popvote[d_state_popvote$state == "District of Columbia",]$state <- "District Of Columbia"
+
+# Read elector distribution dataset. 
+d_ec <- read_csv("corrected_ec_1948_2024.csv")
+
+# Read economic data
+d_fred <- read_csv("fred_econ.csv")
+d_grants <- read_csv("fedgrants_bystate_1988-2008.csv")
+
+# Read polling data. 
+d_polls <- read_csv("national_polls_1968-2024.csv")
+d_state_polls <- read_csv("state_polls_1968-2024.csv")
+
+# Read turnout data. 
+d_turnout <- read_csv("state_turnout_1980_2022.csv")
+
+# Read county turnout. 
+d_county_turnout <- read_csv("county_turnout.csv")
+
+# Read state-level demographics.
+d_state_demog <- read_csv("demographics.csv")
+
+# Read county demographics. 
+d_county_demog <- read_csv("county_demographics.csv")
+
+# Read campaign events datasets. 
+d_campaign_events <- read_csv("campaign_events_geocoded.csv")
+
+# Read field office datasets
+d_dem_field <- read_csv("fieldoffice_2004-2012_dems.csv")
+d_county_field <- read_csv("fieldoffice_2012_bycounty.csv")
+d_address_field <- read_csv("fieldoffice_2012-2016_byaddress.csv")
+```
+
+For this analysis, I am interested in exploring the relationship between ground-campaign events and voter turnout. Given that ground campaigns often happen on a relatively local level, I focus on my home state of Michigan for my analysis this week, reviewing how the prevalence of field offices and campaign events relative to the region's population in 2016 impacted turnout outcomes in prior elections.
+
+First, I visualized the relationship between field offices/campaign events and county turnout as a percentage of the area's population. The first map below indicates the location of field offices (+) and campaign events (∆) associated with each party. The second, put together using a mapping tool developed by the Urban Institute and generously described on their Medium site (1), indicates voter turnout in each county in Michigan. Unfortunately, we do not appear to have county-level turnout data for the 2016 election, so I use 2020 county-level turnout instead. While this is an imperfect metric, especially because of the effects of the COVID-19 pandemic, exploring this relationship could also potentially suggest if there are any long-term effects of the location of a campaign office in a region on future political cycles, or if the effects largely wean as the candidate changes.
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+
+# (1)
+
+mi_geo <- counties(cb = TRUE) |> 
+  shift_geometry() |> 
+  filter(STUSPS == "MI")
+
+# Field Offices
+
+clinton16 <- subset(d_address_field, year == 2016 & candidate == "Clinton" & state == "MI") %>%
+  select(longitude, latitude)
+trump16 <- subset(d_address_field, year == 2016 & candidate == "Trump" & state == "MI") %>%
+  select(longitude, latitude)
+
+clinton16transformed <- st_as_sf(clinton16, coords = c("longitude", "latitude"), crs = 4326) |>
+  st_transform(crs = st_crs(mi_geo)) |>
+  shift_geometry()
+trump16transformed <- st_as_sf(trump16, coords = c("longitude", "latitude"), crs = 4326) |>
+  st_transform(crs = st_crs(mi_geo)) |>
+  shift_geometry()
+
+clinton16transformed$party = "DEM"
+trump16transformed$party = "REP"
+
+transformed_field_offices <- rbind(clinton16transformed, trump16transformed)
+
+
+# Campaign Events
+d_campaign_events$party[d_campaign_events$candidate %in% c("Trump / Pence", "Trump", "Pence", "Trump/Pence", "Vance")] <- "REP"
+d_campaign_events$party[d_campaign_events$candidate %in% c("Biden / Harris", "Biden", "Harris", "Biden/Harris", "Walz", "Kaine", "Clinton", "Clinton / Kaine")] <- "DEM"
+
+d_ev_transformed <- st_as_sf(d_campaign_events |> drop_na(), coords = c("longitude", "latitude"), crs = 4326) |>
+  st_transform(crs = st_crs(mi_geo)) |>
+  shift_geometry() |> 
+  st_make_valid() |>
+  filter(state == "MI",
+         year == 2016)
+
+# To address data error 
+mi_campaign_events_2020_data <- d_campaign_events |> 
+  drop_na() |>
+  filter(state == "MI",
+         year == 2020,
+         longitude < 0)
+  
+d_ev_transformed_2020 <- st_as_sf(mi_campaign_events_2020_data, coords = c("longitude", "latitude"), crs = 4326) |>
+  st_transform(crs = st_crs(mi_geo)) |>
+  shift_geometry() |> 
+  st_make_valid() 
+
+# Map with both values
+mi_campaign_events <- ggplot() + 
+  geom_sf(data = mi_geo) + 
+  geom_sf(data = transformed_field_offices, aes(color = party), alpha = 0.75, pch = 3) +
+  geom_sf(data = d_ev_transformed, aes(color = party), alpha = 0.75, pch = 2) +
+  scale_color_manual(values = c("steelblue2", "red3")) +
+  ggtitle("2016 Campaign Activities") + 
+  labs(caption = " + = Field Office
+       Δ = Campaign Event",
+       color = "Party") +
+  theme_void()
+```
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+# (2)
+
+mi_county_turnout <- d_county_turnout |>
+  filter(state_po == "MI") |>
+  mutate(county = snakecase::to_title_case(county_name)) |> 
+  mutate(county = paste(county, "County", sep = " ")) |>
+  group_by(county) |>
+  summarize(mean_turnout = mean(turnout))
+
+urban_inst_mi_data <- urbnmapr::counties |>
+  filter(state_abbv == "MI")
+  
+mi_county_geocoded_turnout <- left_join(mi_county_turnout, urban_inst_mi_data, join_by(county == county_name))
+
+
+turnout_map <- mi_county_geocoded_turnout |>
+  ggplot(aes(long, lat, group = group, fill = mean_turnout)) +
+  geom_polygon() + 
+  coord_map(projection = "albers", lat0 = 29, lat1 = 45) + 
+  scale_fill_gradient(labels = scales::percent, guide = guide_colorbar()) + 
+  labs(fill = "Mean Turnout (2020)") +
+  theme_void()
+
+ggarrange(mi_campaign_events, turnout_map)
+  
+```
+
+From observing these maps, it does not appear that there is a substantial relationship between the location of 2016 Campaign Activity and 2020 turnout. In fact, if we look at the southeastern part of the state, where much election activity by both parties was concentrated, we see that there was relatively low electoral turnout. However, it is also important to recognize that these activities were likely clustered around the city of Detroit, where a substantial part of Michigan's population lives. Therefore, even if turnout is low, there still could have been a significant number of voters. In other parts of the state, the relationship seems relatively unclear from just this visual representation. Therefore, we also trained a simple linear regression model of the relationship between campaign activities and turnout at the national level. While we have turnout metrics at the county level for 2020, we unfortunately do not have campaign activities measured by county, which is why I regress these two metrics at the national level.
+
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+# Regression 
+
+d_ev_state <- d_campaign_events |> 
+  group_by(year, state, party) |> 
+  summarize(n_events = n()) |> 
+  pivot_wider(names_from = party, values_from = n_events) |> 
+  rename(n_ev_D = DEM, n_ev_R = REP) |>
+  filter(year == 2016)
+
+d_ev_state$n_ev_D[which(is.na(d_ev_state$n_ev_D))] <- 0
+d_ev_state$n_ev_R[which(is.na(d_ev_state$n_ev_R))] <- 0
+d_ev_state$ev_diff_D_R <- d_ev_state$n_ev_D - d_ev_state$n_ev_R
+d_ev_state$ev_diff_R_D <- d_ev_state$n_ev_R - d_ev_state$n_ev_D
+
+d_offices <- d_address_field |>
+  group_by(year, state, party) |>
+  summarize(n_offices = n()) |>
+  pivot_wider(names_from = party, values_from = n_offices) |> 
+  rename(n_office_D = democrat, n_office_R = republican) |>
+  filter(year == 2016)
+
+d_offices$n_office_D[which(is.na(d_offices$n_office_D))] <- 0
+d_offices$n_office_R[which(is.na(d_offices$n_office_R))] <- 0
+d_offices$office_diff_D_R <- d_offices$n_office_D - d_offices$n_office_R
+d_offices$office_diff_R_D <- d_offices$n_office_R - d_offices$n_office_D
+
+campaign_events <- left_join(d_ev_state, d_offices, by = c("year", "state"))
+
+d_turnout$vep_turnout <- gsub("\\%", "", d_turnout$vep_turnout)
+
+d_campaign_events_vote <- d_turnout |>
+  mutate(state = state.abb[match(state, state.name)]) |>
+  right_join(campaign_events, by = c("year", "state")) |>
+  mutate(total_events = n_ev_D + n_ev_R,
+         total_offices = n_office_D + n_office_R)
+
+
+lm_ev_D <- lm(vep_turnout~ n_ev_D + ev_diff_D_R + n_office_D + office_diff_D_R, data = d_campaign_events_vote)
+lm_ev_R <- lm(vep_turnout ~ n_ev_R + ev_diff_R_D + n_office_R + office_diff_R_D, data = d_campaign_events_vote)
+total_events <- lm(vep_turnout ~ total_events + total_offices ,data = d_campaign_events_vote)
+
+summary(lm_ev_D)
+summary(lm_ev_R)
+summary(total_events)
+
+modelsummary(list("All Events" = total_events, "Democratic Events" = lm_ev_D, "Republican Events" = lm_ev_R), stars = TRUE, output = "kableExtra")
+          
+```
+
+This regression confirms my previous assumptions -- metrics of campaign activity alone largely do not appear to have a significant effect on turnout. However, one important exception to this is the number of total offices driving overall turnout in a statistically significant manner. This latter result seems to align with Darr and Levendusky's findings that field offices increase turnout (3). However, it is interesting to note that campaign events, unintuitively, appear to decrease turnout
+
+
+Again, it is important to emphasize that this effect may have been limited because of the time difference between the campaign activities and the measure of turnout. To address this, I also produced a map of campaign events in 2020, compared again with the same map of turnout from before below. Unfortunately, we do not have field office data from 2020, making comparing all three metrics impossible. 
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+
+mi_campaign_events_2020 <- ggplot() + 
+  geom_sf(data = mi_geo) +
+  geom_sf(data = d_ev_transformed_2020, aes(color = party), alpha = 0.75, pch = 2) +
+  scale_color_manual(values = c("steelblue2", "red3")) +
+  ggtitle("2020 Campaign Activities") + 
+  labs(caption = "
+       Δ = Campaign Event",
+       color = "Party") +
+  theme_void()
+
+ggarrange(mi_campaign_events_2020, turnout_map)
+
+```
+
+
+Again, there does not appear to be a tangible relationship between just the two variables. However, I produce another regression model to test this outcome using only 2020 data.
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+d_ev_state_2020 <- d_campaign_events |> 
+  group_by(year, state, party) |> 
+  filter(year == 2020) |>
+  summarize(n_events = n()) |> 
+  pivot_wider(names_from = party, values_from = n_events) |> 
+  rename(n_ev_D = DEM, n_ev_R = REP)
+
+d_ev_state_2020$n_ev_D[which(is.na(d_ev_state_2020$n_ev_D))] <- 0
+d_ev_state_2020$n_ev_R[which(is.na(d_ev_state_2020$n_ev_R))] <- 0
+d_ev_state_2020$ev_diff_D_R <- d_ev_state_2020$n_ev_D - d_ev_state_2020$n_ev_R
+d_ev_state_2020$ev_diff_R_D <- d_ev_state_2020$n_ev_R - d_ev_state_2020$n_ev_D
+
+d_campaign_events_vote_2020 <- d_turnout |>
+  mutate(state = state.abb[match(state, state.name)]) |>
+  right_join(d_ev_state_2020, by = c("year", "state")) |>
+  mutate(total_events = n_ev_D + n_ev_R)
+
+lm_ev_D_2020 <- lm(vep_turnout~ n_ev_D + ev_diff_D_R, data = d_campaign_events_vote_2020)
+lm_ev_R_2020 <- lm(vep_turnout ~ n_ev_R + ev_diff_R_D, data = d_campaign_events_vote_2020)
+total_events_2020 <- lm(vep_turnout ~ total_events, data = d_campaign_events_vote_2020)
+
+d_campaign_events_vote_2020 <- d_turnout |>
+  filter(year == 2020) |>
+  mutate(state = state.abb[match(state, state.name)]) |>
+  right_join(d_ev_state_2020, by = c("year", "state"))
+
+turnout_campaignevents_2020 <- modelsummary(list("All Events" = total_events_2020, "Democratic Events" = lm_ev_D_2020, "Republican Events" = lm_ev_R_2020),stars = TRUE, output = "kableExtra")
+
+turnout_campaignevents_2020
+
+```
+
+Once again, none of these results appear particularly significant, although we find a positive relationship between total events and turnout in this model (though this variable is not significant in either). This may lend credence to Kalla and Broockman's 2018 work, which highlights that ground campaigns have a relatively minimal effect on outcomes (4).
+
+Following this analysis, I also began building my own predictive model of electoral outcomes, based on my findings from previous weeks. Through an initial conversation with Matt Dardet, I was inspired to start with a relatively parsimonious model -- Alan Abramowitz's Time for Change Model. While I still use some parts of this model, including its incorporation of GDP growth and incumbency status, I wanted to build a model that was generalizable to candidates who were not incumbents. Given that our analyses from previous weeks also indicated that metrics like turnout, polling, and federal grant spending (as discussed by Kriner and Reeves (5)) appeared significant, I included these metrics as well. I also notably excluded metrics related to campaign activities, given the rather insignificant results that I found when incorporating them this week and last. 
+
+My linear regression model considers GDP growth in the quarter immediately prior to the election (although I use 2nd quarter data when predicting 2024 outcomes since it is the most recent data we have available), unemployment, and candidate incumbency at the national level and poll support five weeks prior to the election, total federal grant funding allocation since 2000, and turnout in the last presidential election at the state level. Using this model, I aim to predict two-party Democratic vote share. Then, I impute Republican vote share by subtracting the Democratic two-party vote share from 100.  Importantly, I also only used data after 1996, wanting to avoid biasing my findings with results from a time when the American political landscape was significantly different than it is today (6).
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+# Building projection model
+# (7)
+
+# Fed Grants Data by State 
+cleaned_d_grants <- d_grants |>
+  filter(year > 1996) |>
+  group_by(state_abb) |>
+  summarize(total_grant_since_2000 = sum(grant_mil))
+
+# Cleaned Turnout data 
+d_turnout <- d_turnout[order(d_turnout$state, d_turnout$year), ]
+d_turnout$lastpresturnout <- lag(d_turnout$vep_turnout, n = 2)
+d_turnout$prevpresturnout <- lag(d_turnout$vep_turnout, n = 4)
+d_turnout_filtered <- d_turnout |>
+  select(year, state, vep_turnout, lastpresturnout, prevpresturnout) |>
+  filter(!is.na(vep_turnout))
+
+# Cleaned polling data
+d_state_polls_clean <- d_state_polls |>
+  filter(weeks_left == 5) |>
+  select(year, state, weeks_left, party, poll_support) |>
+  group_by(year, state, party) |>
+  summarize(mean_5_wk_poll_support = mean(poll_support))
+
+incumbency <- d_popvote |>
+  mutate(party = snakecase::to_title_case(party)) |>
+  mutate(party = ifelse(party == "Democrat", "DEM", "REP")) |>
+  mutate(dem_party_incumbent = case_when((party == "DEM" & incumbent_party == TRUE) ~ 1,
+                                       (party == "REP" & incumbent_party == FALSE) ~ 1,
+                                       (party == "DEM" & incumbent_party == FALSE) ~ 0,
+                                       (party == "REP" & incumbent_party == TRUE) ~ 0
+                                       )) |>
+  select(year, party, incumbent, incumbent_party, dem_party_incumbent)
+
+
+```
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+# Final Datasets for Reg
+
+# Training Data - merging several datasets made earlier together
+cleaned_reg_data <- d_state_popvote |>
+  filter(year > 1996) |>
+  left_join(d_fred, by = "year") |>
+  mutate(state_abb = state.abb[match(state, state.name)]) |>
+  right_join(cleaned_d_grants, by = "state_abb") |>
+  right_join(d_turnout_filtered, by = c("state", "year")) |>
+  filter(quarter == 4) |>
+  right_join(d_state_polls_clean, by = c("state", "year")) |>
+  right_join(incumbency, by = c("year", "party")) |>
+  filter(year > 1996 & year < 2024) |>
+  select(year, state, party, D_pv2p, R_pv2p, D_pv2p_lag1, R_pv2p_lag1, D_pv2p_lag2, R_pv2p_lag2, GDP_growth_quarterly, unemployment, state_abb, party, total_grant_since_2000, lastpresturnout, prevpresturnout, mean_5_wk_poll_support, incumbent, incumbent_party, dem_party_incumbent)
+
+# Filtering to only democratic data
+dem_cleaned_reg_data <- cleaned_reg_data |>
+  filter(party == "DEM")
+
+dem_cleaned_reg_data$lastpresturnout = as.numeric(dem_cleaned_reg_data$lastpresturnout)
+dem_cleaned_reg_data$prevpresturnout = as.numeric(dem_cleaned_reg_data$prevpresturnout)
+
+# Test Data - Using data from 2020, but setting 2020 data as previous election (relative to 2024) and lagged 2020 data (2016 election) as previous election before that
+
+turnout_lag_2024 <- d_turnout[order(d_turnout$state, d_turnout$year), ]
+turnout_lag_2024$prevpresturnout = lag(d_turnout$vep_turnout, n = 2)
+turnout_lag_2024 <- turnout_lag_2024 |>
+  filter(year == 2020) |>
+  mutate(lastpresturnout = vep_turnout) |>
+  select(state, lastpresturnout, prevpresturnout)
+
+test_data_2024 <- incumbency |>
+  left_join(d_fred, by = "year") |>
+  filter(year == 2024, party == "DEM") |>
+  left_join(d_state_polls_clean, by = c("year", "party")) |>
+  mutate(state_abb = state.abb[match(state, state.name)]) |>
+  right_join(cleaned_d_grants, by = "state_abb") |>
+  right_join(turnout_lag_2024, by = "state") |>
+  filter(quarter == 2) |>
+  select(year, state, party, GDP_growth_quarterly, unemployment, state_abb, party, total_grant_since_2000, lastpresturnout, prevpresturnout, mean_5_wk_poll_support, incumbent, incumbent_party, dem_party_incumbent) |>
+  filter(party == "DEM")
+
+# Cleaning test data
+test_data_2024$lastpresturnout = as.numeric(test_data_2024$lastpresturnout)
+test_data_2024$prevpresturnout = as.numeric(test_data_2024$prevpresturnout)
+
+dem_cleaned_reg_data$incumbent <- ifelse(dem_cleaned_reg_data$incumbent == TRUE, 1, 0)
+dem_cleaned_reg_data$dem_party_incumbent <- ifelse(dem_cleaned_reg_data$dem_party_incumbent == TRUE, 1, 0)
+test_data_2024$incumbent <- ifelse(test_data_2024$incumbent == TRUE, 1, 0)
+test_data_2024$dem_party_incumbent <- ifelse(test_data_2024$dem_party_incumbent == TRUE, 1, 0)
+
+```
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+# Train model for states with all of these variables
+
+trained_pred <- lm(D_pv2p ~ GDP_growth_quarterly + mean_5_wk_poll_support + incumbent + total_grant_since_2000 + lastpresturnout + unemployment, data = dem_cleaned_reg_data, na.rm = TRUE)
+
+modelsummary(list("Predicted Democratic Vote Share" = trained_pred), stars = TRUE, output = "kableExtra")
+
+# Measuring out-of-sample fit Based on example code from Week 2 Cross-Validation example
+
+set.seed(02138)
+out_samp_errors <- sapply(1:1000, function(i) {
+  years_out_samp <- sample(dem_cleaned_reg_data$year, 3) 
+  mod <- lm(D_pv2p ~ GDP_growth_quarterly + mean_5_wk_poll_support + incumbent + total_grant_since_2000 + lastpresturnout + prevpresturnout + unemployment, dem_cleaned_reg_data[!(dem_cleaned_reg_data$year %in% years_out_samp),])
+  out_samp_pred <- predict(mod, dem_cleaned_reg_data[dem_cleaned_reg_data$year %in% years_out_samp,])
+  out_samp_truth <- dem_cleaned_reg_data$D_pv2p[dem_cleaned_reg_data$year %in% years_out_samp]
+  mean(out_samp_pred - out_samp_truth, na.rm = TRUE)
+})
+
+hist(out_samp_errors)
+```
+This model appears to have a very high r^2 of 0.92, indicating that the OLS coefficients seemed to have a high in-sample prediction ability. However, the results appeared less promising when testing out-of-sample errors via cross-validation, with some errors actually being higher than the difference between the actual minimum and maximum value of democratic vote share that a state could have. This may be due to several limitations of my model. For one, the state metrics that I use are easily confounded with other factors. For example, the amount of federal spending has not been found to indicate much without considering which party has provided that funding. Though I use post-2000 funding to provide an aggregate since we do not have access to data following the 2020 election, it is an imperfect measure. Similarly, scholars have disagreed on what party benefits most from having higher overall turnout rates (8).
+
+Nevertheless, I use these findings to predict outcomes in the seven states that numerous sources have declared as "battlegrounds" in the 2024 presidential election. (9)
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+state_preds <- predict(trained_pred, test_data_2024)
+
+test_data_2024$pred <- state_preds
+test_data_2024$repub_pred <- 100-test_data_2024$pred
+test_data_2024$winner <- ifelse(test_data_2024$repub_pred > test_data_2024$pred, "REP", "DEM")
+
+test_data_2024 |>
+  filter(state %in% c("Arizona", "Georgia", "Michigan", "Nevada", "North Carolina", "Wisconsin", "Pennsylvania")) |>
+  select(state, winner) |>
+  knitr::kable(col.names = c("State", "Predicted Winner"))
+```
+
+Though these results appear promising for Vice President Harris, I hope to continue to improve this model to provide a more accurate metric.
+
+# References
+
+(1) Viridis color maps help page; Coord Map help page; Left Join; Data@Urban. 2018. “How to Create State and County Maps Easily in R.” Medium (blog). July 10, 2018. https://urban-institute.medium.com/how-to-create-state-and-county-maps-easily-in-r-577d29300bb2.
+“R Append Data Frames - Spark By {Examples}.” n.d. Accessed October 21, 2024. https://sparkbyexamples.com/r-programming/r-append-dataframes/.
+
+(2) to_title_case help page, camille. 2022. “Answer to ‘Convert Column Names to Title Case.’” Stack Overflow. https://stackoverflow.com/a/70804865.
+Khalilov, Murad. 2024. “Answer to ‘Rename All Columns to Title Case with {dplyr}.’” Stack Overflow. https://stackoverflow.com/a/78146810.
+LurkerFinallyJoins. 2022. “Adding Value to End of Every Value in R Column.” Reddit Post. R/Rlanguage. www.reddit.com/r/Rlanguage/comments/sh9rbu/adding_value_to_end_of_every_value_in_r_column/. Holtz, Yan. n.d. “Dual Y Axis with R and Ggplot2.” Accessed October 21, 2024. https://www.r-graph-gallery.com/line-chart-dual-Y-axis-ggplot2.html.
+
+(7) If_else help page
+
+(8) Shaw and Petrocik
+
+st_transform, tigris (shift_geometry), ggpubr
+
+(9) Boyce, Lily, Lazaro Gamio, Eli Murray, and Alicia Parlapiano. 2024. “Tracking the Swing States for Harris and Trump.” The New York Times, August 14, 2024, sec. U.S. https://www.nytimes.com/interactive/2024/us/elections/presidential-election-swing-states.html.
+Davis Jr., Elliott. n.d. “7 States That Could Sway the 2024 Presidential Election.” US News & World Report. Accessed October 22, 2024. //www.usnews.com/news/elections/articles/7-swing-states-that-could-decide-the-2024-presidential-election.
+Perry, Kati, Dan Keating, and Aaron Blake. 2024. “A Guide to the 7 Battleground States That Could Swing the Election.” Washington Post. October 21, 2024. https://www.washingtonpost.com/elections/interactive/2024/2024-swing-states-trump-harris/.
+Vox Staff. 2024. “The 7 States That Will Decide the 2024 Election.” Vox. October 21, 2024. https://www.vox.com/today-explained-podcast/378112/battleground-states-election-2024-trump-harris.
+
+# Data Sources
