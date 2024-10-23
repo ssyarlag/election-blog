@@ -339,6 +339,8 @@ First, I visualized the relationship between field offices/campaign events and c
   |                                                                            
   |===================================================================   |  96%
   |                                                                            
+  |====================================================================  |  96%
+  |                                                                            
   |====================================================================  |  97%
   |                                                                            
   |====================================================================  |  98%
@@ -628,7 +630,7 @@ From observing these maps, it does not appear that there is a substantial relati
 <sup></sup> + p &lt; 0.1, * p &lt; 0.05, ** p &lt; 0.01, *** p &lt; 0.001</td></tr></tfoot>
 </table>
 
-This regression confirms my previous assumptions -- metrics of campaign activity alone largely do not appear to have a significant effect on turnout. However, one important exception to this is the number of total offices driving overall turnout in a statistically significant manner. This latter result seems to align with Darr and Levendusky's findings that field offices increase turnout (4). However, it is interesting to note that campaign events, unintuitively, appear to decrease turnout, though this result is not statistically significant.
+This regression confirms my previous assumptions -- metrics of campaign activity alone largely do not appear to have a significant effect on turnout. However, one important exception to this is the number of total offices (and a greater number of Democratic offices relative to Republican offices) driving overall turnout in a statistically significant manner. This latter result seems to align with Darr and Levendusky's findings that field offices increase turnout (4). However, it is interesting to note that campaign events, unintuitively, appear to decrease turnout, though this result is not statistically significant.
 
 Again, it is important to emphasize that this effect may have been limited because of the time difference between the campaign activities and the measure of turnout. To address this, I also produced a map of campaign events in 2020, compared again with the same map of turnout from before below. Unfortunately, we do not have field office data from 2020, making comparing all three metrics impossible. 
 
@@ -771,11 +773,11 @@ Again, there does not appear to be a tangible relationship between just the two 
 <sup></sup> + p &lt; 0.1, * p &lt; 0.05, ** p &lt; 0.01, *** p &lt; 0.001</td></tr></tfoot>
 </table>
 
-Once again, most of these results don't indicate significance, except for the metrics of the differences between the number of Democratic and Republican offices in a state, with more Republican offices relative to Democratic offices resulting in higher turnout rates. However, I am not sure what the mechanism is for this finding.
+Once again, most of these results don't indicate significance, except for the metrics of the differences between the number of Democratic and Republican offices in a state, with more Republican offices relative to Democratic offices resulting in higher turnout rates. However, I am not sure what the mechanism is for this finding, especially since the results are the opposite of what we found in the last set of regressions.
 
 The large lack of significance, aside from this difference measure, may lend credence to Kalla and Broockman's 2018 work, which highlights that ground campaigns have a relatively minimal effect on outcomes (5).
 
-Following this analysis, I also began building my own predictive model of electoral outcomes, based on my findings from previous weeks. Through an initial conversation with Matt Dardet, I was inspired to start with a relatively parsimonious model -- Alan Abramowitz's Time for Change Model. While I still use some parts of this model, including its incorporation of GDP growth and incumbency status, I wanted to build a model that was generalizable to candidates who were not incumbents. Given that our analyses from previous weeks also indicated that metrics like turnout, polling, and federal grant spending (as discussed by Kriner and Reeves (6)) appeared significant, I included these metrics as well. I also notably excluded metrics related to campaign activities, given the relatively insignificant results that I found when incorporating them this week and last. 
+Following this analysis, I also began building my own predictive model of electoral outcomes, based on my findings from previous weeks. Through an initial conversation with Matt Dardet, I was inspired to start with a relatively "parsimonious" model -- Alan Abramowitz's Time for Change Model. While I still use some parts of this model, including its incorporation of GDP growth and incumbency status, I wanted to build a model that was generalizable to candidates who were not incumbents. Given that our analyses from previous weeks also indicated that metrics like turnout, polling, and federal grant spending (as discussed by Kriner and Reeves (6)) appeared significant, I included these metrics as well. I also notably excluded metrics related to campaign activities, given the relatively insignificant results that I found when incorporating them this week and last. 
 
 My linear regression model considers GDP growth in the quarter immediately prior to the election (although I use 2nd quarter data when predicting 2024 outcomes since it is the most recent data we have available), unemployment, and candidate incumbency at the national level and poll support five weeks prior to the election, total federal grant funding allocation since 2000, and turnout in the last presidential election at the state level. Using this model, I aim to predict two-party Democratic vote share. Then, I impute Republican vote share by subtracting the Democratic two-party vote share from 100.  Importantly, I also only used data after 1996, wanting to avoid biasing my findings with results from a time when the American political landscape was significantly different than it is today (7).
 
