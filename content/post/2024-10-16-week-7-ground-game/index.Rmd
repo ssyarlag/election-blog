@@ -49,9 +49,9 @@ d_county_field <- read_csv("fieldoffice_2012_bycounty.csv")
 d_address_field <- read_csv("fieldoffice_2012-2016_byaddress.csv")
 ```
 
-For this analysis, I am interested in exploring the relationship between ground-campaign events and voter turnout. Given that ground campaigns often happen on a relatively local level, I focus on my home state of Michigan for my analysis this week, reviewing how the prevalence of field offices and campaign events relative to the region's population in 2016 impacted turnout outcomes in prior elections.
+For this analysis, I am interested in exploring the relationship between ground-campaign activities and voter turnout. Given that ground campaigns happen on a relatively local level, I focus on my home state of Michigan for my analysis this week, reviewing how the prevalence of field offices and campaign events in 2016 impacted turnout outcomes.
 
-First, I visualized the relationship between field offices/campaign events and county turnout as a percentage of the area's population. The first map below indicates the location of field offices (+) and campaign events (∆) associated with each party. The second, put together using a mapping tool developed by the Urban Institute and generously described on their Medium site (1), indicates voter turnout in each county in Michigan. Unfortunately, we do not appear to have county-level turnout data for the 2016 election, so I use 2020 county-level turnout instead. While this is an imperfect metric, especially because of the effects of the COVID-19 pandemic, exploring this relationship could also potentially suggest if there are any long-term effects of the location of a campaign office in a region on future political cycles, or if the effects largely wean as the candidate changes.
+First, I visualized the relationship between field offices/campaign events and county turnout. The first map below indicates the location of field offices (+) and campaign events (∆) associated with each party. The second, put together using a mapping tool developed by the Urban Institute and generously described on their Medium site (1), indicates voter turnout in each county in Michigan. Unfortunately, we do not appear to have county-level turnout data for the 2016 election, so I use 2020 county-level turnout instead. While this is an imperfect metric, especially because of the effects of the COVID-19 pandemic, exploring this relationship could also potentially suggest if there are any long-term effects of the location of a campaign office in a region on future political cycles, or if the effects largely wean as the candidate changes.
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 
@@ -145,12 +145,12 @@ ggarrange(mi_campaign_events, turnout_map)
   
 ```
 
-From observing these maps, it does not appear that there is a substantial relationship between the location of 2016 Campaign Activity and 2020 turnout. In fact, if we look at the southeastern part of the state, where much election activity by both parties was concentrated, we see that there was relatively low electoral turnout. However, it is also important to recognize that these activities were likely clustered around the city of Detroit, where a substantial part of Michigan's population lives. Therefore, even if turnout is low, there still could have been a significant number of voters. In other parts of the state, the relationship seems relatively unclear from just this visual representation. Therefore, we also trained a simple linear regression model of the relationship between campaign activities and turnout at the national level. While we have turnout metrics at the county level for 2020, we unfortunately do not have campaign activities measured by county, which is why I regress these two metrics at the national level.
+From observing these maps, it does not appear that there is a substantial relationship between the location of 2016 campaign activity and 2020 turnout. In fact, if we look at the southeastern part of the state, where much election activity by both parties was concentrated, we see that there was relatively low electoral turnout in 2020. However, it is also important to recognize that these activities were likely clustered around the city of Detroit. Therefore, even if turnout is low, there still could have been a significant number of voters. In other parts of the state, the relationship seems relatively unclear from just this visual representation. Therefore, we also trained three linear regression models of the relationship between campaign activities and turnout at the national level, including total activity, Republican activity, and Democratic activity. While we have turnout metrics at the county level for 2020, we unfortunately do not have campaign activities measured by county, which is why I regress these two metrics at the national level.
 
 
-```{r echo = FALSE, message = FALSE, warning = FALSE}
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
 # Regression 
-
+# (3)
 d_ev_state <- d_campaign_events |> 
   group_by(year, state, party) |> 
   summarize(n_events = n()) |> 
@@ -198,8 +198,7 @@ modelsummary(list("All Events" = total_events, "Democratic Events" = lm_ev_D, "R
           
 ```
 
-This regression confirms my previous assumptions -- metrics of campaign activity alone largely do not appear to have a significant effect on turnout. However, one important exception to this is the number of total offices driving overall turnout in a statistically significant manner. This latter result seems to align with Darr and Levendusky's findings that field offices increase turnout (3). However, it is interesting to note that campaign events, unintuitively, appear to decrease turnout
-
+This regression confirms my previous assumptions -- metrics of campaign activity alone largely do not appear to have a significant effect on turnout. However, one important exception to this is the number of total offices driving overall turnout in a statistically significant manner. This latter result seems to align with Darr and Levendusky's findings that field offices increase turnout (4). However, it is interesting to note that campaign events, unintuitively, appear to decrease turnout, though this result is not statistically significant.
 
 Again, it is important to emphasize that this effect may have been limited because of the time difference between the campaign activities and the measure of turnout. To address this, I also produced a map of campaign events in 2020, compared again with the same map of turnout from before below. Unfortunately, we do not have field office data from 2020, making comparing all three metrics impossible. 
 
@@ -216,9 +215,7 @@ mi_campaign_events_2020 <- ggplot() +
   theme_void()
 
 ggarrange(mi_campaign_events_2020, turnout_map)
-
 ```
-
 
 Again, there does not appear to be a tangible relationship between just the two variables. However, I produce another regression model to test this outcome using only 2020 data.
 
@@ -255,15 +252,17 @@ turnout_campaignevents_2020
 
 ```
 
-Once again, none of these results appear particularly significant, although we find a positive relationship between total events and turnout in this model (though this variable is not significant in either). This may lend credence to Kalla and Broockman's 2018 work, which highlights that ground campaigns have a relatively minimal effect on outcomes (4).
+Once again, most of these results don't indicate significance, except for the metrics of the differences between the number of Democratic and Republican offices in a state, with more Republican offices relative to Democratic offices resulting in higher turnout rates. However, I am not sure what the mechanism is for this finding.
 
-Following this analysis, I also began building my own predictive model of electoral outcomes, based on my findings from previous weeks. Through an initial conversation with Matt Dardet, I was inspired to start with a relatively parsimonious model -- Alan Abramowitz's Time for Change Model. While I still use some parts of this model, including its incorporation of GDP growth and incumbency status, I wanted to build a model that was generalizable to candidates who were not incumbents. Given that our analyses from previous weeks also indicated that metrics like turnout, polling, and federal grant spending (as discussed by Kriner and Reeves (5)) appeared significant, I included these metrics as well. I also notably excluded metrics related to campaign activities, given the rather insignificant results that I found when incorporating them this week and last. 
+The large lack of significance, aside from this difference measure, may lend credence to Kalla and Broockman's 2018 work, which highlights that ground campaigns have a relatively minimal effect on outcomes (5).
 
-My linear regression model considers GDP growth in the quarter immediately prior to the election (although I use 2nd quarter data when predicting 2024 outcomes since it is the most recent data we have available), unemployment, and candidate incumbency at the national level and poll support five weeks prior to the election, total federal grant funding allocation since 2000, and turnout in the last presidential election at the state level. Using this model, I aim to predict two-party Democratic vote share. Then, I impute Republican vote share by subtracting the Democratic two-party vote share from 100.  Importantly, I also only used data after 1996, wanting to avoid biasing my findings with results from a time when the American political landscape was significantly different than it is today (6).
+Following this analysis, I also began building my own predictive model of electoral outcomes, based on my findings from previous weeks. Through an initial conversation with Matt Dardet, I was inspired to start with a relatively parsimonious model -- Alan Abramowitz's Time for Change Model. While I still use some parts of this model, including its incorporation of GDP growth and incumbency status, I wanted to build a model that was generalizable to candidates who were not incumbents. Given that our analyses from previous weeks also indicated that metrics like turnout, polling, and federal grant spending (as discussed by Kriner and Reeves (6)) appeared significant, I included these metrics as well. I also notably excluded metrics related to campaign activities, given the relatively insignificant results that I found when incorporating them this week and last. 
+
+My linear regression model considers GDP growth in the quarter immediately prior to the election (although I use 2nd quarter data when predicting 2024 outcomes since it is the most recent data we have available), unemployment, and candidate incumbency at the national level and poll support five weeks prior to the election, total federal grant funding allocation since 2000, and turnout in the last presidential election at the state level. Using this model, I aim to predict two-party Democratic vote share. Then, I impute Republican vote share by subtracting the Democratic two-party vote share from 100.  Importantly, I also only used data after 1996, wanting to avoid biasing my findings with results from a time when the American political landscape was significantly different than it is today (7).
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
 # Building projection model
-# (7)
+# (8)
 
 # Fed Grants Data by State 
 cleaned_d_grants <- d_grants |>
@@ -373,9 +372,9 @@ out_samp_errors <- sapply(1:1000, function(i) {
 hist(out_samp_errors)
 ```
 
-This model appears to have a very high r^2 of 0.92, indicating that the OLS coefficients seemed to have a high in-sample prediction ability. However, the results appeared less promising when testing out-of-sample errors via cross-validation, with some errors actually being higher than the difference between the actual minimum and maximum value of democratic vote share that a state could have. This may be due to several limitations of my model. For one, the state metrics that I use are easily confounded with other factors. For example, the amount of federal spending has not been found to indicate much without considering which party has provided that funding. Though I use post-2000 funding to provide an aggregate since we do not have access to data following the 2020 election, it is an imperfect measure. Similarly, scholars have disagreed on what party benefits most from having higher overall turnout rates (8).
+This model appears to have a very high r^2 of 0.92, indicating that the OLS coefficients seemed to have a high in-sample prediction ability. However, the results appeared less promising when testing out-of-sample errors via cross-validation, with some errors actually being higher than the difference between the actual minimum and maximum value of Democratic vote share that a state could have. This may be due to several limitations of my model. For one, the state metrics that I use are easily confounded with other factors. For example, the amount of federal spending has not been found to indicate much without considering which party has provided that funding (5). Though I use post-2000 funding to provide an aggregate since we do not have access to data following the 2020 election, it is an imperfect measure. Similarly, scholars have disagreed on what party benefits most from having higher overall turnout rates (9).
 
-Nevertheless, I use these findings to predict outcomes in the seven states that numerous sources have declared as "battlegrounds" in the 2024 presidential election. (9)
+Nevertheless, I use these findings to predict outcomes in the seven states that numerous sources have declared as "battlegrounds" in the 2024 presidential election. (10)
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 state_preds <- predict(trained_pred, test_data_2024)
@@ -401,7 +400,11 @@ St_transform, tigris (shift_geometry), and ggpubr help pages
 
 (2) to_title_case help page, camille. 2022. “Answer to ‘Convert Column Names to Title Case.’” Stack Overflow. https://stackoverflow.com/a/70804865.
 Khalilov, Murad. 2024. “Answer to ‘Rename All Columns to Title Case with {dplyr}.’” Stack Overflow. https://stackoverflow.com/a/78146810.
-LurkerFinallyJoins. 2022. “Adding Value to End of Every Value in R Column.” Reddit Post. R/Rlanguage. www.reddit.com/r/Rlanguage/comments/sh9rbu/adding_value_to_end_of_every_value_in_r_column/. Holtz, Yan. n.d. “Dual Y Axis with R and Ggplot2.” Accessed October 21, 2024. https://www.r-graph-gallery.com/line-chart-dual-Y-axis-ggplot2.html.
+LurkerFinallyJoins. 2022. “Adding Value to End of Every Value in R Column.” Reddit Post. R/Rlanguage. www.reddit.com/r/Rlanguage/comments/sh9rbu/adding_value_to_end_of_every_value_in_r_column/. Holtz, Yan. n.d. “Dual Y Axis with R and Ggplot2.” Accessed October 21, 2024. https://www.r-graph-gallery.com/line-chart-dual-Y-axis-ggplot2.html.; “Reorder the Column of Dataframe in R Using Dplyr.” 2021. GeeksforGeeks. September 1, 2021. https://www.geeksforgeeks.org/reorder-the-column-of-dataframe-in-r-using-dplyr/.
+
+
+(3) Andina, Matias. 2016. “Answer to ‘How to Remove $ and % from Columns in R?’” Stack Overflow. https://stackoverflow.com/a/35757945.
+
 
 (3) Darr, Joshua P., and Matthew S. Levendusky. 2014. “Relying on the Ground Game: The Placement and Effect of Campaign Field Offices.” American Politics Research 42 (3): 529–48. https://doi.org/10.1177/1532673X13500520.
 
@@ -411,7 +414,8 @@ LurkerFinallyJoins. 2022. “Adding Value to End of Every Value in R Column.” 
 
 (6) Students of History. “The Great Switch: How Republicans and Democrats Flipped Ideologies.” Accessed September 7, 2024. https://www.studentsofhistory.com/ideologies-flip-Democratic-Republican-parties.; U.S. Embassy & Consulate in the Kingdom of Denmark. “Presidential Elections and the American Political System.” Accessed September 7, 2024. https://dk.usembassy.gov/usa-i-skolen/presidential-elections-and-the-american-political-system/. (As cited in my first blog post)
 
-(7) If_else help page
+(7) If_else help page; Bobbitt, Zach. 2021. “How to Sort Values Alphabetically in R.” Statology. July 13, 2021. https://www.statology.org/sort-alphabetically-in-r/.
+———. 2022. “How to Calculate Lagged Values in R (With Examples).” Statology. December 13, 2022. https://www.statology.org/r-lag/.
 
 (8) Shaw, Daron R., and John R. Petrocik. 2020. The Turnout Myth: Voting Rates and Partisan Outcomes in American National Elections. Oxford University Press.
 
