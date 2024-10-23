@@ -351,8 +351,6 @@
   |                                                                            
   |===================================================================   |  96%
   |                                                                            
-  |====================================================================  |  96%
-  |                                                                            
   |====================================================================  |  97%
   |                                                                            
   |====================================================================  |  98%
@@ -873,7 +871,7 @@
 <sup></sup> + p &lt; 0.1, * p &lt; 0.05, ** p &lt; 0.01, *** p &lt; 0.001</td></tr></tfoot>
 </table>
 <img src="/post/2024/10/16/week-7-ground-game/index_files/figure-html/unnamed-chunk-9-1.png" width="672" />
-<p>This model appears to have a very high r^2 of 0.92, indicating that the OLS coefficients seemed to have a high in-sample prediction ability. However, the results appeared less promising when testing out-of-sample errors via cross-validation, with some errors actually being higher than the difference between the actual minimum and maximum value of Democratic vote share that a state could have. This may be due to several limitations of my model. For one, the state metrics that I use are easily confounded with other factors. For example, the amount of federal spending has not been found to indicate much without considering which party has provided that funding (5). Though I use post-2000 funding to provide an aggregate since we do not have access to data following the 2020 election, it is an imperfect measure. Similarly, scholars have disagreed on what party benefits most from having higher overall turnout rates (9).</p>
+<p>This model appears to have a very high r^2 of 0.92, indicating that the OLS coefficients seemed to have a high in-sample prediction ability. However, the results appeared less promising when testing out-of-sample errors via cross-validation, with some errors actually being higher than the difference between the actual minimum and maximum value of Democratic vote share that a state could have. This may be due to several limitations of my model. For one, the state metrics that I use are easily confounded with other factors. For example, the amount of federal spending has not been found to indicate much without considering which party has provided that funding (5). Though I use post-2000 funding to provide an aggregate since we do not have access to data following the 2020 election, it is an imperfect measure. Similarly, scholars have disagreed on what party benefits most from having higher overall turnout rates (9). Perhaps a next step may be to disaggregate turnout outcomes by party, available in our county turnout dataset.</p>
 <p>Nevertheless, I use these findings to predict outcomes in the seven states that numerous sources have declared as &ldquo;battlegrounds&rdquo; in the 2024 presidential election. (10)</p>
 <table>
   <thead>

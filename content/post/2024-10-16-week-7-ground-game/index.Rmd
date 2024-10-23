@@ -63,11 +63,13 @@ mi_geo <- counties(cb = TRUE) |>
 
 # Field Offices
 
+# Find Office Data
 clinton16 <- subset(d_address_field, year == 2016 & candidate == "Clinton" & state == "MI") %>%
   select(longitude, latitude)
 trump16 <- subset(d_address_field, year == 2016 & candidate == "Trump" & state == "MI") %>%
   select(longitude, latitude)
 
+# Transform for mapping
 clinton16transformed <- st_as_sf(clinton16, coords = c("longitude", "latitude"), crs = 4326) |>
   st_transform(crs = st_crs(mi_geo)) |>
   shift_geometry()
@@ -85,6 +87,7 @@ transformed_field_offices <- rbind(clinton16transformed, trump16transformed)
 d_campaign_events$party[d_campaign_events$candidate %in% c("Trump / Pence", "Trump", "Pence", "Trump/Pence", "Vance")] <- "REP"
 d_campaign_events$party[d_campaign_events$candidate %in% c("Biden / Harris", "Biden", "Harris", "Biden/Harris", "Walz", "Kaine", "Clinton", "Clinton / Kaine")] <- "DEM"
 
+# Transform for mapping
 d_ev_transformed <- st_as_sf(d_campaign_events |> drop_na(), coords = c("longitude", "latitude"), crs = 4326) |>
   st_transform(crs = st_crs(mi_geo)) |>
   shift_geometry() |> 
@@ -98,13 +101,14 @@ mi_campaign_events_2020_data <- d_campaign_events |>
   filter(state == "MI",
          year == 2020,
          longitude < 0)
-  
+
+# Transform for mapping - 2020 data  
 d_ev_transformed_2020 <- st_as_sf(mi_campaign_events_2020_data, coords = c("longitude", "latitude"), crs = 4326) |>
   st_transform(crs = st_crs(mi_geo)) |>
   shift_geometry() |> 
   st_make_valid() 
 
-# Map with both values
+# Map with both campaign activity values
 mi_campaign_events <- ggplot() + 
   geom_sf(data = mi_geo) + 
   geom_sf(data = transformed_field_offices, aes(color = party), alpha = 0.75, pch = 3) +
@@ -120,6 +124,7 @@ mi_campaign_events <- ggplot() +
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
 # (2)
 
+# Clean turnout data by county
 mi_county_turnout <- d_county_turnout |>
   filter(state_po == "MI") |>
   mutate(county = snakecase::to_title_case(county_name)) |> 
@@ -127,12 +132,14 @@ mi_county_turnout <- d_county_turnout |>
   group_by(county) |>
   summarize(mean_turnout = mean(turnout))
 
+# Download Michigan data from Urban Institute
 urban_inst_mi_data <- urbnmapr::counties |>
   filter(state_abbv == "MI")
   
+# Merge geocode with county turnout data
 mi_county_geocoded_turnout <- left_join(mi_county_turnout, urban_inst_mi_data, join_by(county == county_name))
 
-
+# Map turnout by county in Michigan
 turnout_map <- mi_county_geocoded_turnout |>
   ggplot(aes(long, lat, group = group, fill = mean_turnout)) +
   geom_polygon() + 
@@ -151,6 +158,8 @@ From observing these maps, it does not appear that there is a substantial relati
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
 # Regression 
 # (3)
+
+# Find total events by state and party
 d_ev_state <- d_campaign_events |> 
   group_by(year, state, party) |> 
   summarize(n_events = n()) |> 
@@ -163,6 +172,7 @@ d_ev_state$n_ev_R[which(is.na(d_ev_state$n_ev_R))] <- 0
 d_ev_state$ev_diff_D_R <- d_ev_state$n_ev_D - d_ev_state$n_ev_R
 d_ev_state$ev_diff_R_D <- d_ev_state$n_ev_R - d_ev_state$n_ev_D
 
+# Find total offices by state and party
 d_offices <- d_address_field |>
   group_by(year, state, party) |>
   summarize(n_offices = n()) |>
@@ -175,10 +185,12 @@ d_offices$n_office_R[which(is.na(d_offices$n_office_R))] <- 0
 d_offices$office_diff_D_R <- d_offices$n_office_D - d_offices$n_office_R
 d_offices$office_diff_R_D <- d_offices$n_office_R - d_offices$n_office_D
 
+# Merge events and offices data
 campaign_events <- left_join(d_ev_state, d_offices, by = c("year", "state"))
 
 d_turnout$vep_turnout <- gsub("\\%", "", d_turnout$vep_turnout)
 
+# Merge turnout data with campaign events data
 d_campaign_events_vote <- d_turnout |>
   mutate(state = state.abb[match(state, state.name)]) |>
   right_join(campaign_events, by = c("year", "state")) |>
@@ -204,6 +216,7 @@ Again, it is important to emphasize that this effect may have been limited becau
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
 
+# Plot campaign events in 2020
 mi_campaign_events_2020 <- ggplot() + 
   geom_sf(data = mi_geo) +
   geom_sf(data = d_ev_transformed_2020, aes(color = party), alpha = 0.75, pch = 2) +
@@ -220,6 +233,8 @@ ggarrange(mi_campaign_events_2020, turnout_map)
 Again, there does not appear to be a tangible relationship between just the two variables. However, I produce another regression model to test this outcome using only 2020 data.
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
+
+# Count of campaign events in 2020
 d_ev_state_2020 <- d_campaign_events |> 
   group_by(year, state, party) |> 
   filter(year == 2020) |>
@@ -232,6 +247,7 @@ d_ev_state_2020$n_ev_R[which(is.na(d_ev_state_2020$n_ev_R))] <- 0
 d_ev_state_2020$ev_diff_D_R <- d_ev_state_2020$n_ev_D - d_ev_state_2020$n_ev_R
 d_ev_state_2020$ev_diff_R_D <- d_ev_state_2020$n_ev_R - d_ev_state_2020$n_ev_D
 
+# Merge # of 2020 campaign events with turnout data
 d_campaign_events_vote_2020 <- d_turnout |>
   mutate(state = state.abb[match(state, state.name)]) |>
   right_join(d_ev_state_2020, by = c("year", "state")) |>
@@ -240,11 +256,6 @@ d_campaign_events_vote_2020 <- d_turnout |>
 lm_ev_D_2020 <- lm(vep_turnout~ n_ev_D + ev_diff_D_R, data = d_campaign_events_vote_2020)
 lm_ev_R_2020 <- lm(vep_turnout ~ n_ev_R + ev_diff_R_D, data = d_campaign_events_vote_2020)
 total_events_2020 <- lm(vep_turnout ~ total_events, data = d_campaign_events_vote_2020)
-
-d_campaign_events_vote_2020 <- d_turnout |>
-  filter(year == 2020) |>
-  mutate(state = state.abb[match(state, state.name)]) |>
-  right_join(d_ev_state_2020, by = c("year", "state"))
 
 turnout_campaignevents_2020 <- modelsummary(list("All Events" = total_events_2020, "Democratic Events" = lm_ev_D_2020, "Republican Events" = lm_ev_R_2020),stars = TRUE, output = "kableExtra")
 
@@ -372,11 +383,12 @@ out_samp_errors <- sapply(1:1000, function(i) {
 hist(out_samp_errors)
 ```
 
-This model appears to have a very high r^2 of 0.92, indicating that the OLS coefficients seemed to have a high in-sample prediction ability. However, the results appeared less promising when testing out-of-sample errors via cross-validation, with some errors actually being higher than the difference between the actual minimum and maximum value of Democratic vote share that a state could have. This may be due to several limitations of my model. For one, the state metrics that I use are easily confounded with other factors. For example, the amount of federal spending has not been found to indicate much without considering which party has provided that funding (5). Though I use post-2000 funding to provide an aggregate since we do not have access to data following the 2020 election, it is an imperfect measure. Similarly, scholars have disagreed on what party benefits most from having higher overall turnout rates (9).
+This model appears to have a very high r^2 of 0.92, indicating that the OLS coefficients seemed to have a high in-sample prediction ability. However, the results appeared less promising when testing out-of-sample errors via cross-validation, with some errors actually being higher than the difference between the actual minimum and maximum value of Democratic vote share that a state could have. This may be due to several limitations of my model. For one, the state metrics that I use are easily confounded with other factors. For example, the amount of federal spending has not been found to indicate much without considering which party has provided that funding (5). Though I use post-2000 funding to provide an aggregate since we do not have access to data following the 2020 election, it is an imperfect measure. Similarly, scholars have disagreed on what party benefits most from having higher overall turnout rates (9). Perhaps a next step may be to disaggregate turnout outcomes by party, available in our county turnout dataset.
 
 Nevertheless, I use these findings to predict outcomes in the seven states that numerous sources have declared as "battlegrounds" in the 2024 presidential election. (10)
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
+# Predict Democrat two-party vote share in 2024 by state
 state_preds <- predict(trained_pred, test_data_2024)
 
 test_data_2024$pred <- state_preds
