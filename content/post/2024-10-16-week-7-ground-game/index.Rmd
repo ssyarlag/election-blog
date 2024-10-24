@@ -47,6 +47,9 @@ d_campaign_events <- read_csv("campaign_events_geocoded.csv")
 d_dem_field <- read_csv("fieldoffice_2004-2012_dems.csv")
 d_county_field <- read_csv("fieldoffice_2012_bycounty.csv")
 d_address_field <- read_csv("fieldoffice_2012-2016_byaddress.csv")
+
+# Michigan county map
+mi_geo <- readRDS("mi_geo.rds")
 ```
 
 For this analysis, I am interested in exploring the relationship between ground-campaign activities and voter turnout. Given that ground campaigns happen on a relatively local level, I focus on my home state of Michigan for my analysis this week, reviewing how the prevalence of field offices and campaign events in 2016 impacted turnout outcomes.
@@ -57,9 +60,11 @@ First, I visualized the relationship between field offices/campaign events and c
 
 # (1)
 
-mi_geo <- counties(cb = TRUE) |> 
-  shift_geometry() |> 
-  filter(STUSPS == "MI")
+# mi_geo <- counties(cb = TRUE) |>
+#   shift_geometry() |>
+#   filter(STUSPS == "MI")
+# 
+# saveRDS(mi_geo, "mi_geo.rds")
 
 # Field Offices
 
@@ -200,11 +205,7 @@ d_campaign_events_vote <- d_turnout |>
 
 lm_ev_D <- lm(vep_turnout~ n_ev_D + ev_diff_D_R + n_office_D + office_diff_D_R, data = d_campaign_events_vote)
 lm_ev_R <- lm(vep_turnout ~ n_ev_R + ev_diff_R_D + n_office_R + office_diff_R_D, data = d_campaign_events_vote)
-total_events <- lm(vep_turnout ~ total_events + total_offices ,data = d_campaign_events_vote)
-
-summary(lm_ev_D)
-summary(lm_ev_R)
-summary(total_events)
+total_events <- lm(vep_turnout ~ total_events + total_offices ,data = d_campaign_events_vote) 
 
 modelsummary(list("All Events" = total_events, "Democratic Events" = lm_ev_D, "Republican Events" = lm_ev_R), stars = TRUE, output = "kableExtra")
           
@@ -267,9 +268,9 @@ Once again, most of these results don't indicate significance, except for the me
 
 The large lack of significance, aside from this difference measure, may lend credence to Kalla and Broockman's 2018 work, which highlights that ground campaigns have a relatively minimal effect on outcomes (5).
 
-Following this analysis, I also began building my own predictive model of electoral outcomes, based on my findings from previous weeks. Through an initial conversation with Matt Dardet, I was inspired to start with a relatively "parsimonious" model -- Alan Abramowitz's Time for Change Model. While I still use some parts of this model, including its incorporation of GDP growth and incumbency status, I wanted to build a model that was generalizable to candidates who were not incumbents. Given that our analyses from previous weeks also indicated that metrics like turnout, polling, and federal grant spending (as discussed by Kriner and Reeves (6)) appeared significant, I included these metrics as well. I also notably excluded metrics related to campaign activities, given the relatively insignificant results that I found when incorporating them this week and last. 
+Following this analysis, I also began building my own predictive model of electoral outcomes, based on my findings from previous weeks. Through an initial conversation with Matt Dardet, I was inspired to start with a relatively "parsimonious" model -- Alan Abramowitz's Time for Change Model (which is also similar to several other prominent models, as we discussed in our section!). While I still use some parts of this model, including its incorporation of GDP growth, I wanted to build a model that was generalizable to candidates who were not incumbents. Given that our analyses from previous weeks also indicated that metrics like turnout, polling, and federal fund allocation (as discussed by Kriner and Reeves (6)) appeared significant, I included these metrics as well. I also notably excluded metrics related to campaign activities, given the relatively insignificant results that I found when incorporating them this week and last. 
 
-My linear regression model considers GDP growth in the quarter immediately prior to the election (although I use 2nd quarter data when predicting 2024 outcomes since it is the most recent data we have available), unemployment, and candidate incumbency at the national level and poll support five weeks prior to the election, total federal grant funding allocation since 2000, and turnout in the last presidential election at the state level. Using this model, I aim to predict two-party Democratic vote share. Then, I impute Republican vote share by subtracting the Democratic two-party vote share from 100.  Importantly, I also only used data after 1996, wanting to avoid biasing my findings with results from a time when the American political landscape was significantly different than it is today (7).
+My linear regression model considers GDP growth in the quarter immediately prior to the election (although I use 2nd quarter data when predicting 2024 outcomes since it is the most recent data we have available), unemployment, and candidate incumbency at the national level and poll support five weeks prior to the election, total federal funding allocation since 1984, and turnout in the last presidential election at the state level. Using this model, I aim to predict two-party Democratic vote share. Then, I impute Republican vote share by subtracting the Democratic two-party vote share from 100.  Importantly, I also only used data after 1984, wanting to avoid biasing my findings with results from a time when the American political landscape was significantly different than it is today, as well as the election outcomes of Ronald Reagan's second election (8). I had initially only analyzed data from after 1996 (including total grant allocation since 1996), and still include that subsetted model here for comparison.
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
 # Building projection model
@@ -277,16 +278,21 @@ My linear regression model considers GDP growth in the quarter immediately prior
 
 # Fed Grants Data by State 
 cleaned_d_grants <- d_grants |>
+  filter(year > 1984) |>
+  group_by(state_abb) |>
+  summarize(total_grant= sum(grant_mil))
+
+cleaned_d_grants_post_1996 <- d_grants |>
   filter(year > 1996) |>
   group_by(state_abb) |>
-  summarize(total_grant_since_2000 = sum(grant_mil))
+  summarize(total_grant= sum(grant_mil))
 
 # Cleaned Turnout data 
 d_turnout <- d_turnout[order(d_turnout$state, d_turnout$year), ]
-d_turnout$lastpresturnout <- lag(d_turnout$vep_turnout, n = 2)
-d_turnout$prevpresturnout <- lag(d_turnout$vep_turnout, n = 4)
+d_turnout$turnout_lag1 <- lag(d_turnout$vep_turnout, n = 2)
+d_turnout$turnout_lag2 <- lag(d_turnout$vep_turnout, n = 4)
 d_turnout_filtered <- d_turnout |>
-  select(year, state, vep_turnout, lastpresturnout, prevpresturnout) |>
+  select(year, state, vep_turnout, turnout_lag1, turnout_lag2) |>
   filter(!is.na(vep_turnout))
 
 # Cleaned polling data
@@ -311,52 +317,72 @@ incumbency <- d_popvote |>
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 # Final Datasets for Reg
 
-# Training Data - merging several datasets made earlier together
-cleaned_reg_data <- d_state_popvote |>
+# Training Data post 1984 - merging several datasets made earlier together
+dem_cleaned_reg_data <- d_state_popvote |>
+  filter(year > 1984) |>
+  left_join(d_fred, by = "year") |>
+  mutate(state_abb = state.abb[match(state, state.name)]) |>
+  filter(state != "District Of Columbia") |>
+  left_join(cleaned_d_grants, by = "state_abb") |>
+  left_join(d_turnout_filtered, by = c("state", "year")) |>
+  filter(quarter == 4) |>
+  right_join(d_state_polls_clean, by = c("state", "year")) |>
+  left_join(incumbency, by = c("year", "party")) |>
+  filter(year > 1984 & year < 2024) |>
+  select(year, state, party, D_pv2p, R_pv2p, D_pv2p_lag1, R_pv2p_lag1, D_pv2p_lag2, R_pv2p_lag2, GDP_growth_quarterly, unemployment, state_abb, party, total_grant, turnout_lag1, turnout_lag2, mean_5_wk_poll_support, incumbent, incumbent_party, dem_party_incumbent) |>
+  filter(party == "DEM") 
+
+dem_cleaned_reg_data$turnout_lag1 = as.numeric(dem_cleaned_reg_data$turnout_lag1)
+dem_cleaned_reg_data$turnout_lag2 = as.numeric(dem_cleaned_reg_data$turnout_lag2)
+
+dem_cleaned_reg_data$incumbent <- ifelse(dem_cleaned_reg_data$incumbent == TRUE, 1, 0)
+dem_cleaned_reg_data$dem_party_incumbent <- ifelse(dem_cleaned_reg_data$dem_party_incumbent == TRUE, 1, 0)
+
+# Training Data Post 1996 
+cleaned_data_post_1996 <- d_state_popvote |>
   filter(year > 1996) |>
   left_join(d_fred, by = "year") |>
   mutate(state_abb = state.abb[match(state, state.name)]) |>
-  right_join(cleaned_d_grants, by = "state_abb") |>
-  right_join(d_turnout_filtered, by = c("state", "year")) |>
+  filter(state != "District Of Columbia") |>
+  left_join(cleaned_d_grants_post_1996, by = "state_abb") |>
+  left_join(d_turnout_filtered, by = c("state", "year")) |>
   filter(quarter == 4) |>
   right_join(d_state_polls_clean, by = c("state", "year")) |>
-  right_join(incumbency, by = c("year", "party")) |>
+  left_join(incumbency, by = c("year", "party")) |>
   filter(year > 1996 & year < 2024) |>
-  select(year, state, party, D_pv2p, R_pv2p, D_pv2p_lag1, R_pv2p_lag1, D_pv2p_lag2, R_pv2p_lag2, GDP_growth_quarterly, unemployment, state_abb, party, total_grant_since_2000, lastpresturnout, prevpresturnout, mean_5_wk_poll_support, incumbent, incumbent_party, dem_party_incumbent)
-
-# Filtering to only democratic data
-dem_cleaned_reg_data <- cleaned_reg_data |>
+  select(year, state, party, D_pv2p, R_pv2p, D_pv2p_lag1, R_pv2p_lag1, D_pv2p_lag2, R_pv2p_lag2, GDP_growth_quarterly, unemployment, state_abb, party, total_grant, turnout_lag1, turnout_lag2, mean_5_wk_poll_support, incumbent, incumbent_party, dem_party_incumbent) |>
   filter(party == "DEM")
 
-dem_cleaned_reg_data$lastpresturnout = as.numeric(dem_cleaned_reg_data$lastpresturnout)
-dem_cleaned_reg_data$prevpresturnout = as.numeric(dem_cleaned_reg_data$prevpresturnout)
+cleaned_data_post_1996$turnout_lag1 = as.numeric(cleaned_data_post_1996$turnout_lag1)
+cleaned_data_post_1996$turnout_lag2 = as.numeric(cleaned_data_post_1996$turnout_lag2)
+
+cleaned_data_post_1996$incumbent <- ifelse(cleaned_data_post_1996$incumbent == TRUE, 1, 0)
+cleaned_data_post_1996$dem_party_incumbent <- ifelse(cleaned_data_post_1996$dem_party_incumbent == TRUE, 1, 0)
+
 
 # Test Data - Using data from 2020, but setting 2020 data as previous election (relative to 2024) and lagged 2020 data (2016 election) as previous election before that
 
 turnout_lag_2024 <- d_turnout[order(d_turnout$state, d_turnout$year), ]
-turnout_lag_2024$prevpresturnout = lag(d_turnout$vep_turnout, n = 2)
+turnout_lag_2024$turnout_lag2 = lag(d_turnout$vep_turnout, n = 2)
 turnout_lag_2024 <- turnout_lag_2024 |>
   filter(year == 2020) |>
-  mutate(lastpresturnout = vep_turnout) |>
-  select(state, lastpresturnout, prevpresturnout)
+  mutate(turnout_lag1 = vep_turnout) |>
+  select(state, turnout_lag1, turnout_lag2)
 
 test_data_2024 <- incumbency |>
   left_join(d_fred, by = "year") |>
   filter(year == 2024, party == "DEM") |>
   left_join(d_state_polls_clean, by = c("year", "party")) |>
   mutate(state_abb = state.abb[match(state, state.name)]) |>
-  right_join(cleaned_d_grants, by = "state_abb") |>
+  left_join(cleaned_d_grants, by = "state_abb") |>
   right_join(turnout_lag_2024, by = "state") |>
   filter(quarter == 2) |>
-  select(year, state, party, GDP_growth_quarterly, unemployment, state_abb, party, total_grant_since_2000, lastpresturnout, prevpresturnout, mean_5_wk_poll_support, incumbent, incumbent_party, dem_party_incumbent) |>
+  select(year, state, party, GDP_growth_quarterly, unemployment, state_abb, party, total_grant, turnout_lag1, turnout_lag2, mean_5_wk_poll_support, incumbent, incumbent_party, dem_party_incumbent) |>
   filter(party == "DEM")
 
-# Cleaning test data
-test_data_2024$lastpresturnout = as.numeric(test_data_2024$lastpresturnout)
-test_data_2024$prevpresturnout = as.numeric(test_data_2024$prevpresturnout)
+test_data_2024$turnout_lag1 = as.numeric(test_data_2024$turnout_lag1)
+test_data_2024$turnout_lag2 = as.numeric(test_data_2024$turnout_lag2)
 
-dem_cleaned_reg_data$incumbent <- ifelse(dem_cleaned_reg_data$incumbent == TRUE, 1, 0)
-dem_cleaned_reg_data$dem_party_incumbent <- ifelse(dem_cleaned_reg_data$dem_party_incumbent == TRUE, 1, 0)
 test_data_2024$incumbent <- ifelse(test_data_2024$incumbent == TRUE, 1, 0)
 test_data_2024$dem_party_incumbent <- ifelse(test_data_2024$dem_party_incumbent == TRUE, 1, 0)
 
@@ -365,50 +391,75 @@ test_data_2024$dem_party_incumbent <- ifelse(test_data_2024$dem_party_incumbent 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 # Train model for states with all of these variables
 
-trained_pred <- lm(D_pv2p ~ GDP_growth_quarterly + mean_5_wk_poll_support + incumbent + total_grant_since_2000 + lastpresturnout + unemployment, data = dem_cleaned_reg_data, na.rm = TRUE)
+trained_pred <- lm(D_pv2p ~ GDP_growth_quarterly + mean_5_wk_poll_support + total_grant + turnout_lag1 + unemployment, data = dem_cleaned_reg_data, na.rm = TRUE)
 
-modelsummary(list("Predicted Democratic Vote Share" = trained_pred), stars = TRUE, output = "kableExtra")
+trained_pred_post_1996 <- lm(D_pv2p ~ GDP_growth_quarterly + mean_5_wk_poll_support + total_grant + turnout_lag1 + unemployment, data = cleaned_data_post_1996, na.rm = TRUE)
+
+modelsummary(list("1985-2020 Data" = trained_pred, "1997-2020 Data" = trained_pred_post_1996), stars = TRUE, output = "kableExtra")
 
 # Measuring out-of-sample fit Based on example code from Week 2 Cross-Validation example
 
 set.seed(02138)
 out_samp_errors <- sapply(1:1000, function(i) {
-  years_out_samp <- sample(dem_cleaned_reg_data$year, 3) 
-  mod <- lm(D_pv2p ~ GDP_growth_quarterly + mean_5_wk_poll_support + incumbent + total_grant_since_2000 + lastpresturnout + prevpresturnout + unemployment, dem_cleaned_reg_data[!(dem_cleaned_reg_data$year %in% years_out_samp),])
+  years_out_samp <- sample(dem_cleaned_reg_data$year, 4) 
+  mod <- lm(D_pv2p ~ GDP_growth_quarterly + mean_5_wk_poll_support + total_grant + turnout_lag1 + unemployment, na.rm = TRUE, dem_cleaned_reg_data[!(dem_cleaned_reg_data$year %in% years_out_samp),])
   out_samp_pred <- predict(mod, dem_cleaned_reg_data[dem_cleaned_reg_data$year %in% years_out_samp,])
   out_samp_truth <- dem_cleaned_reg_data$D_pv2p[dem_cleaned_reg_data$year %in% years_out_samp]
   mean(out_samp_pred - out_samp_truth, na.rm = TRUE)
 })
 
+out_samp_errors_post96 <- sapply(1:1000, function(i) {
+  years_out_samp <- sample(cleaned_data_post_1996$year, 3) 
+  mod <- lm(D_pv2p ~ GDP_growth_quarterly + mean_5_wk_poll_support + total_grant + turnout_lag1 + unemployment, na.rm = TRUE, data = cleaned_data_post_1996[!(cleaned_data_post_1996$year %in% years_out_samp),])
+  out_samp_pred <- predict(mod, cleaned_data_post_1996[cleaned_data_post_1996$year %in% years_out_samp,])
+  out_samp_truth <- cleaned_data_post_1996$D_pv2p[cleaned_data_post_1996$year %in% years_out_samp]
+  mean(out_samp_pred - out_samp_truth, na.rm = TRUE)
+})
+
+
 hist(out_samp_errors)
+hist(out_samp_errors_post96)
 ```
 
-This model appears to have a very high r^2 of 0.92, indicating that the OLS coefficients seemed to have a high in-sample prediction ability. However, the results appeared less promising when testing out-of-sample errors via cross-validation, with some errors actually being higher than the difference between the actual minimum and maximum value of Democratic vote share that a state could have. This may be due to several limitations of my model. For one, the state metrics that I use are easily confounded with other factors. For example, the amount of federal spending has not been found to indicate much without considering which party has provided that funding (5). Though I use post-2000 funding to provide an aggregate since we do not have access to data following the 2020 election, it is an imperfect measure. Similarly, scholars have disagreed on what party benefits most from having higher overall turnout rates (9). Perhaps a next step may be to disaggregate turnout outcomes by party, available in our county turnout dataset.
+Both models appear to have relatively high R^2 values, indicating higher levels of in-sample fit, but the model with data after 1996 appears to have a significantly higher R^2, reaching up to 0.91. Both models also have similar out-of-sample cross validation errors, centering around zero, but I find that the spread on the model with more data is slightly right skewed (meaning that the model is likely to underpredict Democrat performance). While this model also has a smaller range of prediction errors from 0, both seem to have a pretty substantial range.
+
+However, there are several limitations of my model. For one, the state metrics that I use are easily confounded with other factors. For example, the amount of federal spending has not been found to indicate much without considering which party has provided that funding (5). Though I use aggregated funding since we do not have access to data following the 2020 election, it is an imperfect measure. Similarly, scholars have disagreed on what party benefits most from having higher overall turnout rates (9). Perhaps a next step may be to disaggregate turnout outcomes by party, available in our county turnout dataset. Additionally, on the note of turnout, the regression model including data as far back as 1984 includes many missing data points, because we do not have turnout metrics for many of these states in the 1980s/1990s in our datasets.
 
 Nevertheless, I use these findings to predict outcomes in the seven states that numerous sources have declared as "battlegrounds" in the 2024 presidential election. (10)
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 # Predict Democrat two-party vote share in 2024 by state
 state_preds <- predict(trained_pred, test_data_2024)
+state_preds_post96 <- predict(trained_pred_post_1996, test_data_2024)
 
 test_data_2024$pred <- state_preds
 test_data_2024$repub_pred <- 100-test_data_2024$pred
 test_data_2024$winner <- ifelse(test_data_2024$repub_pred > test_data_2024$pred, "REP", "DEM")
 
+test_data_2024$pred_post96 <- state_preds_post96
+test_data_2024$repub_pred_post96 <- 100-test_data_2024$pred_post96
+test_data_2024$winner_post96 <- ifelse(test_data_2024$repub_pred_post96 > test_data_2024$pred_post96, "REP", "DEM")
+
 test_data_2024 |>
   filter(state %in% c("Arizona", "Georgia", "Michigan", "Nevada", "North Carolina", "Wisconsin", "Pennsylvania")) |>
-  select(state, winner) |>
-  knitr::kable(col.names = c("State", "Predicted Winner"), align = "c")
+  select(state, winner, pred) |>
+  knitr::kable(col.names = c("State", "Predicted Winner", "Democratic Vote Share"), align = "c", digits = 2, caption = "Prediction (Post 1984 Data)")
+
+
+test_data_2024 |>
+  filter(state %in% c("Arizona", "Georgia", "Michigan", "Nevada", "North Carolina", "Wisconsin", "Pennsylvania")) |>
+  select(state, winner_post96, pred_post96) |>
+  knitr::kable(col.names = c("State", "Predicted Winner", "Democratic Vote Share"), align = "c", digits = 2, caption = "Prediction (Post 1996 Data)")
 ```
 
-Though these results appear promising for Vice President Harris, I hope to continue to improve this model to provide a more accurate metric.
+Though these results appear promising for Vice President Harris, these predictions are more optimistic for her than I would expect them to be, given how close prominent forecasts predict the election to be (11). This is especially the case of the Post 1996 Data model. However, given that we found the post 1984 model to slightly skew towards underpredicting Democratic performance, this could lend more credence to the higher predictions found in the post-96 model. Regardless, I am looking forward to gathering feedback on these models and further improving them.
 
 # References
 
-St_transform, tigris (shift_geometry), and ggpubr help pages
+St_transform, st_as_sf, tigris (shift_geometry), and ggpubr help pages
 
 (1) Viridis color maps help page; Coord Map help page; Left Join; Data@Urban. 2018. “How to Create State and County Maps Easily in R.” Medium (blog). July 10, 2018. https://urban-institute.medium.com/how-to-create-state-and-county-maps-easily-in-r-577d29300bb2.
-“R Append Data Frames - Spark By {Examples}.” n.d. Accessed October 21, 2024. https://sparkbyexamples.com/r-programming/r-append-dataframes/.
+“R Append Data Frames - Spark By {Examples}.” n.d. Accessed October 21, 2024. https://sparkbyexamples.com/r-programming/r-append-dataframes/.; Julia. (2020, May 26). Answer to “Export R data to csv” [Online post]. Stack Overflow. https://stackoverflow.com/a/62017887; ialm. (2013, November 14). Answer to “How to save data file into .RData?” [Online post]. Stack Overflow. https://stackoverflow.com/a/19967638
 
 (2) to_title_case help page, camille. 2022. “Answer to ‘Convert Column Names to Title Case.’” Stack Overflow. https://stackoverflow.com/a/70804865.
 Khalilov, Murad. 2024. “Answer to ‘Rename All Columns to Title Case with {dplyr}.’” Stack Overflow. https://stackoverflow.com/a/78146810.
@@ -417,24 +468,26 @@ LurkerFinallyJoins. 2022. “Adding Value to End of Every Value in R Column.” 
 
 (3) Andina, Matias. 2016. “Answer to ‘How to Remove $ and % from Columns in R?’” Stack Overflow. https://stackoverflow.com/a/35757945.
 
+(4) Darr, Joshua P., and Matthew S. Levendusky. 2014. “Relying on the Ground Game: The Placement and Effect of Campaign Field Offices.” American Politics Research 42 (3): 529–48. https://doi.org/10.1177/1532673X13500520.
 
-(3) Darr, Joshua P., and Matthew S. Levendusky. 2014. “Relying on the Ground Game: The Placement and Effect of Campaign Field Offices.” American Politics Research 42 (3): 529–48. https://doi.org/10.1177/1532673X13500520.
+(5) Kalla, Joshua L., and David E. Broockman. 2018. “The Minimal Persuasive Effects of Campaign Contact in General Elections: Evidence from 49 Field Experiments.” American Political Science Review 112 (1): 148–66. https://doi.org/10.1017/S0003055417000363.
 
-(4) Kalla, Joshua L., and David E. Broockman. 2018. “The Minimal Persuasive Effects of Campaign Contact in General Elections: Evidence from 49 Field Experiments.” American Political Science Review 112 (1): 148–66. https://doi.org/10.1017/S0003055417000363.
+(6) Kriner, Douglas L., and Andrew Reeves. 2012. “The Influence of Federal Spending on Presidential Elections.” American Political Science Review 106 (2): 348–66. https://doi.org/10.1017/S0003055412000159.
 
-(5) Kriner, Douglas L., and Andrew Reeves. 2012. “The Influence of Federal Spending on Presidential Elections.” American Political Science Review 106 (2): 348–66. https://doi.org/10.1017/S0003055412000159.
+(7) Students of History. “The Great Switch: How Republicans and Democrats Flipped Ideologies.” Accessed September 7, 2024. https://www.studentsofhistory.com/ideologies-flip-Democratic-Republican-parties.; U.S. Embassy & Consulate in the Kingdom of Denmark. “Presidential Elections and the American Political System.” Accessed September 7, 2024. https://dk.usembassy.gov/usa-i-skolen/presidential-elections-and-the-american-political-system/. (As cited in my first blog post)
 
-(6) Students of History. “The Great Switch: How Republicans and Democrats Flipped Ideologies.” Accessed September 7, 2024. https://www.studentsofhistory.com/ideologies-flip-Democratic-Republican-parties.; U.S. Embassy & Consulate in the Kingdom of Denmark. “Presidential Elections and the American Political System.” Accessed September 7, 2024. https://dk.usembassy.gov/usa-i-skolen/presidential-elections-and-the-american-political-system/. (As cited in my first blog post)
-
-(7) If_else help page; Bobbitt, Zach. 2021. “How to Sort Values Alphabetically in R.” Statology. July 13, 2021. https://www.statology.org/sort-alphabetically-in-r/.
+(8) If_else help page; Bobbitt, Zach. 2021. “How to Sort Values Alphabetically in R.” Statology. July 13, 2021. https://www.statology.org/sort-alphabetically-in-r/.
 ———. 2022. “How to Calculate Lagged Values in R (With Examples).” Statology. December 13, 2022. https://www.statology.org/r-lag/.
 
-(8) Shaw, Daron R., and John R. Petrocik. 2020. The Turnout Myth: Voting Rates and Partisan Outcomes in American National Elections. Oxford University Press.
+(9) Shaw, Daron R., and John R. Petrocik. 2020. The Turnout Myth: Voting Rates and Partisan Outcomes in American National Elections. Oxford University Press.
 
-(9) Boyce, Lily, Lazaro Gamio, Eli Murray, and Alicia Parlapiano. 2024. “Tracking the Swing States for Harris and Trump.” The New York Times, August 14, 2024, sec. U.S. https://www.nytimes.com/interactive/2024/us/elections/presidential-election-swing-states.html.
+(10) Boyce, Lily, Lazaro Gamio, Eli Murray, and Alicia Parlapiano. 2024. “Tracking the Swing States for Harris and Trump.” The New York Times, August 14, 2024, sec. U.S. https://www.nytimes.com/interactive/2024/us/elections/presidential-election-swing-states.html.
 Davis Jr., Elliott. n.d. “7 States That Could Sway the 2024 Presidential Election.” US News & World Report. Accessed October 22, 2024. //www.usnews.com/news/elections/articles/7-swing-states-that-could-decide-the-2024-presidential-election.
 Perry, Kati, Dan Keating, and Aaron Blake. 2024. “A Guide to the 7 Battleground States That Could Swing the Election.” Washington Post. October 21, 2024. https://www.washingtonpost.com/elections/interactive/2024/2024-swing-states-trump-harris/.
 Vox Staff. 2024. “The 7 States That Will Decide the 2024 Election.” Vox. October 21, 2024. https://www.vox.com/today-explained-podcast/378112/battleground-states-election-2024-trump-harris.
+
+(11) Morris, G. Elliott. 2024. “Who Is Favored To Win The 2024 Presidential Election?” FiveThirtyEight. June 11, 2024. https://projects.fivethirtyeight.com/2024-election-forecast/.
+
 
 # Data Sources
 All Data Sources are provided by GOV 1372 Staff

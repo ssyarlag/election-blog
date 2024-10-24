@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en-us">
-  <head>
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=6822&amp;path=livereload" data-no-instant defer></script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Week 7 - Ground Game | A minimal Hugo website</title>
@@ -26,416 +26,17 @@
 </div>
 
 <main>
-<script src="https://example.org/post/2024/10/16/week-7-ground-game/index_files/kePrint/kePrint.js"></script>
-<link href="https://example.org/post/2024/10/16/week-7-ground-game/index_files/lightable/lightable.css" rel="stylesheet" />
-<script src="https://example.org/post/2024/10/16/week-7-ground-game/index_files/kePrint/kePrint.js"></script>
-<link href="https://example.org/post/2024/10/16/week-7-ground-game/index_files/lightable/lightable.css" rel="stylesheet" />
-<script src="https://example.org/post/2024/10/16/week-7-ground-game/index_files/kePrint/kePrint.js"></script>
-<link href="https://example.org/post/2024/10/16/week-7-ground-game/index_files/lightable/lightable.css" rel="stylesheet" />
+<script src="/post/2024/10/16/week-7-ground-game/index_files/kePrint/kePrint.js"></script>
+<link href="/post/2024/10/16/week-7-ground-game/index_files/lightable/lightable.css" rel="stylesheet" />
+<script src="/post/2024/10/16/week-7-ground-game/index_files/kePrint/kePrint.js"></script>
+<link href="/post/2024/10/16/week-7-ground-game/index_files/lightable/lightable.css" rel="stylesheet" />
+<script src="/post/2024/10/16/week-7-ground-game/index_files/kePrint/kePrint.js"></script>
+<link href="/post/2024/10/16/week-7-ground-game/index_files/lightable/lightable.css" rel="stylesheet" />
 <p>This week, we focus on exploring the impacts of the &ldquo;ground game&rdquo; &ndash; a campaign&rsquo;s strategy of individually reaching out to voters in person. Thank you again to Matt Dardet for his helpful starter code.</p>
 <p>For this analysis, I am interested in exploring the relationship between ground-campaign activities and voter turnout. Given that ground campaigns happen on a relatively local level, I focus on my home state of Michigan for my analysis this week, reviewing how the prevalence of field offices and campaign events in 2016 impacted turnout outcomes.</p>
 <p>First, I visualized the relationship between field offices/campaign events and county turnout. The first map below indicates the location of field offices (+) and campaign events (∆) associated with each party. The second, put together using a mapping tool developed by the Urban Institute and generously described on their Medium site (1), indicates voter turnout in each county in Michigan. Unfortunately, we do not appear to have county-level turnout data for the 2016 election, so I use 2020 county-level turnout instead. While this is an imperfect metric, especially because of the effects of the COVID-19 pandemic, exploring this relationship could also potentially suggest if there are any long-term effects of the location of a campaign office in a region on future political cycles, or if the effects largely wean as the candidate changes.</p>
-<pre><code>## 
-  |                                                                            
-  |                                                                      |   0%
-  |                                                                            
-  |                                                                      |   1%
-  |                                                                            
-  |=                                                                     |   1%
-  |                                                                            
-  |=                                                                     |   2%
-  |                                                                            
-  |==                                                                    |   2%
-  |                                                                            
-  |==                                                                    |   3%
-  |                                                                            
-  |==                                                                    |   4%
-  |                                                                            
-  |===                                                                   |   4%
-  |                                                                            
-  |===                                                                   |   5%
-  |                                                                            
-  |====                                                                  |   5%
-  |                                                                            
-  |====                                                                  |   6%
-  |                                                                            
-  |=====                                                                 |   6%
-  |                                                                            
-  |=====                                                                 |   7%
-  |                                                                            
-  |=====                                                                 |   8%
-  |                                                                            
-  |======                                                                |   8%
-  |                                                                            
-  |======                                                                |   9%
-  |                                                                            
-  |=======                                                               |   9%
-  |                                                                            
-  |=======                                                               |  10%
-  |                                                                            
-  |=======                                                               |  11%
-  |                                                                            
-  |========                                                              |  11%
-  |                                                                            
-  |========                                                              |  12%
-  |                                                                            
-  |=========                                                             |  12%
-  |                                                                            
-  |=========                                                             |  13%
-  |                                                                            
-  |==========                                                            |  14%
-  |                                                                            
-  |==========                                                            |  15%
-  |                                                                            
-  |===========                                                           |  15%
-  |                                                                            
-  |===========                                                           |  16%
-  |                                                                            
-  |============                                                          |  17%
-  |                                                                            
-  |============                                                          |  18%
-  |                                                                            
-  |=============                                                         |  18%
-  |                                                                            
-  |=============                                                         |  19%
-  |                                                                            
-  |==============                                                        |  19%
-  |                                                                            
-  |==============                                                        |  20%
-  |                                                                            
-  |==============                                                        |  21%
-  |                                                                            
-  |===============                                                       |  21%
-  |                                                                            
-  |===============                                                       |  22%
-  |                                                                            
-  |================                                                      |  22%
-  |                                                                            
-  |================                                                      |  23%
-  |                                                                            
-  |================                                                      |  24%
-  |                                                                            
-  |=================                                                     |  24%
-  |                                                                            
-  |=================                                                     |  25%
-  |                                                                            
-  |==================                                                    |  25%
-  |                                                                            
-  |==================                                                    |  26%
-  |                                                                            
-  |===================                                                   |  26%
-  |                                                                            
-  |===================                                                   |  27%
-  |                                                                            
-  |===================                                                   |  28%
-  |                                                                            
-  |====================                                                  |  28%
-  |                                                                            
-  |====================                                                  |  29%
-  |                                                                            
-  |=====================                                                 |  29%
-  |                                                                            
-  |=====================                                                 |  30%
-  |                                                                            
-  |=====================                                                 |  31%
-  |                                                                            
-  |======================                                                |  31%
-  |                                                                            
-  |======================                                                |  32%
-  |                                                                            
-  |=======================                                               |  32%
-  |                                                                            
-  |=======================                                               |  33%
-  |                                                                            
-  |=======================                                               |  34%
-  |                                                                            
-  |========================                                              |  34%
-  |                                                                            
-  |========================                                              |  35%
-  |                                                                            
-  |=========================                                             |  35%
-  |                                                                            
-  |=========================                                             |  36%
-  |                                                                            
-  |==========================                                            |  36%
-  |                                                                            
-  |==========================                                            |  37%
-  |                                                                            
-  |==========================                                            |  38%
-  |                                                                            
-  |===========================                                           |  38%
-  |                                                                            
-  |===========================                                           |  39%
-  |                                                                            
-  |============================                                          |  39%
-  |                                                                            
-  |============================                                          |  40%
-  |                                                                            
-  |============================                                          |  41%
-  |                                                                            
-  |=============================                                         |  41%
-  |                                                                            
-  |=============================                                         |  42%
-  |                                                                            
-  |==============================                                        |  42%
-  |                                                                            
-  |==============================                                        |  43%
-  |                                                                            
-  |===============================                                       |  44%
-  |                                                                            
-  |===============================                                       |  45%
-  |                                                                            
-  |================================                                      |  45%
-  |                                                                            
-  |================================                                      |  46%
-  |                                                                            
-  |=================================                                     |  47%
-  |                                                                            
-  |=================================                                     |  48%
-  |                                                                            
-  |==================================                                    |  48%
-  |                                                                            
-  |==================================                                    |  49%
-  |                                                                            
-  |===================================                                   |  49%
-  |                                                                            
-  |===================================                                   |  50%
-  |                                                                            
-  |===================================                                   |  51%
-  |                                                                            
-  |====================================                                  |  51%
-  |                                                                            
-  |====================================                                  |  52%
-  |                                                                            
-  |=====================================                                 |  52%
-  |                                                                            
-  |=====================================                                 |  53%
-  |                                                                            
-  |=====================================                                 |  54%
-  |                                                                            
-  |======================================                                |  54%
-  |                                                                            
-  |======================================                                |  55%
-  |                                                                            
-  |=======================================                               |  55%
-  |                                                                            
-  |=======================================                               |  56%
-  |                                                                            
-  |========================================                              |  56%
-  |                                                                            
-  |========================================                              |  57%
-  |                                                                            
-  |========================================                              |  58%
-  |                                                                            
-  |=========================================                             |  58%
-  |                                                                            
-  |=========================================                             |  59%
-  |                                                                            
-  |==========================================                            |  59%
-  |                                                                            
-  |==========================================                            |  60%
-  |                                                                            
-  |==========================================                            |  61%
-  |                                                                            
-  |===========================================                           |  61%
-  |                                                                            
-  |===========================================                           |  62%
-  |                                                                            
-  |============================================                          |  62%
-  |                                                                            
-  |============================================                          |  63%
-  |                                                                            
-  |============================================                          |  64%
-  |                                                                            
-  |=============================================                         |  64%
-  |                                                                            
-  |=============================================                         |  65%
-  |                                                                            
-  |==============================================                        |  65%
-  |                                                                            
-  |==============================================                        |  66%
-  |                                                                            
-  |===============================================                       |  66%
-  |                                                                            
-  |===============================================                       |  67%
-  |                                                                            
-  |===============================================                       |  68%
-  |                                                                            
-  |================================================                      |  68%
-  |                                                                            
-  |================================================                      |  69%
-  |                                                                            
-  |=================================================                     |  69%
-  |                                                                            
-  |=================================================                     |  70%
-  |                                                                            
-  |=================================================                     |  71%
-  |                                                                            
-  |==================================================                    |  71%
-  |                                                                            
-  |==================================================                    |  72%
-  |                                                                            
-  |===================================================                   |  72%
-  |                                                                            
-  |===================================================                   |  73%
-  |                                                                            
-  |====================================================                  |  74%
-  |                                                                            
-  |====================================================                  |  75%
-  |                                                                            
-  |=====================================================                 |  75%
-  |                                                                            
-  |=====================================================                 |  76%
-  |                                                                            
-  |======================================================                |  77%
-  |                                                                            
-  |======================================================                |  78%
-  |                                                                            
-  |=======================================================               |  78%
-  |                                                                            
-  |=======================================================               |  79%
-  |                                                                            
-  |========================================================              |  79%
-  |                                                                            
-  |========================================================              |  80%
-  |                                                                            
-  |========================================================              |  81%
-  |                                                                            
-  |=========================================================             |  81%
-  |                                                                            
-  |=========================================================             |  82%
-  |                                                                            
-  |==========================================================            |  82%
-  |                                                                            
-  |==========================================================            |  83%
-  |                                                                            
-  |==========================================================            |  84%
-  |                                                                            
-  |===========================================================           |  84%
-  |                                                                            
-  |===========================================================           |  85%
-  |                                                                            
-  |============================================================          |  85%
-  |                                                                            
-  |============================================================          |  86%
-  |                                                                            
-  |=============================================================         |  87%
-  |                                                                            
-  |=============================================================         |  88%
-  |                                                                            
-  |==============================================================        |  88%
-  |                                                                            
-  |==============================================================        |  89%
-  |                                                                            
-  |===============================================================       |  89%
-  |                                                                            
-  |===============================================================       |  90%
-  |                                                                            
-  |===============================================================       |  91%
-  |                                                                            
-  |================================================================      |  91%
-  |                                                                            
-  |================================================================      |  92%
-  |                                                                            
-  |=================================================================     |  92%
-  |                                                                            
-  |=================================================================     |  93%
-  |                                                                            
-  |=================================================================     |  94%
-  |                                                                            
-  |==================================================================    |  94%
-  |                                                                            
-  |==================================================================    |  95%
-  |                                                                            
-  |===================================================================   |  95%
-  |                                                                            
-  |===================================================================   |  96%
-  |                                                                            
-  |====================================================================  |  96%
-  |                                                                            
-  |====================================================================  |  97%
-  |                                                                            
-  |====================================================================  |  98%
-  |                                                                            
-  |===================================================================== |  98%
-  |                                                                            
-  |===================================================================== |  99%
-  |                                                                            
-  |======================================================================|  99%
-  |                                                                            
-  |======================================================================| 100%
-</code></pre>
-<img src="https://example.org/post/2024/10/16/week-7-ground-game/index_files/figure-html/unnamed-chunk-3-1.png" width="672" />
+<img src="/post/2024/10/16/week-7-ground-game/index_files/figure-html/unnamed-chunk-3-1.png" width="672" />
 <p>From observing these maps, it does not appear that there is a substantial relationship between the location of 2016 campaign activity and 2020 turnout. In fact, if we look at the southeastern part of the state, where much election activity by both parties was concentrated, we see that there was relatively low electoral turnout in 2020. However, it is also important to recognize that these activities were likely clustered around the city of Detroit. Therefore, even if turnout is low, there still could have been a significant number of voters. In other parts of the state, the relationship seems relatively unclear from just this visual representation. Therefore, we also trained three linear regression models of the relationship between campaign activities and turnout at the national level, including total activity, Republican activity, and Democratic activity. While we have turnout metrics at the county level for 2020, we unfortunately do not have campaign activities measured by county, which is why I regress these two metrics at the national level.</p>
-<pre><code>## 
-## Call:
-## lm(formula = vep_turnout ~ n_ev_D + ev_diff_D_R + n_office_D + 
-##     office_diff_D_R, data = d_campaign_events_vote)
-## 
-## Residuals:
-##     Min      1Q  Median      3Q     Max 
-## -10.729  -2.986   1.052   3.327   9.145 
-## 
-## Coefficients:
-##                 Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)     61.53278    1.27384  48.305   &lt;2e-16 ***
-## n_ev_D          -0.35394    0.24916  -1.421    0.169    
-## ev_diff_D_R      0.01492    0.36880   0.040    0.968    
-## n_office_D       0.05022    0.22609   0.222    0.826    
-## office_diff_D_R  0.28757    0.22023   1.306    0.205    
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-## 
-## Residual standard error: 5.174 on 22 degrees of freedom
-##   (8 observations deleted due to missingness)
-## Multiple R-squared:  0.3488,	Adjusted R-squared:  0.2304 
-## F-statistic: 2.946 on 4 and 22 DF,  p-value: 0.04319
-</code></pre>
-<pre><code>## 
-## Call:
-## lm(formula = vep_turnout ~ n_ev_R + ev_diff_R_D + n_office_R + 
-##     office_diff_R_D, data = d_campaign_events_vote)
-## 
-## Residuals:
-##     Min      1Q  Median      3Q     Max 
-## -10.729  -2.986   1.052   3.327   9.145 
-## 
-## Coefficients:
-##                 Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)     61.53278    1.27384  48.305   &lt;2e-16 ***
-## n_ev_R          -0.35394    0.24916  -1.421   0.1695    
-## ev_diff_R_D      0.33903    0.26164   1.296   0.2085    
-## n_office_R       0.05022    0.22609   0.222   0.8262    
-## office_diff_R_D -0.33780    0.13655  -2.474   0.0216 *  
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-## 
-## Residual standard error: 5.174 on 22 degrees of freedom
-##   (8 observations deleted due to missingness)
-## Multiple R-squared:  0.3488,	Adjusted R-squared:  0.2304 
-## F-statistic: 2.946 on 4 and 22 DF,  p-value: 0.04319
-</code></pre>
-<pre><code>## 
-## Call:
-## lm(formula = vep_turnout ~ total_events + total_offices, data = d_campaign_events_vote)
-## 
-## Residuals:
-##      Min       1Q   Median       3Q      Max 
-## -10.0306  -3.5256  -0.8565   3.8785  11.0022 
-## 
-## Coefficients:
-##               Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)   61.84217    1.31385  47.069   &lt;2e-16 ***
-## total_events  -0.16651    0.11596  -1.436   0.1639    
-## total_offices  0.18116    0.08353   2.169   0.0402 *  
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-## 
-## Residual standard error: 5.507 on 24 degrees of freedom
-##   (8 observations deleted due to missingness)
-## Multiple R-squared:  0.1952,	Adjusted R-squared:  0.1281 
-## F-statistic: 2.911 on 2 and 24 DF,  p-value: 0.07383
-</code></pre>
 <table style="NAborder-bottom: 0; width: auto !important; margin-left: auto; margin-right: auto;" class="table">
  <thead>
   <tr>
@@ -632,7 +233,7 @@
 </table>
 <p>This regression confirms my previous assumptions &ndash; metrics of campaign activity alone largely do not appear to have a significant effect on turnout. However, one important exception to this is the number of total offices (and a greater number of Democratic offices relative to Republican offices) driving overall turnout in a statistically significant manner. This latter result seems to align with Darr and Levendusky&rsquo;s findings that field offices increase turnout (4). However, it is interesting to note that campaign events, unintuitively, appear to decrease turnout, though this result is not statistically significant.</p>
 <p>Again, it is important to emphasize that this effect may have been limited because of the time difference between the campaign activities and the measure of turnout. To address this, I also produced a map of campaign events in 2020, compared again with the same map of turnout from before below. Unfortunately, we do not have field office data from 2020, making comparing all three metrics impossible.</p>
-<img src="https://example.org/post/2024/10/16/week-7-ground-game/index_files/figure-html/unnamed-chunk-5-1.png" width="672" />
+<img src="/post/2024/10/16/week-7-ground-game/index_files/figure-html/unnamed-chunk-5-1.png" width="672" />
 <p>Again, there does not appear to be a tangible relationship between just the two variables. However, I produce another regression model to test this outcome using only 2020 data.</p>
 <table style="NAborder-bottom: 0; width: auto !important; margin-left: auto; margin-right: auto;" class="table">
  <thead>
@@ -770,169 +371,240 @@
 </table>
 <p>Once again, most of these results don&rsquo;t indicate significance, except for the metrics of the differences between the number of Democratic and Republican offices in a state, with more Republican offices relative to Democratic offices resulting in higher turnout rates. However, I am not sure what the mechanism is for this finding, especially since the results are the opposite of what we found in the last set of regressions.</p>
 <p>The large lack of significance, aside from this difference measure, may lend credence to Kalla and Broockman&rsquo;s 2018 work, which highlights that ground campaigns have a relatively minimal effect on outcomes (5).</p>
-<p>Following this analysis, I also began building my own predictive model of electoral outcomes, based on my findings from previous weeks. Through an initial conversation with Matt Dardet, I was inspired to start with a relatively &ldquo;parsimonious&rdquo; model &ndash; Alan Abramowitz&rsquo;s Time for Change Model. While I still use some parts of this model, including its incorporation of GDP growth and incumbency status, I wanted to build a model that was generalizable to candidates who were not incumbents. Given that our analyses from previous weeks also indicated that metrics like turnout, polling, and federal grant spending (as discussed by Kriner and Reeves (6)) appeared significant, I included these metrics as well. I also notably excluded metrics related to campaign activities, given the relatively insignificant results that I found when incorporating them this week and last.</p>
-<p>My linear regression model considers GDP growth in the quarter immediately prior to the election (although I use 2nd quarter data when predicting 2024 outcomes since it is the most recent data we have available), unemployment, and candidate incumbency at the national level and poll support five weeks prior to the election, total federal grant funding allocation since 2000, and turnout in the last presidential election at the state level. Using this model, I aim to predict two-party Democratic vote share. Then, I impute Republican vote share by subtracting the Democratic two-party vote share from 100.  Importantly, I also only used data after 1996, wanting to avoid biasing my findings with results from a time when the American political landscape was significantly different than it is today (7).</p>
+<p>Following this analysis, I also began building my own predictive model of electoral outcomes, based on my findings from previous weeks. Through an initial conversation with Matt Dardet, I was inspired to start with a relatively &ldquo;parsimonious&rdquo; model &ndash; Alan Abramowitz&rsquo;s Time for Change Model (which is also similar to several other prominent models, as we discussed in our section!). While I still use some parts of this model, including its incorporation of GDP growth, I wanted to build a model that was generalizable to candidates who were not incumbents. Given that our analyses from previous weeks also indicated that metrics like turnout, polling, and federal fund allocation (as discussed by Kriner and Reeves (6)) appeared significant, I included these metrics as well. I also notably excluded metrics related to campaign activities, given the relatively insignificant results that I found when incorporating them this week and last.</p>
+<p>My linear regression model considers GDP growth in the quarter immediately prior to the election (although I use 2nd quarter data when predicting 2024 outcomes since it is the most recent data we have available), unemployment, and candidate incumbency at the national level and poll support five weeks prior to the election, total federal funding allocation since 1984, and turnout in the last presidential election at the state level. Using this model, I aim to predict two-party Democratic vote share. Then, I impute Republican vote share by subtracting the Democratic two-party vote share from 100.  Importantly, I also only used data after 1984, wanting to avoid biasing my findings with results from a time when the American political landscape was significantly different than it is today, as well as the election outcomes of Ronald Reagan&rsquo;s second election (8). I had initially only analyzed data from after 1996 (including total grant allocation since 1996), and still include that subsetted model here for comparison.</p>
 <table style="NAborder-bottom: 0; width: auto !important; margin-left: auto; margin-right: auto;" class="table">
  <thead>
   <tr>
    <th style="text-align:left;">   </th>
-   <th style="text-align:center;"> &amp;nbsp;Predicted Democratic Vote Share </th>
+   <th style="text-align:center;"> &amp;nbsp;1985-2020 Data </th>
+   <th style="text-align:center;"> &amp;nbsp;1997-2020 Data </th>
   </tr>
  </thead>
 <tbody>
   <tr>
    <td style="text-align:left;"> (Intercept) </td>
-   <td style="text-align:center;"> 8.083*** </td>
+   <td style="text-align:center;"> 7.278** </td>
+   <td style="text-align:center;"> 5.423** </td>
   </tr>
   <tr>
    <td style="text-align:left;">  </td>
-   <td style="text-align:center;"> (1.980) </td>
+   <td style="text-align:center;"> (2.664) </td>
+   <td style="text-align:center;"> (1.925) </td>
   </tr>
   <tr>
    <td style="text-align:left;"> GDP_growth_quarterly </td>
-   <td style="text-align:center;"> −0.426*** </td>
+   <td style="text-align:center;"> −0.074 </td>
+   <td style="text-align:center;"> −0.364*** </td>
   </tr>
   <tr>
    <td style="text-align:left;">  </td>
-   <td style="text-align:center;"> (0.048) </td>
+   <td style="text-align:center;"> (0.063) </td>
+   <td style="text-align:center;"> (0.047) </td>
   </tr>
   <tr>
    <td style="text-align:left;"> mean_5_wk_poll_support </td>
-   <td style="text-align:center;"> 1.162*** </td>
+   <td style="text-align:center;"> 0.898*** </td>
+   <td style="text-align:center;"> 1.144*** </td>
   </tr>
   <tr>
    <td style="text-align:left;">  </td>
+   <td style="text-align:center;"> (0.039) </td>
    <td style="text-align:center;"> (0.032) </td>
   </tr>
   <tr>
-   <td style="text-align:left;"> incumbent </td>
-   <td style="text-align:center;"> 2.798*** </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;">  </td>
-   <td style="text-align:center;"> (0.702) </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> total_grant_since_2000 </td>
-   <td style="text-align:center;"> 0.000+ </td>
+   <td style="text-align:left;"> total_grant </td>
+   <td style="text-align:center;"> 0.000*** </td>
+   <td style="text-align:center;"> 0.000* </td>
   </tr>
   <tr>
    <td style="text-align:left;">  </td>
    <td style="text-align:center;"> (0.000) </td>
+   <td style="text-align:center;"> (0.000) </td>
   </tr>
   <tr>
-   <td style="text-align:left;"> lastpresturnout </td>
-   <td style="text-align:center;"> 0.044 </td>
+   <td style="text-align:left;"> turnout_lag1 </td>
+   <td style="text-align:center;"> 0.022 </td>
+   <td style="text-align:center;"> 0.049 </td>
   </tr>
   <tr>
    <td style="text-align:left;">  </td>
-   <td style="text-align:center;"> (0.031) </td>
+   <td style="text-align:center;"> (0.041) </td>
+   <td style="text-align:center;"> (0.032) </td>
   </tr>
   <tr>
    <td style="text-align:left;"> unemployment </td>
-   <td style="text-align:center;"> −2.248*** </td>
+   <td style="text-align:center;"> 0.073 </td>
+   <td style="text-align:center;"> −1.665*** </td>
   </tr>
   <tr>
    <td style="text-align:left;box-shadow: 0px 1.5px">  </td>
-   <td style="text-align:center;box-shadow: 0px 1.5px"> (0.232) </td>
+   <td style="text-align:center;box-shadow: 0px 1.5px"> (0.231) </td>
+   <td style="text-align:center;box-shadow: 0px 1.5px"> (0.186) </td>
   </tr>
   <tr>
    <td style="text-align:left;"> Num.Obs. </td>
+   <td style="text-align:center;"> 322 </td>
    <td style="text-align:center;"> 230 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> R2 </td>
-   <td style="text-align:center;"> 0.920 </td>
+   <td style="text-align:center;"> 0.771 </td>
+   <td style="text-align:center;"> 0.914 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> R2 Adj. </td>
-   <td style="text-align:center;"> 0.918 </td>
+   <td style="text-align:center;"> 0.767 </td>
+   <td style="text-align:center;"> 0.912 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> AIC </td>
-   <td style="text-align:center;"> 1151.5 </td>
+   <td style="text-align:center;"> 1904.4 </td>
+   <td style="text-align:center;"> 1165.4 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> BIC </td>
-   <td style="text-align:center;"> 1179.0 </td>
+   <td style="text-align:center;"> 1930.8 </td>
+   <td style="text-align:center;"> 1189.4 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> Log.Lik. </td>
-   <td style="text-align:center;"> −567.769 </td>
+   <td style="text-align:center;"> −945.197 </td>
+   <td style="text-align:center;"> −575.678 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> F </td>
-   <td style="text-align:center;"> 427.175 </td>
+   <td style="text-align:center;"> 212.917 </td>
+   <td style="text-align:center;"> 477.709 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> RMSE </td>
-   <td style="text-align:center;"> 2.86 </td>
+   <td style="text-align:center;"> 4.56 </td>
+   <td style="text-align:center;"> 2.96 </td>
   </tr>
 </tbody>
 <tfoot><tr><td style="padding: 0; " colspan="100%">
 <sup></sup> + p &lt; 0.1, * p &lt; 0.05, ** p &lt; 0.01, *** p &lt; 0.001</td></tr></tfoot>
 </table>
-<img src="https://example.org/post/2024/10/16/week-7-ground-game/index_files/figure-html/unnamed-chunk-9-1.png" width="672" />
-<p>This model appears to have a very high r^2 of 0.92, indicating that the OLS coefficients seemed to have a high in-sample prediction ability. However, the results appeared less promising when testing out-of-sample errors via cross-validation, with some errors actually being higher than the difference between the actual minimum and maximum value of Democratic vote share that a state could have. This may be due to several limitations of my model. For one, the state metrics that I use are easily confounded with other factors. For example, the amount of federal spending has not been found to indicate much without considering which party has provided that funding (5). Though I use post-2000 funding to provide an aggregate since we do not have access to data following the 2020 election, it is an imperfect measure. Similarly, scholars have disagreed on what party benefits most from having higher overall turnout rates (9). Perhaps a next step may be to disaggregate turnout outcomes by party, available in our county turnout dataset.</p>
+<p><img src="/post/2024/10/16/week-7-ground-game/index_files/figure-html/unnamed-chunk-9-1.png" width="672" /><img src="/post/2024/10/16/week-7-ground-game/index_files/figure-html/unnamed-chunk-9-2.png" width="672" /></p>
+<p>Both models appear to have relatively high R^2 values, indicating higher levels of in-sample fit, but the model with data after 1996 appears to have a significantly higher R^2, reaching up to 0.91. Both models also have similar out-of-sample cross validation errors, centering around zero, but I find that the spread on the model with more data is slightly right skewed (meaning that the model is likely to underpredict Democrat performance). While this model also has a smaller range of prediction errors from 0, both seem to have a pretty substantial range.</p>
+<p>However, there are several limitations of my model. For one, the state metrics that I use are easily confounded with other factors. For example, the amount of federal spending has not been found to indicate much without considering which party has provided that funding (5). Though I use aggregated funding since we do not have access to data following the 2020 election, it is an imperfect measure. Similarly, scholars have disagreed on what party benefits most from having higher overall turnout rates (9). Perhaps a next step may be to disaggregate turnout outcomes by party, available in our county turnout dataset. Additionally, on the note of turnout, the regression model including data as far back as 1984 includes many missing data points, because we do not have turnout metrics for many of these states in the 1980s/1990s in our datasets.</p>
 <p>Nevertheless, I use these findings to predict outcomes in the seven states that numerous sources have declared as &ldquo;battlegrounds&rdquo; in the 2024 presidential election. (10)</p>
+<p>Table: <span id="tab:unnamed-chunk-10"></span>Table 1: Prediction (Post 1984 Data)</p>
 <table>
   <thead>
       <tr>
           <th style="text-align: center">State</th>
           <th style="text-align: center">Predicted Winner</th>
+          <th style="text-align: center">Democratic Vote Share</th>
       </tr>
   </thead>
   <tbody>
       <tr>
           <td style="text-align: center">Arizona</td>
           <td style="text-align: center">DEM</td>
+          <td style="text-align: center">53.97</td>
       </tr>
       <tr>
           <td style="text-align: center">Georgia</td>
           <td style="text-align: center">DEM</td>
+          <td style="text-align: center">51.74</td>
       </tr>
       <tr>
           <td style="text-align: center">Michigan</td>
           <td style="text-align: center">DEM</td>
+          <td style="text-align: center">53.37</td>
       </tr>
       <tr>
           <td style="text-align: center">Nevada</td>
           <td style="text-align: center">DEM</td>
+          <td style="text-align: center">52.55</td>
       </tr>
       <tr>
           <td style="text-align: center">North Carolina</td>
           <td style="text-align: center">DEM</td>
+          <td style="text-align: center">52.37</td>
       </tr>
       <tr>
           <td style="text-align: center">Pennsylvania</td>
           <td style="text-align: center">DEM</td>
+          <td style="text-align: center">54.02</td>
       </tr>
       <tr>
           <td style="text-align: center">Wisconsin</td>
           <td style="text-align: center">DEM</td>
+          <td style="text-align: center">53.32</td>
       </tr>
   </tbody>
 </table>
-<p>Though these results appear promising for Vice President Harris, I hope to continue to improve this model to provide a more accurate metric.</p>
+<p>Table: <span id="tab:unnamed-chunk-10"></span>Table 1: Prediction (Post 1996 Data)</p>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: center">State</th>
+          <th style="text-align: center">Predicted Winner</th>
+          <th style="text-align: center">Democratic Vote Share</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: center">Arizona</td>
+          <td style="text-align: center">DEM</td>
+          <td style="text-align: center">56.20</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">Georgia</td>
+          <td style="text-align: center">DEM</td>
+          <td style="text-align: center">55.31</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">Michigan</td>
+          <td style="text-align: center">DEM</td>
+          <td style="text-align: center">56.94</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">Nevada</td>
+          <td style="text-align: center">DEM</td>
+          <td style="text-align: center">56.08</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">North Carolina</td>
+          <td style="text-align: center">DEM</td>
+          <td style="text-align: center">55.96</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">Pennsylvania</td>
+          <td style="text-align: center">DEM</td>
+          <td style="text-align: center">57.08</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">Wisconsin</td>
+          <td style="text-align: center">DEM</td>
+          <td style="text-align: center">57.28</td>
+      </tr>
+  </tbody>
+</table>
+<p>Though these results appear promising for Vice President Harris, these predictions are more optimistic for her than I would expect them to be, given how close prominent forecasts predict the election to be (11). This is especially the case of the Post 1996 Data model. However, given that we found the post 1984 model to slightly skew towards underpredicting Democratic performance, this could lend more credence to the higher predictions found in the post-96 model. Regardless, I am looking forward to gathering feedback on these models and further improving them.</p>
 <h1 id="references">References</h1>
-<p>St_transform, tigris (shift_geometry), and ggpubr help pages</p>
+<p>St_transform, st_as_sf, tigris (shift_geometry), and ggpubr help pages</p>
 <p>(1) Viridis color maps help page; Coord Map help page; Left Join; Data@Urban. 2018. “How to Create State and County Maps Easily in R.” Medium (blog). July 10, 2018. <a href="https://urban-institute.medium.com/how-to-create-state-and-county-maps-easily-in-r-577d29300bb2">https://urban-institute.medium.com/how-to-create-state-and-county-maps-easily-in-r-577d29300bb2</a>.
-“R Append Data Frames - Spark By {Examples}.” n.d. Accessed October 21, 2024. <a href="https://sparkbyexamples.com/r-programming/r-append-dataframes/">https://sparkbyexamples.com/r-programming/r-append-dataframes/</a>.</p>
+“R Append Data Frames - Spark By {Examples}.” n.d. Accessed October 21, 2024. <a href="https://sparkbyexamples.com/r-programming/r-append-dataframes/.;">https://sparkbyexamples.com/r-programming/r-append-dataframes/.;</a> Julia. (2020, May 26). Answer to “Export R data to csv” [Online post]. Stack Overflow. <a href="https://stackoverflow.com/a/62017887;">https://stackoverflow.com/a/62017887;</a> ialm. (2013, November 14). Answer to “How to save data file into .RData?” [Online post]. Stack Overflow. <a href="https://stackoverflow.com/a/19967638">https://stackoverflow.com/a/19967638</a></p>
 <p>(2) to_title_case help page, camille. 2022. “Answer to ‘Convert Column Names to Title Case.’” Stack Overflow. <a href="https://stackoverflow.com/a/70804865">https://stackoverflow.com/a/70804865</a>.
 Khalilov, Murad. 2024. “Answer to ‘Rename All Columns to Title Case with {dplyr}.’” Stack Overflow. <a href="https://stackoverflow.com/a/78146810">https://stackoverflow.com/a/78146810</a>.
 LurkerFinallyJoins. 2022. “Adding Value to End of Every Value in R Column.” Reddit Post. R/Rlanguage. <a href="https://www.reddit.com/r/Rlanguage/comments/sh9rbu/adding_value_to_end_of_every_value_in_r_column/">www.reddit.com/r/Rlanguage/comments/sh9rbu/adding_value_to_end_of_every_value_in_r_column/</a>. Holtz, Yan. n.d. “Dual Y Axis with R and Ggplot2.” Accessed October 21, 2024. <a href="https://www.r-graph-gallery.com/line-chart-dual-Y-axis-ggplot2.html.;">https://www.r-graph-gallery.com/line-chart-dual-Y-axis-ggplot2.html.;</a> “Reorder the Column of Dataframe in R Using Dplyr.” 2021. GeeksforGeeks. September 1, 2021. <a href="https://www.geeksforgeeks.org/reorder-the-column-of-dataframe-in-r-using-dplyr/">https://www.geeksforgeeks.org/reorder-the-column-of-dataframe-in-r-using-dplyr/</a>.</p>
 <p>(3) Andina, Matias. 2016. “Answer to ‘How to Remove $ and % from Columns in R?’” Stack Overflow. <a href="https://stackoverflow.com/a/35757945">https://stackoverflow.com/a/35757945</a>.</p>
-<p>(3) Darr, Joshua P., and Matthew S. Levendusky. 2014. “Relying on the Ground Game: The Placement and Effect of Campaign Field Offices.” American Politics Research 42 (3): 529–48. <a href="https://doi.org/10.1177/1532673X13500520">https://doi.org/10.1177/1532673X13500520</a>.</p>
-<p>(4) Kalla, Joshua L., and David E. Broockman. 2018. “The Minimal Persuasive Effects of Campaign Contact in General Elections: Evidence from 49 Field Experiments.” American Political Science Review 112 (1): 148–66. <a href="https://doi.org/10.1017/S0003055417000363">https://doi.org/10.1017/S0003055417000363</a>.</p>
-<p>(5) Kriner, Douglas L., and Andrew Reeves. 2012. “The Influence of Federal Spending on Presidential Elections.” American Political Science Review 106 (2): 348–66. <a href="https://doi.org/10.1017/S0003055412000159">https://doi.org/10.1017/S0003055412000159</a>.</p>
-<p>(6) Students of History. “The Great Switch: How Republicans and Democrats Flipped Ideologies.” Accessed September 7, 2024. <a href="https://www.studentsofhistory.com/ideologies-flip-Democratic-Republican-parties.;">https://www.studentsofhistory.com/ideologies-flip-Democratic-Republican-parties.;</a> U.S. Embassy &amp; Consulate in the Kingdom of Denmark. “Presidential Elections and the American Political System.” Accessed September 7, 2024. <a href="https://dk.usembassy.gov/usa-i-skolen/presidential-elections-and-the-american-political-system/">https://dk.usembassy.gov/usa-i-skolen/presidential-elections-and-the-american-political-system/</a>. (As cited in my first blog post)</p>
-<p>(7) If_else help page; Bobbitt, Zach. 2021. “How to Sort Values Alphabetically in R.” Statology. July 13, 2021. <a href="https://www.statology.org/sort-alphabetically-in-r/">https://www.statology.org/sort-alphabetically-in-r/</a>.
+<p>(4) Darr, Joshua P., and Matthew S. Levendusky. 2014. “Relying on the Ground Game: The Placement and Effect of Campaign Field Offices.” American Politics Research 42 (3): 529–48. <a href="https://doi.org/10.1177/1532673X13500520">https://doi.org/10.1177/1532673X13500520</a>.</p>
+<p>(5) Kalla, Joshua L., and David E. Broockman. 2018. “The Minimal Persuasive Effects of Campaign Contact in General Elections: Evidence from 49 Field Experiments.” American Political Science Review 112 (1): 148–66. <a href="https://doi.org/10.1017/S0003055417000363">https://doi.org/10.1017/S0003055417000363</a>.</p>
+<p>(6) Kriner, Douglas L., and Andrew Reeves. 2012. “The Influence of Federal Spending on Presidential Elections.” American Political Science Review 106 (2): 348–66. <a href="https://doi.org/10.1017/S0003055412000159">https://doi.org/10.1017/S0003055412000159</a>.</p>
+<p>(7) Students of History. “The Great Switch: How Republicans and Democrats Flipped Ideologies.” Accessed September 7, 2024. <a href="https://www.studentsofhistory.com/ideologies-flip-Democratic-Republican-parties.;">https://www.studentsofhistory.com/ideologies-flip-Democratic-Republican-parties.;</a> U.S. Embassy &amp; Consulate in the Kingdom of Denmark. “Presidential Elections and the American Political System.” Accessed September 7, 2024. <a href="https://dk.usembassy.gov/usa-i-skolen/presidential-elections-and-the-american-political-system/">https://dk.usembassy.gov/usa-i-skolen/presidential-elections-and-the-american-political-system/</a>. (As cited in my first blog post)</p>
+<p>(8) If_else help page; Bobbitt, Zach. 2021. “How to Sort Values Alphabetically in R.” Statology. July 13, 2021. <a href="https://www.statology.org/sort-alphabetically-in-r/">https://www.statology.org/sort-alphabetically-in-r/</a>.
 ———. 2022. “How to Calculate Lagged Values in R (With Examples).” Statology. December 13, 2022. <a href="https://www.statology.org/r-lag/">https://www.statology.org/r-lag/</a>.</p>
-<p>(8) Shaw, Daron R., and John R. Petrocik. 2020. The Turnout Myth: Voting Rates and Partisan Outcomes in American National Elections. Oxford University Press.</p>
-<p>(9) Boyce, Lily, Lazaro Gamio, Eli Murray, and Alicia Parlapiano. 2024. “Tracking the Swing States for Harris and Trump.” The New York Times, August 14, 2024, sec. U.S. <a href="https://www.nytimes.com/interactive/2024/us/elections/presidential-election-swing-states.html">https://www.nytimes.com/interactive/2024/us/elections/presidential-election-swing-states.html</a>.
+<p>(9) Shaw, Daron R., and John R. Petrocik. 2020. The Turnout Myth: Voting Rates and Partisan Outcomes in American National Elections. Oxford University Press.</p>
+<p>(10) Boyce, Lily, Lazaro Gamio, Eli Murray, and Alicia Parlapiano. 2024. “Tracking the Swing States for Harris and Trump.” The New York Times, August 14, 2024, sec. U.S. <a href="https://www.nytimes.com/interactive/2024/us/elections/presidential-election-swing-states.html">https://www.nytimes.com/interactive/2024/us/elections/presidential-election-swing-states.html</a>.
 Davis Jr., Elliott. n.d. “7 States That Could Sway the 2024 Presidential Election.” US News &amp; World Report. Accessed October 22, 2024. //www.usnews.com/news/elections/articles/7-swing-states-that-could-decide-the-2024-presidential-election.
 Perry, Kati, Dan Keating, and Aaron Blake. 2024. “A Guide to the 7 Battleground States That Could Swing the Election.” Washington Post. October 21, 2024. <a href="https://www.washingtonpost.com/elections/interactive/2024/2024-swing-states-trump-harris/">https://www.washingtonpost.com/elections/interactive/2024/2024-swing-states-trump-harris/</a>.
 Vox Staff. 2024. “The 7 States That Will Decide the 2024 Election.” Vox. October 21, 2024. <a href="https://www.vox.com/today-explained-podcast/378112/battleground-states-election-2024-trump-harris">https://www.vox.com/today-explained-podcast/378112/battleground-states-election-2024-trump-harris</a>.</p>
+<p>(11) Morris, G. Elliott. 2024. “Who Is Favored To Win The 2024 Presidential Election?” FiveThirtyEight. June 11, 2024. <a href="https://projects.fivethirtyeight.com/2024-election-forecast/">https://projects.fivethirtyeight.com/2024-election-forecast/</a>.</p>
 <h1 id="data-sources">Data Sources</h1>
 <p>All Data Sources are provided by GOV 1372 Staff</p>
 <p>Popular Vote Datasets</p>
