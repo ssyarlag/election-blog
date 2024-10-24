@@ -395,7 +395,7 @@ trained_pred <- lm(D_pv2p ~ GDP_growth_quarterly + mean_5_wk_poll_support + tota
 
 trained_pred_post_1996 <- lm(D_pv2p ~ GDP_growth_quarterly + mean_5_wk_poll_support + total_grant + turnout_lag1 + unemployment, data = cleaned_data_post_1996, na.rm = TRUE)
 
-modelsummary(list("1985-2020 Data" = trained_pred, "1997-2020 Data" = trained_pred_post_1996), stars = TRUE, output = "kableExtra")
+modelsummary(list("Post 1984 Data" = trained_pred, "Post 1996 Data" = trained_pred_post_1996), stars = TRUE, output = "kableExtra")
 
 # Measuring out-of-sample fit Based on example code from Week 2 Cross-Validation example
 

@@ -381,8 +381,8 @@ My linear regression model considers GDP growth in the quarter immediately prior
  <thead>
   <tr>
    <th style="text-align:left;">   </th>
-   <th style="text-align:center;"> &amp;nbsp;1985-2020 Data </th>
-   <th style="text-align:center;"> &amp;nbsp;1997-2020 Data </th>
+   <th style="text-align:center;"> &amp;nbsp;Post 1984 Data </th>
+   <th style="text-align:center;"> &amp;nbsp;Post 1996 Data </th>
   </tr>
  </thead>
 <tbody>
