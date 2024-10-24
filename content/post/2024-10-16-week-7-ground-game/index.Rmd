@@ -399,6 +399,7 @@ modelsummary(list("Post 1984 Data" = trained_pred, "Post 1996 Data" = trained_pr
 
 # Measuring out-of-sample fit Based on example code from Week 2 Cross-Validation example
 
+# Post 1984
 set.seed(02138)
 out_samp_errors <- sapply(1:1000, function(i) {
   years_out_samp <- sample(dem_cleaned_reg_data$year, 4) 
@@ -408,6 +409,7 @@ out_samp_errors <- sapply(1:1000, function(i) {
   mean(out_samp_pred - out_samp_truth, na.rm = TRUE)
 })
 
+# Post 1996
 out_samp_errors_post96 <- sapply(1:1000, function(i) {
   years_out_samp <- sample(cleaned_data_post_1996$year, 3) 
   mod <- lm(D_pv2p ~ GDP_growth_quarterly + mean_5_wk_poll_support + total_grant + turnout_lag1 + unemployment, na.rm = TRUE, data = cleaned_data_post_1996[!(cleaned_data_post_1996$year %in% years_out_samp),])
@@ -421,14 +423,14 @@ hist(out_samp_errors)
 hist(out_samp_errors_post96)
 ```
 
-Both models appear to have relatively high R^2 values, indicating higher levels of in-sample fit, but the model with data after 1996 appears to have a significantly higher R^2, reaching up to 0.91. Both models also have similar out-of-sample cross validation errors, centering around zero, but I find that the spread on the model with more data is slightly right skewed (meaning that the model is likely to underpredict Democrat performance). While this model also has a smaller range of prediction errors from 0, both seem to have a pretty substantial range.
+Both models appear to have relatively high R^2 values, indicating higher levels of in-sample fit, but the model with data only after 1996 appears to have a significantly higher R^2, reaching up to 0.91. Both models also have similar out-of-sample cross validation errors, centering around zero, but I find that the spread on the model with more data is slightly right skewed (meaning that the model is likely to underpredict Democrat performance). While this model also has a smaller range of prediction errors from 0, both seem to have a pretty substantial range.
 
 However, there are several limitations of my model. For one, the state metrics that I use are easily confounded with other factors. For example, the amount of federal spending has not been found to indicate much without considering which party has provided that funding (5). Though I use aggregated funding since we do not have access to data following the 2020 election, it is an imperfect measure. Similarly, scholars have disagreed on what party benefits most from having higher overall turnout rates (9). Perhaps a next step may be to disaggregate turnout outcomes by party, available in our county turnout dataset. Additionally, on the note of turnout, the regression model including data as far back as 1984 includes many missing data points, because we do not have turnout metrics for many of these states in the 1980s/1990s in our datasets.
 
 Nevertheless, I use these findings to predict outcomes in the seven states that numerous sources have declared as "battlegrounds" in the 2024 presidential election. (10)
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
-# Predict Democrat two-party vote share in 2024 by state
+# Predict Democrat two-party vote share in 2024 by state for both models
 state_preds <- predict(trained_pred, test_data_2024)
 state_preds_post96 <- predict(trained_pred_post_1996, test_data_2024)
 
@@ -440,19 +442,21 @@ test_data_2024$pred_post96 <- state_preds_post96
 test_data_2024$repub_pred_post96 <- 100-test_data_2024$pred_post96
 test_data_2024$winner_post96 <- ifelse(test_data_2024$repub_pred_post96 > test_data_2024$pred_post96, "REP", "DEM")
 
+# Post 1984 model
 test_data_2024 |>
   filter(state %in% c("Arizona", "Georgia", "Michigan", "Nevada", "North Carolina", "Wisconsin", "Pennsylvania")) |>
   select(state, winner, pred) |>
   knitr::kable(col.names = c("State", "Predicted Winner", "Democratic Vote Share"), align = "c", digits = 2, caption = "Prediction (Post 1984 Data)")
 
 
+# Post 1996 model
 test_data_2024 |>
   filter(state %in% c("Arizona", "Georgia", "Michigan", "Nevada", "North Carolina", "Wisconsin", "Pennsylvania")) |>
   select(state, winner_post96, pred_post96) |>
   knitr::kable(col.names = c("State", "Predicted Winner", "Democratic Vote Share"), align = "c", digits = 2, caption = "Prediction (Post 1996 Data)")
 ```
 
-Though these results appear promising for Vice President Harris, these predictions are more optimistic for her than I would expect them to be, given how close prominent forecasts predict the election to be (11). This is especially the case of the Post 1996 Data model. However, given that we found the post 1984 model to slightly skew towards underpredicting Democratic performance, this could lend more credence to the higher predictions found in the post-96 model. Regardless, I am looking forward to gathering feedback on these models and further improving them.
+Though these results appear promising for Vice President Harris, these predictions are more optimistic for her than I would expect them to be, given how close prominent forecasts predict the election to be (11). This is especially the case of the post 1996 model. However, given that we found the post 1984 model to slightly skew towards underpredicting Democratic performance, this could lend more credence to the higher predictions found in the post-96 model. Regardless, I am looking forward to gathering feedback on these models and further improving them.
 
 # References
 
