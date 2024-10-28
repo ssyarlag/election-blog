@@ -43,7 +43,7 @@ d_turnout <- read_csv("state_turnout_1980_2022.csv")
 d_county_turnout <- read_csv("county_turnout.csv")
 
 # Read shocks data
-d_sc_prec <- read_csv("supreme_court_precedents.csv")
+d_sc_prec <- read_csv("sc_prec.csv")
 d_sc_cr <- read_csv("supreme_court_congressional_review.csv")
 # d_protests <- read_csv("protests.csv")
 d_protests <- read_csv("protests_clean.csv")
@@ -66,27 +66,42 @@ test <- read_csv("test.csv")
 # 
 # write.csv(d_protests, "protests_clean.csv", row.names = FALSE)
 
-d_sc_prec <- d_sc_prec |>
-  mutate(year = substring(dateDecision, nchar(dateDecision) - 3)) |>
-  group_by(year) |>
-  summarize(count = n())
+# Cleaning Supreme Court precedent data
+# d_sc_prec <- d_sc_prec |>
+#   mutate(year = substring(dateDecision, nchar(dateDecision) - 3)) |>
+#   group_by(year) |>
+#   summarize(count = n())
+# 
+# d_sc_prec$year = as.numeric(d_sc_prec$year)
 
-d_sc_prec$year = as.numeric(d_sc_prec$year) 
-
-d_sc_prec <- d_sc_prec |>
-  filter(year > 1984) |>
-  mutate(pres_year = case_when(year <= 1988 ~ 1988,
-                               year > 1988 & year <= 1992 ~ 1992,
-                               year > 1992 & year <= 1996 ~ 1996,
-                               year > 1996 & year <= 2000 ~ 2000,
-                               year > 2000 & year <= 2004 ~ 2004,
-                               year > 2004 & year <= 2008 ~ 2008,
-                               year > 2008 & year <= 2012 ~ 2012,
-                               year > 2012 & year <= 2016 ~ 2016,
-                               year > 2016 & year <= 2020 ~ 2020,
-                               year > 2020 ~ 2024)) |>
-  group_by(pres_year) |>
-  summarize(count = sum(count))
+# d_sc_prec <- d_sc_prec |>
+#   filter(year > 1984) |>
+#   mutate(pres_year = case_when(year <= 1988 ~ 1988,
+#                                year > 1988 & year <= 1992 ~ 1992,
+#                                year > 1992 & year <= 1996 ~ 1996,
+#                                year > 1996 & year <= 2000 ~ 2000,
+#                                year > 2000 & year <= 2004 ~ 2004,
+#                                year > 2004 & year <= 2008 ~ 2008,
+#                                year > 2008 & year <= 2012 ~ 2012,
+#                                year > 2012 & year <= 2016 ~ 2016,
+#                                year > 2016 & year <= 2020 ~ 2020,
+#                                year > 2020 ~ 2024)) |>
+#   group_by(pres_year) |>
+#   summarize(count = sum(count)) |>
+#   mutate(cons_shift = case_when(
+#                           pres_year == 1992 ~ 1,
+#                           pres_year == 1996 ~ 1,
+#                           pres_year == 2000 ~ 1,
+#                           pres_year == 2004 ~ 0,
+#                           pres_year == 2008 ~ 1,
+#                           pres_year == 2012 ~ 0,
+#                           pres_year == 2016 ~ 0,
+#                           pres_year == 2020 ~ 1,
+#                           pres_year == 2024 ~ 1))
+# 
+# # I computed the conservative shift variable by seeing how the decisions of the "median justice" as described by Rubin's article in Axios (Rubin, April. 2023. “Supreme Court Ideology Continues to Lean Conservative, New Data Shows.” Axios. July 3, 2023. https://www.axios.com/2023/07/03/supreme-court-justices-political-ideology-chart.) shifted in the four years prior to the election 
+# 
+# write.csv(d_sc_prec, "sc_prec.csv", row.names = FALSE)
 ```
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
@@ -216,12 +231,14 @@ I planned to make three initial changes this week. First, upon the recommendatio
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 
-# (3)  = Snakecase + prediction for confidence interval
+# (3)
 
+# Predict models
 mod_84 <- lm(D_pv ~ GDP_growth_quarterly + mean_5_wk_poll_support + turnout_lag1 + unemployment + log(total_grant), data = train_post84, na.rm = TRUE)
 
 mod_96 <- lm(D_pv ~ GDP_growth_quarterly + mean_5_wk_poll_support + turnout_lag1 + unemployment + log(total_grant), data = train_post96, na.rm = TRUE)
 
+# Output descriptions of models
 modelsummary(list("Post 84" = mod_84,"Post 96" = mod_96), stars = TRUE, output = "kableExtra")
 
 # Summary of models, showing similar r^2 values
@@ -269,7 +286,7 @@ test |>
 By taking the log of grant allocation, we find a highly significant prediction value in the ultimate outcome. Furthermore, although the models still overwhelmingly appear to predict that the Democrats will win all of the battleground states, which seems relatively unlikely, these models show additional uncertainty, with the values for both Georgia and North Carolina falling within a range of uncertainty. To get an additional benchmark for the performance of both of these models, I also run out-of-sample cross validation
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
-# Out-of-Sample testing of models without the federal grant allocation variable
+# Out-of-Sample testing of models with log allocation model and not two-party vote share
 
 # Post 1984
 set.seed(02138)
@@ -324,7 +341,7 @@ To further improve my model, I was interested in including several additional me
 # dem_turnout$state[dem_turnout$state == "Westvirginia"] <- "West Virginia"
 # 
 
-# Updated models
+# Updated models - Version 2 (with lagged vote share)
 mod_84_v2 <- lm(D_pv ~ GDP_growth_quarterly + mean_5_wk_poll_support + turnout_lag1 + unemployment + log(total_grant) + D_pv_lag1 + D_pv_lag2, data = train_post84, na.rm = TRUE)
 
 mod_96_v2 <- lm(D_pv ~ GDP_growth_quarterly + mean_5_wk_poll_support + turnout_lag1 + unemployment + log(total_grant) + D_pv_lag1 + D_pv_lag2, data = train_post96, na.rm = TRUE)
@@ -337,6 +354,7 @@ When adding in these variables, we interestingly find that the R\^2 value of bot
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 set.seed(02138)
 
+# Calculate out of sample errors- post 1984 model
 out_samp_errors <- sapply(1:1000, function(i) {
   years_out_samp <- sample(train_post84$year, 4)
   mod <- lm(D_pv ~ GDP_growth_quarterly + mean_5_wk_poll_support + turnout_lag1 + unemployment + log(total_grant) + D_pv_lag1 + D_pv_lag2, na.rm = TRUE, train_post84[!(train_post84$year %in% years_out_samp),])
@@ -372,7 +390,7 @@ lag_vote_2024 <- train_post84 |>
 
 test <- left_join(test, lag_vote_2024, by = "state")
 
-# Produce prediction outcomes
+# Produce prediction outcomes with model update 2
 state_preds_v2 <- predict(mod_84_v2, test, interval = 'confidence')
 state_preds_post96_v2 <- predict(mod_96_v2, test, interval = 'confidence')
 
@@ -579,14 +597,15 @@ test |>
 
 These results show a more certain Democratic victory than if turnout was not included.
 
-Finally, I am interested in testing the effect of the overturning of Supreme Court precedent on mobilization. In particular, I believe that there would be a strong effect on Democratic voter outcomes as the values interact with h
+Moving forward, there are a few additional steps I would like to take. First, I would like to incorporate the Supreme Court precedent data that I modified to include whether or not the shifts were accompanied by a conservative shift in the "median justice" of the court, as described by Rubin in Axios (5). In particular, I would like to evaluate the effect of an interaction term between precedent changes and the court's ideological shifts. However, following this, I am interested in running these models, especially the models that include more than the three highly predictive variables, through Elastic Net in order to engage in feature selection.
 
 # References
 
-1.  Julia. 2020. “Answer to ‘Export R Data to Csv.’” *Stack Overflow*. <https://stackoverflow.com/a/62017887>.; Bobbitt, Zach. 2023. “How to Convert Datetime to Date in R.” Statology. January 25, 2023. <https://www.statology.org/r-convert-datetime-to-date/>. GKi. 2023. “Answer to ‘Extract Month and Year From Date in R.’” *Stack Overflow*. <https://stackoverflow.com/a/76709941>. rafa.pereira. 2016. “Answer to ‘Extract Month and Year From Date in R.’” *Stack Overflow*. <https://stackoverflow.com/a/37704385>.; “Extract the Last N Characters from String in R - Spark By {Examples}.” n.d. Accessed October 26, 2024. <https://sparkbyexamples.com/r-programming/extract-the-last-n-characters-from-string-in-r/>.
+1.  Julia. 2020. “Answer to ‘Export R Data to Csv.’” *Stack Overflow*. <https://stackoverflow.com/a/62017887>.; Bobbitt, Zach. 2023. “How to Convert Datetime to Date in R.” Statology. January 25, 2023. <https://www.statology.org/r-convert-datetime-to-date/>. GKi. 2023. “Answer to ‘Extract Month and Year From Date in R.’” *Stack Overflow*. <https://stackoverflow.com/a/76709941>. rafa.pereira. 2016. “Answer to ‘Extract Month and Year From Date in R.’” *Stack Overflow*. <https://stackoverflow.com/a/37704385>.; “Extract the Last N Characters from String in R - Spark By {Examples}.” n.d. Accessed October 26, 2024. <https://sparkbyexamples.com/r-programming/extract-the-last-n-characters-from-string-in-r/>.; Rubin, April. 2023. “Supreme Court Ideology Continues to Lean Conservative, New Data Shows.” Axios. July 3, 2023. https://www.axios.com/2023/07/03/supreme-court-justices-political-ideology-chart.
 2.  Andina, Matias. 2016. “Answer to ‘How to Remove \$ and % from Columns in R?’” *Stack Overflow*. <https://stackoverflow.com/a/35757945>.; camille. 2022. “Answer to ‘Convert Column Names to Title Case.’” *Stack Overflow*. <https://stackoverflow.com/a/70804865>.
 3.  Andina, Matias. 2016. “Answer to ‘How to Remove \$ and % from Columns in R?’” *Stack Overflow*. <https://stackoverflow.com/a/35757945>. “RPubs - Linear Regression Confidence and Prediction Intervals.” n.d. Accessed October 26, 2024. <https://rpubs.com/aaronsc32/regression-confidence-prediction-intervals>.
 4.  “How to Replace Values in R with Examples - Spark By {Examples}.” n.d. Accessed October 26, 2024. <https://sparkbyexamples.com/r-programming/replace-values-in-r/>. camille. 2022. “Answer to ‘Convert Column Names to Title Case.’” *Stack Overflow*. <https://stackoverflow.com/a/70804865>.
+5. Rubin, April. 2023. “Supreme Court Ideology Continues to Lean Conservative, New Data Shows.” Axios. July 3, 2023. https://www.axios.com/2023/07/03/supreme-court-justices-political-ideology-chart.
 
 # Data Sources
 
@@ -608,4 +627,5 @@ Polling Data
 
 -   State Polls from FiveThirtyEight poll averages and preprocessing
 
-Data sources for state and county-level turnout and Supreme Court cases are unknown, but were generously provided by the GOV 1372 course staff
+Data sources for state and county-level turnout and Supreme Court cases are unknown, but were generously provided by the GOV 1372 course staff. However, I append the Supreme Court data with a metric of how the Supreme Court's leaninted over time with data from Axios (Rubin, April. 2023. “Supreme Court Ideology Continues to Lean Conservative, New Data Shows.” Axios. July 3, 2023. https://www.axios.com/2023/07/03/supreme-court-justices-political-ideology-chart.
+)
