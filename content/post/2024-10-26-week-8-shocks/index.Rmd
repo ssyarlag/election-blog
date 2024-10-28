@@ -512,7 +512,7 @@ test$conf_high84_v3 <-state_preds_v3[,3]
 test |>
   filter(state %in% c("Arizona", "Georgia", "Michigan", "Nevada", "North Carolina", "Wisconsin", "Pennsylvania")) |>
   select(state, winner_v3, pred_v2, conf_low84_v3, conf_high84_v3) |>
-  knitr::kable(col.names = c("State", "Predicted Winner", "Democratic Vote Share", "Low Pred", "High Pred"), align = "c", digits = 2, caption = "Prediction (Post 1984 Data)")
+  knitr::kable(col.names = c("State", "Predicted Winner", "Democratic Vote Share", "Low Pred", "High Pred"), align = "c", digits = 2)
 
 
 ```
@@ -582,7 +582,7 @@ test$conf_high96_v4 <-state_preds_96_v4[,3]
 test |>
   filter(state %in% c("Arizona", "Georgia", "Michigan", "Nevada", "North Carolina", "Wisconsin", "Pennsylvania")) |>
   select(state, winner_v4, pred_v4, conf_low84_v4, conf_high84_v4) |>
-  knitr::kable(col.names = c("State", "Predicted Winner", "Democratic Vote Share", "Low Pred", "High Pred"), align = "c", digits = 2, caption = "Prediction (Post 1984 Data)")
+  knitr::kable(col.names = c("State", "Predicted Winner", "Democratic Vote Share", "Low Pred", "High Pred"), align = "c", digits = 2)
 ```
 
 Post 1996 Model:
@@ -592,7 +592,7 @@ Post 1996 Model:
 test |>
   filter(state %in% c("Arizona", "Georgia", "Michigan", "Nevada", "North Carolina", "Wisconsin", "Pennsylvania")) |>
   select(state, winner_96_v4, pred_96_v4, conf_low96_v4, conf_high96_v4) |>
-  knitr::kable(col.names = c("State", "Predicted Winner", "Democratic Vote Share", "Low Pred", "High Pred"), align = "c", digits = 2, caption = "Prediction (Post 1984 Data)")
+  knitr::kable(col.names = c("State", "Predicted Winner", "Democratic Vote Share", "Low Pred", "High Pred"), align = "c", digits = 2)
 ```
 
 These results show a more certain Democratic victory than if turnout was not included.

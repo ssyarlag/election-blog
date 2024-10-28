@@ -458,8 +458,6 @@ While both of these models have relatively high in-sample fit, they both interes
 Post 1984 Model:
 
 
-Table: <span id="tab:unnamed-chunk-15"></span>Table 1: Prediction (Post 1984 Data)
-
 |     State      | Predicted Winner | Democratic Vote Share | Low Pred | High Pred |
 |:--------------:|:----------------:|:---------------------:|:--------:|:---------:|
 |    Arizona     |       DEM        |         51.84         |  49.95   |   50.71   |
@@ -605,8 +603,6 @@ Somewhat aligning with Shaw and Petrocik's argument, the out-of-sample error ran
 Post 1984 Model:
 
 
-Table: <span id="tab:unnamed-chunk-17"></span>Table 2: Prediction (Post 1984 Data)
-
 |     State      | Predicted Winner | Democratic Vote Share | Low Pred | High Pred |
 |:--------------:|:----------------:|:---------------------:|:--------:|:---------:|
 |    Arizona     |       DEM        |         50.33         |  50.54   |   52.06   |
@@ -619,8 +615,6 @@ Table: <span id="tab:unnamed-chunk-17"></span>Table 2: Prediction (Post 1984 Dat
 
 Post 1996 Model:
 
-
-Table: <span id="tab:unnamed-chunk-18"></span>Table 3: Prediction (Post 1984 Data)
 
 |     State      | Predicted Winner | Democratic Vote Share | Low Pred | High Pred |
 |:--------------:|:----------------:|:---------------------:|:--------:|:---------:|

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en-us">
-  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=7381&amp;path=livereload" data-no-instant defer></script>
+  <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Week 4: Incumbency | A minimal Hugo website</title>
@@ -26,8 +26,8 @@
 </div>
 
 <main>
-<script src="/post/2024/09/25/week-4-incumbency/index_files/kePrint/kePrint.js"></script>
-<link href="/post/2024/09/25/week-4-incumbency/index_files/lightable/lightable.css" rel="stylesheet" />
+<script src="https://example.org/post/2024/09/25/week-4-incumbency/index_files/kePrint/kePrint.js"></script>
+<link href="https://example.org/post/2024/09/25/week-4-incumbency/index_files/lightable/lightable.css" rel="stylesheet" />
 <p>In this week&rsquo;s lab, we explore the impact of candidate or party incumbency on presidential election outcomes. More specifically, we ask &ldquo;How should we treat the incumbency advantage in our 2024 electoral forecasts?&rdquo;. As always, my thanks to Matthew Dardet for his helpful starter code.</p>
 <p>This week, we reviewed a canonically successful model used to predict the advantage of incumbency: the Time for Change Model (TFC) by Alan Abramowitz. This relatively simple model &ndash; an OLS regression with independent variables of Quarter 2 GDP Growth, June Gallup poll approval, and whether or not one is an incumbent &ndash; is modeled here. We exclude 2020 data here, given that (as we have shown in previous blogs) the year is an outlier in terms of GDP growth.</p>
 <table style="NAborder-bottom: 0; width: auto !important; margin-left: auto; margin-right: auto;" class="table">
@@ -107,7 +107,7 @@
 <sup></sup> + p &lt; 0.1, * p &lt; 0.05, ** p &lt; 0.01, *** p &lt; 0.001</td></tr></tfoot>
 </table>
 <p>With an R^2 value of 0.82, it appears that this model is quite robust at the national level. To test its accuracy further, I conducted cross-validation testing, as demonstrated below. Again, I am grateful for Matthew Dardet&rsquo;s cross-validation starter code from Week 2</p>
-<img src="/post/2024/09/25/week-4-incumbency/index_files/figure-html/unnamed-chunk-3-1.png" width="672" />
+<img src="https://example.org/post/2024/09/25/week-4-incumbency/index_files/figure-html/unnamed-chunk-3-1.png" width="672" />
 <p>This plot demonstrates that the model generally tends to produce an accurate prediction of the truth, with most measures of error collecting around 0</p>
 <p>Given this, I was interested to see how this model would predict the outcome of the 2024 presidential election. Here, I first assume that Harris maintains the incumbency advantage. Although she is not a sitting president, many still associate Harris with the Biden administration, considering the Biden administration&rsquo;s legacy as hers as well (5). Therefore, it may be reasonable to consider her an incumbent as well. This is especially true if we see the TFC model as a quantification of Achen and Bartels&rsquo;s conception of blame attribution &ndash; the association of an incumbent candidate with the economic situation of their administration, even if they were not directly responsible for that outcome (6). If voters do not seem to care much about direct responsibility, it is conceivable that they could even perceive of those close to a &ldquo;true&rdquo; incumbent president as being an incumbent themselves.</p>
 <p>However, it is also important to acknowledge that Harris&rsquo; campaign is actively trying to distance itself from Biden&rsquo;s legacy (5). Their success appears reflected in Harris&rsquo; relative popularity compared to Biden (7). Therefore, I also consider how the model would predict Harris&rsquo;s vote share even if she does not have &ldquo;incumbent&rdquo; status.</p>
