@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en-us">
-  <head>
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=7381&amp;path=livereload" data-no-instant defer></script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Week 7 - Ground Game | A minimal Hugo website</title>
@@ -26,12 +26,12 @@
 </div>
 
 <main>
-<script src="https://example.org/post/2024/10/16/week-7-ground-game/index_files/kePrint/kePrint.js"></script>
-<link href="https://example.org/post/2024/10/16/week-7-ground-game/index_files/lightable/lightable.css" rel="stylesheet" />
-<script src="https://example.org/post/2024/10/16/week-7-ground-game/index_files/kePrint/kePrint.js"></script>
-<link href="https://example.org/post/2024/10/16/week-7-ground-game/index_files/lightable/lightable.css" rel="stylesheet" />
-<script src="https://example.org/post/2024/10/16/week-7-ground-game/index_files/kePrint/kePrint.js"></script>
-<link href="https://example.org/post/2024/10/16/week-7-ground-game/index_files/lightable/lightable.css" rel="stylesheet" />
+<script src="/post/2024/10/16/week-7-ground-game/index_files/kePrint/kePrint.js"></script>
+<link href="/post/2024/10/16/week-7-ground-game/index_files/lightable/lightable.css" rel="stylesheet" />
+<script src="/post/2024/10/16/week-7-ground-game/index_files/kePrint/kePrint.js"></script>
+<link href="/post/2024/10/16/week-7-ground-game/index_files/lightable/lightable.css" rel="stylesheet" />
+<script src="/post/2024/10/16/week-7-ground-game/index_files/kePrint/kePrint.js"></script>
+<link href="/post/2024/10/16/week-7-ground-game/index_files/lightable/lightable.css" rel="stylesheet" />
 <p>This week, we focus on exploring the impacts of the &ldquo;ground game&rdquo; &ndash; a campaign&rsquo;s strategy of individually reaching out to voters in person.
 Thank you again to Matt Dardet for his helpful starter code.</p>
 <p>For this analysis, I am interested in exploring the relationship between ground-campaign activities and voter turnout.
@@ -41,7 +41,7 @@ The first map below indicates the location of field offices (+) and campaign eve
 The second, put together using a mapping tool developed by the Urban Institute and generously described on their Medium site (1), indicates voter turnout in each county in Michigan.
 Unfortunately, we do not appear to have county-level turnout data for the 2016 election, so I use 2020 county-level turnout instead.
 While this is an imperfect metric, especially because of the effects of the COVID-19 pandemic, exploring this relationship could also potentially suggest if there are any long-term effects of the location of a campaign office in a region on future political cycles, or if the effects largely wean as the candidate changes.</p>
-<img src="https://example.org/post/2024/10/16/week-7-ground-game/index_files/figure-html/unnamed-chunk-3-1.png" width="672" />
+<img src="/post/2024/10/16/week-7-ground-game/index_files/figure-html/unnamed-chunk-3-1.png" width="672" />
 <p>From observing these maps, it does not appear that there is a substantial relationship between the location of 2016 campaign activity and 2020 turnout.
 In fact, if we look at the southeastern part of the state, where much election activity by both parties was concentrated, we see that there was relatively low electoral turnout in 2020.
 However, it is also important to recognize that these activities were likely clustered around the city of Detroit.
@@ -250,7 +250,7 @@ However, it is interesting to note that campaign events, unintuitively, appear t
 <p>Again, it is important to emphasize that this effect may have been limited because of the time difference between the campaign activities and the measure of turnout.
 To address this, I also produced a map of campaign events in 2020, compared again with the same map of turnout from before below.
 Unfortunately, we do not have field office data from 2020, making comparing all three metrics impossible.</p>
-<img src="https://example.org/post/2024/10/16/week-7-ground-game/index_files/figure-html/unnamed-chunk-5-1.png" width="672" />
+<img src="/post/2024/10/16/week-7-ground-game/index_files/figure-html/unnamed-chunk-5-1.png" width="672" />
 <p>Again, there does not appear to be a tangible relationship between just the two variables.
 However, I produce another regression model to test this outcome using only 2020 data.</p>
 <table style="NAborder-bottom: 0; width: auto !important; margin-left: auto; margin-right: auto;" class="table">
@@ -513,7 +513,7 @@ I had initially only analyzed data from after 1996 (including total grant alloca
 <tfoot><tr><td style="padding: 0; " colspan="100%">
 <sup></sup> + p &lt; 0.1, * p &lt; 0.05, ** p &lt; 0.01, *** p &lt; 0.001</td></tr></tfoot>
 </table>
-<p><img src="https://example.org/post/2024/10/16/week-7-ground-game/index_files/figure-html/unnamed-chunk-9-1.png" width="672" /><img src="https://example.org/post/2024/10/16/week-7-ground-game/index_files/figure-html/unnamed-chunk-9-2.png" width="672" /></p>
+<p><img src="/post/2024/10/16/week-7-ground-game/index_files/figure-html/unnamed-chunk-9-1.png" width="672" /><img src="/post/2024/10/16/week-7-ground-game/index_files/figure-html/unnamed-chunk-9-2.png" width="672" /></p>
 <p>Both models appear to have relatively high R^2 values, indicating higher levels of in-sample fit, but the model with data only after 1996 appears to have a significantly higher R^2, reaching up to 0.91.
 Both models also have similar out-of-sample cross validation errors, centering around zero, but I find that the spread on the model with more data is slightly right skewed (meaning that the model is likely to underpredict Democrat performance).
 While this model also has a smaller range of prediction errors from 0, both seem to have a pretty substantial range.</p>

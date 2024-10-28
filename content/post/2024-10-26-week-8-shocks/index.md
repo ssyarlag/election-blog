@@ -171,9 +171,9 @@ By taking the log of grant allocation, we find a highly significant prediction v
 
 <img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-7-1.png" width="672" /><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-7-2.png" width="672" />
 
-Though these results are slightly right skewed, we find a relatively small range of out-of-sample errors, especially for the post 84 model, and a high clustering around 0! This suggests that the post 84, especially, may be a strong predictor of out-of-sample outcomes.
+Though these results are slightly left skewed, we find a relatively small range of out-of-sample errors, especially for the post 84 model, and a high clustering around 0! This suggests that the post 84, especially, may be a strong predictor of out-of-sample outcomes.
 
-To further improve my model, I was interested in including several additional metrics that we currently have access to, namely 1) Democratic vote share in the last election 2) Democratic vote share in the second-last election. I anticipated that these metrics will add an estimation baseline to the predictions
+To further improve my model, I was interested in including several additional metrics that we currently have access to, namely 1) Democratic vote share in the last election and 2) Democratic vote share in the second-last election. I anticipated that these metrics will add an estimation baseline to the predictions
 
 ## Update 2: Adding Democratic Vote Share in Last Two Elections
 
@@ -311,11 +311,11 @@ To further improve my model, I was interested in including several additional me
 <sup></sup> + p &lt; 0.1, * p &lt; 0.05, ** p &lt; 0.01, *** p &lt; 0.001</td></tr></tfoot>
 </table>
 
-When adding in these variables, we interestingly find that the R\^2 value of both models is still incredibly high, suggesting that these models have high in-sample prediction ability. To see how well these models perform on out-of-sample data, I again conduct model cross-validation.
+When adding in these variables, we interestingly find that the R\^2 value of both models is still incredibly high, suggesting that these models have high in-sample prediction ability. To see how well these models perform on out-of-sample data, I again conduct out-of-sample cross-validation.
 
 <img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-9-1.png" width="672" /><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-9-2.png" width="672" />
 
-Unfortunately, it appears that these models are still left-skewed, but have more values that appear further away from zero. In particular, it appears that these models are underpredicting Democratic vote share relative to the actual outcome. For reference, I also wanted to test how this would translate to 2024 prediction outcomes.
+Unfortunately, it appears that these models are still left-skewed, but have more values that appear further away from zero. In general, it appears that these models are underpredicting Democratic vote share relative to the actual outcome. For reference, I also wanted to test how this would translate to 2024 prediction outcomes.
 
 
 
@@ -347,7 +347,7 @@ Post 1996 Model:
 
 Despite this greater skew, we do not see a substantive shift in outcomes, with a Democratic sweep still being predicted. However, it is interesting to note that the post 96 model appears to predict a more conservative Democratic vote share given these specifications, with the Arizona, Georgia, and North Carolina models all predicting uncertain outcomes.
 
-Given that changing the variables included in my models does not seem to have a clear and direct effect on our prediction outcomes, I considered updating their form. To inform this decision, I plotted the relationship between Democratic turnout and each of the explanatory models that I had included in my prediction, aside from federal funding allocation.
+In addition to altering the variables in my model, I wanted to explore if changing their form would add additional precision. To inform this decision, I plotted the relationship between Democratic vote share and each of the explanatory models that I had included in my prediction, aside from federal funding allocation.
 
 <img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-13-1.png" width="672" />
 
@@ -467,8 +467,9 @@ Post 1984 Model:
 | North Carolina |       DEM        |         51.00         |  50.24   |   50.95   |
 |  Pennsylvania  |       DEM        |         52.64         |  51.16   |   51.87   |
 |   Wisconsin    |       DEM        |         51.98         |  51.31   |   52.08   |
+Interestingly, despite this additional precision, we find a greater certainty of a Democratic sweep, with only Arizona having uncertain results.
 
-Next, given the argument made by Shaw and Petrocik (5), as also addressed by Matt Dardet, that turnout does not predict party-specific outcomes, I was interested in seeing how my models would perform without the lagged turnout variable.
+Next, given the argument made by Shaw and Petrocik (5), and also addressed by Matt Dardet, that turnout does not predict party-specific outcomes, I was interested in seeing how my models would perform without the lagged turnout variable.
 
 ## Update 4: Removing Lagged Turnout
 
@@ -626,9 +627,9 @@ Post 1996 Model:
 |  Pennsylvania  |       DEM        |         52.32         |  51.68   |   52.97   |
 |   Wisconsin    |       DEM        |         52.17         |  51.54   |   52.80   |
 
-These results show a more certain Democratic victory than if turnout was not included.
+These results continue to show a Democratic sweep, with more certainty than most of the previous models (other than the first post-96 model)
 
-Moving forward, there are a few additional steps I would like to take. First, I would like to incorporate the Supreme Court precedent data that I modified to include whether or not the shifts were accompanied by a conservative shift in the "median justice" of the court, as described by Rubin in Axios (5). In particular, I would like to evaluate the effect of an interaction term between precedent changes and the court's ideological shifts. However, following this, I am interested in running these models, especially the models that include more than the three highly predictive variables, through Elastic Net in order to engage in feature selection.
+Moving forward, there are a few additional steps I would like to take. First, I would like to incorporate the Supreme Court precedent data that I modified to include whether or not the shifts were accompanied by a conservative shift in the "median justice" of the court, as described by Rubin in Axios (5). In particular, I would like to evaluate the effect of an interaction term between precedent changes and the court's ideological shifts. However, following this, I am interested in running these models, especially the models that include more than the three highly predictive variables, through Elastic Net in order to engage in feature selection and select my final model.
 
 # References
 
@@ -658,5 +659,5 @@ Polling Data
 
 -   State Polls from FiveThirtyEight poll averages and preprocessing
 
-Data sources for state and county-level turnout and Supreme Court cases are unknown, but were generously provided by the GOV 1372 course staff. However, I append the Supreme Court data with a metric of how the Supreme Court's leaninted over time with data from Axios (Rubin, April. 2023. “Supreme Court Ideology Continues to Lean Conservative, New Data Shows.” Axios. July 3, 2023. https://www.axios.com/2023/07/03/supreme-court-justices-political-ideology-chart.
+Data sources for state and county-level turnout, protests, and Supreme Court cases are unknown, but were generously provided by the GOV 1372 course staff. However, I append the Supreme Court data with a metric of how the Supreme Court's leaninted over time with data from Axios (Rubin, April. 2023. “Supreme Court Ideology Continues to Lean Conservative, New Data Shows.” Axios. July 3, 2023. https://www.axios.com/2023/07/03/supreme-court-justices-political-ideology-chart.
 )
