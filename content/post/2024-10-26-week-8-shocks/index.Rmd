@@ -349,7 +349,7 @@ mod_96_v2 <- lm(D_pv ~ GDP_growth_quarterly + mean_5_wk_poll_support + turnout_l
 modelsummary(list("Post 84" = mod_84_v2, "Post 96" = mod_96_v2), stars = TRUE, output = "kableExtra")
 ```
 
-When adding in these variables, we interestingly find that the R\^2 value of both models is still incredibly high, suggesting that these models have high in-sample prediction ability. To see how well these models perform on out-of-sample data, I again conduct out-of-sample cross-validation.
+When adding in these variables, we interestingly find that the R^2 value of both models is still incredibly high, suggesting that these models have high in-sample prediction ability. To see how well these models perform on out-of-sample data, I again conduct out-of-sample cross-validation.
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 set.seed(02138)
@@ -442,6 +442,7 @@ In addition to altering the variables in my model, I wanted to explore if changi
 
 vars_list <- c("GDP_growth_quarterly", "mean_5_wk_poll_support", "turnout_lag1", "unemployment", "D_pv_lag1", "D_pv_lag2")
 
+# Generate all graphs
 gdp_graph <- ggplot(data = train_post84) + geom_point(aes(x = GDP_growth_quarterly, y = D_pv)) + ggtitle("GDP Growth") + labs(x = "GDP Growth", y = "Dem Vote Share") + theme_bw()
 
 meanpoll_graph <- ggplot(data = train_post84) + geom_point(aes(x = mean_5_wk_poll_support, y = D_pv)) + ggtitle("Mean Poll Support") + labs(x = "Mean Poll Support (Five Weeks from Election)", y = "Dem Vote Share") + theme_bw()
@@ -464,7 +465,7 @@ Out of curiosity, I wanted to how much the results would vary if I only included
 ## Update 3: Only Poll Support and Vote Share in Last Two Elections
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
-
+# Train new models
 mod_84_v3 <- lm(D_pv ~ mean_5_wk_poll_support + D_pv_lag1 + D_pv_lag2, data = train_post84, na.rm = TRUE)
 
 mod_96_v3 <- lm(D_pv ~ mean_5_wk_poll_support + D_pv_lag1 + D_pv_lag2, data = train_post96, na.rm = TRUE)

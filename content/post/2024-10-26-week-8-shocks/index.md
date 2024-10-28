@@ -311,7 +311,7 @@ To further improve my model, I was interested in including several additional me
 <sup></sup> + p &lt; 0.1, * p &lt; 0.05, ** p &lt; 0.01, *** p &lt; 0.001</td></tr></tfoot>
 </table>
 
-When adding in these variables, we interestingly find that the R\^2 value of both models is still incredibly high, suggesting that these models have high in-sample prediction ability. To see how well these models perform on out-of-sample data, I again conduct out-of-sample cross-validation.
+When adding in these variables, we interestingly find that the R^2 value of both models is still incredibly high, suggesting that these models have high in-sample prediction ability. To see how well these models perform on out-of-sample data, I again conduct out-of-sample cross-validation.
 
 <img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-9-1.png" width="672" /><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-9-2.png" width="672" />
 
