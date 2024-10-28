@@ -1,0 +1,611 @@
+---
+title: Week 8 - Shocks
+author: Shriya Yarlagadda
+date: '2024-10-26'
+slug: week-8-shocks
+categories: []
+tags: []
+---
+
+Although we discussed the impacts of electoral shocks in class this week, my blog post this week will focus on refining my model from last week. As I did last week, I will continue to compare two models, one using data from after 1984 and the other using data from after 1996.
+
+```{r echo = FALSE, message = FALSE, warning = FALSE }
+library(ggpubr)
+library(glmnet)
+library(haven)
+library(kableExtra)
+library(maps)
+library(modelsummary)
+library(randomForest)
+library(ranger)
+library(sf)
+library(tigris)
+library(tidyverse)
+library(urbnmapr)
+library(viridis)
+
+# Read popular vote datasets. 
+d_popvote <- read_csv("popvote_1948_2020.csv")
+d_state_popvote <- read_csv("state_popvote_1948_2020.csv")
+d_state_popvote[d_state_popvote$state == "District of Columbia",]$state <- "District Of Columbia"
+
+# Read economic data
+d_fred <- read_csv("fred_econ.csv")
+d_grants <- read_csv("fedgrants_bystate_1988-2008.csv")
+
+# Read polling data. 
+d_state_polls <- read_csv("state_polls_1968-2024.csv")
+
+# Read turnout data. 
+d_turnout <- read_csv("state_turnout_1980_2022.csv")
+
+# Read county turnout. 
+d_county_turnout <- read_csv("county_turnout.csv")
+
+# Read shocks data
+d_sc_prec <- read_csv("supreme_court_precedents.csv")
+d_sc_cr <- read_csv("supreme_court_congressional_review.csv")
+# d_protests <- read_csv("protests.csv")
+d_protests <- read_csv("protests_clean.csv")
+
+# Read training and test data from last week
+train_post84 <- read_csv("train_post84.csv")
+train_post96 <- read_csv("train_post96.csv")
+test <- read_csv("test.csv")
+
+```
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+# Clean protest data (1)
+
+# d_protests <- d_protests |>
+#   mutate(month_year = format(date, "%m %Y")) |>
+#   select(date, month_year, state, online, type, valence, issues) |>
+#   group_by(month_year, state, type, valence ) |>
+#   summarize(count = n())
+# 
+# write.csv(d_protests, "protests_clean.csv", row.names = FALSE)
+
+d_sc_prec <- d_sc_prec |>
+  mutate(year = substring(dateDecision, nchar(dateDecision) - 3)) |>
+  group_by(year) |>
+  summarize(count = n())
+
+d_sc_prec$year = as.numeric(d_sc_prec$year) 
+
+d_sc_prec <- d_sc_prec |>
+  filter(year > 1984) |>
+  mutate(pres_year = case_when(year <= 1988 ~ 1988,
+                               year > 1988 & year <= 1992 ~ 1992,
+                               year > 1992 & year <= 1996 ~ 1996,
+                               year > 1996 & year <= 2000 ~ 2000,
+                               year > 2000 & year <= 2004 ~ 2004,
+                               year > 2004 & year <= 2008 ~ 2008,
+                               year > 2008 & year <= 2012 ~ 2012,
+                               year > 2012 & year <= 2016 ~ 2016,
+                               year > 2016 & year <= 2020 ~ 2020,
+                               year > 2020 ~ 2024)) |>
+  group_by(pres_year) |>
+  summarize(count = sum(count))
+```
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+
+# # Save cleaned data from last week as new dataframes to access more easily (2) - Snakecase + gsub
+# 
+# d_turnout$vep_turnout <- gsub("\\%", "", d_turnout$vep_turnout)
+# 
+# 
+# # Fed Grants Data by State
+# cleaned_d_grants <- d_grants |>
+#   filter(year > 1984) |>
+#   group_by(state_abb) |>
+#   summarize(total_grant= sum(grant_mil))
+# 
+# cleaned_d_grants_post_1996 <- d_grants |>
+#   filter(year > 1996) |>
+#   group_by(state_abb) |>
+#   summarize(total_grant= sum(grant_mil))
+# 
+# # Cleaned Turnout data
+# 
+# d_turnout <- d_turnout[order(d_turnout$state, d_turnout$year), ]
+# d_turnout$turnout_lag1 <- lag(d_turnout$vep_turnout, n = 2)
+# d_turnout$turnout_lag2 <- lag(d_turnout$vep_turnout, n = 4)
+# d_turnout_filtered <- d_turnout |>
+#   select(year, state, vep_turnout, turnout_lag1, turnout_lag2) |>
+#   filter(!is.na(vep_turnout))
+# 
+# # Cleaned polling data
+# d_state_polls_clean <- d_state_polls |>
+#   filter(weeks_left == 5) |>
+#   select(year, state, weeks_left, party, poll_support) |>
+#   group_by(year, state, party) |>
+#   summarize(mean_5_wk_poll_support = mean(poll_support))
+# 
+# incumbency <- d_popvote |>
+#   mutate(party = snakecase::to_title_case(party)) |>
+#   mutate(party = ifelse(party == "Democrat", "DEM", "REP")) |>
+#   mutate(dem_party_incumbent = case_when((party == "DEM" & incumbent_party == TRUE) ~ 1,
+#                                        (party == "REP" & incumbent_party == FALSE) ~ 1,
+#                                        (party == "DEM" & incumbent_party == FALSE) ~ 0,
+#                                        (party == "REP" & incumbent_party == TRUE) ~ 0
+#                                        )) |>
+#   select(year, party, incumbent, incumbent_party, dem_party_incumbent)
+# 
+# # Training Data post 1984 - merging several datasets made earlier together
+# dem_cleaned_reg_data <- d_state_popvote |>
+#   filter(year > 1984) |>
+#   left_join(d_fred, by = "year") |>
+#   mutate(state_abb = state.abb[match(state, state.name)]) |>
+#   filter(state != "District Of Columbia") |>
+#   left_join(cleaned_d_grants, by = "state_abb") |>
+#   left_join(d_turnout_filtered, by = c("state", "year")) |>
+#   filter(quarter == 4) |>
+#   right_join(d_state_polls_clean, by = c("state", "year")) |>
+#   left_join(incumbency, by = c("year", "party")) |>
+#   filter(year > 1984 & year < 2024) |>
+#   select(year, state, party, D_pv, R_pv, D_pv_lag1, R_pv_lag1, D_pv_lag2, R_pv_lag2, GDP_growth_quarterly, unemployment, state_abb, party, total_grant, turnout_lag1, turnout_lag2, mean_5_wk_poll_support, incumbent, incumbent_party, dem_party_incumbent) |>
+#   filter(party == "DEM")
+# 
+# dem_cleaned_reg_data$turnout_lag1 = as.numeric(dem_cleaned_reg_data$turnout_lag1)
+# dem_cleaned_reg_data$turnout_lag2 = as.numeric(dem_cleaned_reg_data$turnout_lag2)
+# 
+# dem_cleaned_reg_data$incumbent <- ifelse(dem_cleaned_reg_data$incumbent == TRUE, 1, 0)
+# dem_cleaned_reg_data$dem_party_incumbent <- ifelse(dem_cleaned_reg_data$dem_party_incumbent == TRUE, 1, 0)
+# 
+# # Training Data Post 1996
+# cleaned_data_post_1996 <- d_state_popvote |>
+#   filter(year > 1996) |>
+#   left_join(d_fred, by = "year") |>
+#   mutate(state_abb = state.abb[match(state, state.name)]) |>
+#   filter(state != "District Of Columbia") |>
+#   left_join(cleaned_d_grants_post_1996, by = "state_abb") |>
+#   left_join(d_turnout_filtered, by = c("state", "year")) |>
+#   filter(quarter == 4) |>
+#   right_join(d_state_polls_clean, by = c("state", "year")) |>
+#   left_join(incumbency, by = c("year", "party")) |>
+#   filter(year > 1996 & year < 2024) |>
+#   select(year, state, party, D_pv, R_pv, D_pv_lag1, R_pv_lag1, D_pv_lag2, R_pv_lag2, GDP_growth_quarterly, unemployment, state_abb, party, total_grant, turnout_lag1, turnout_lag2, mean_5_wk_poll_support, incumbent, incumbent_party, dem_party_incumbent) |>
+#   filter(party == "DEM")
+# 
+# cleaned_data_post_1996$turnout_lag1 = as.numeric(cleaned_data_post_1996$turnout_lag1)
+# cleaned_data_post_1996$turnout_lag2 = as.numeric(cleaned_data_post_1996$turnout_lag2)
+# 
+# cleaned_data_post_1996$incumbent <- ifelse(cleaned_data_post_1996$incumbent == TRUE, 1, 0)
+# cleaned_data_post_1996$dem_party_incumbent <- ifelse(cleaned_data_post_1996$dem_party_incumbent == TRUE, 1, 0)
+# 
+# 
+# # Test Data - Using data from 2020, but setting 2020 data as previous election (relative to 2024) and lagged 2020 data (2016 election) as previous election before that
+# 
+# turnout_lag_2024 <- d_turnout[order(d_turnout$state, d_turnout$year), ]
+# turnout_lag_2024$turnout_lag2 = lag(d_turnout$vep_turnout, n = 2)
+# turnout_lag_2024 <- turnout_lag_2024 |>
+#   filter(year == 2020) |>
+#   mutate(turnout_lag1 = vep_turnout) |>
+#   select(state, turnout_lag1, turnout_lag2)
+# 
+# test_data_2024 <- incumbency |>
+#   left_join(d_fred, by = "year") |>
+#   filter(year == 2024, party == "DEM") |>
+#   left_join(d_state_polls_clean, by = c("year", "party")) |>
+#   mutate(state_abb = state.abb[match(state, state.name)]) |>
+#   left_join(cleaned_d_grants, by = "state_abb") |>
+#   left_join(turnout_lag_2024, by = "state") |>
+#   filter(quarter == 2) |>
+#   select(year, state, party, GDP_growth_quarterly, unemployment, party, total_grant, turnout_lag1, turnout_lag2, mean_5_wk_poll_support, incumbent, incumbent_party, dem_party_incumbent) |>
+#   filter(party == "DEM")
+# 
+# test_data_2024$turnout_lag1 = as.numeric(test_data_2024$turnout_lag1)
+# test_data_2024$turnout_lag2 = as.numeric(test_data_2024$turnout_lag2)
+# 
+# test_data_2024$incumbent <- ifelse(test_data_2024$incumbent == TRUE, 1, 0)
+# test_data_2024$dem_party_incumbent <- ifelse(test_data_2024$dem_party_incumbent == TRUE, 1, 0)
+# 
+# write.csv(dem_cleaned_reg_data, "train_post84.csv", row.names = FALSE)
+# write.csv(cleaned_data_post_1996, "train_post96.csv", row.names = FALSE)
+# write.csv(test_data_2024, "test.csv", row.names = FALSE)
+
+
+
+```
+
+I planned to make three initial changes this week. First, upon the recommendation of Matt Dardet, I took the log of grant allocation in order to see if my model predicted a significant effect. Second, after being inspired by my classmate Alex Heuss, I decided to measure the outcome of Democratic vote share, rather than two-party vote share, in order to better account for the disruptive ability of third-party candidates. Finally, I added confidence intervals to my measures, seeking to better estimate the precision of my predictions.
+
+## Update 1: Grant Allocation + Single Party Vote Share + Confidence Intervals
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+
+# (3)  = Snakecase + prediction for confidence interval
+
+mod_84 <- lm(D_pv ~ GDP_growth_quarterly + mean_5_wk_poll_support + turnout_lag1 + unemployment + log(total_grant), data = train_post84, na.rm = TRUE)
+
+mod_96 <- lm(D_pv ~ GDP_growth_quarterly + mean_5_wk_poll_support + turnout_lag1 + unemployment + log(total_grant), data = train_post96, na.rm = TRUE)
+
+modelsummary(list("Post 84" = mod_84,"Post 96" = mod_96), stars = TRUE, output = "kableExtra")
+
+# Summary of models, showing similar r^2 values
+
+# Produce prediction outcomes
+state_preds <- predict(mod_84, test, interval = 'confidence')
+state_preds_post96 <- predict(mod_96, test, interval = 'confidence')
+
+test$pred_v1 <- state_preds[,1]
+test$repub_pred_v1 <- 100-test$pred_v1
+test$winner_v1 <- ifelse(test$repub_pred_v1 > test$pred_v1, "REP", "DEM")
+
+test$pred_post96_v1 <- state_preds_post96[,1]
+test$repub_pred_post96_v1 <- 100-test$pred_post96_v1
+test$winner_post96_v1 <- ifelse(test$repub_pred_post96_v1 > test$pred_post96_v1, "REP", "DEM")
+
+test$conf_low84_v1 <- state_preds[,2]
+test$conf_high84_v1 <-state_preds[,3]
+
+test$conf_low96_v1 <- state_preds_post96[,2]
+test$conf_high96_v1 <-state_preds_post96[,3]
+
+```
+
+Post 1984 Model:
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+# Results from post 84 model
+test |>
+  filter(state %in% c("Arizona", "Georgia", "Michigan", "Nevada", "North Carolina", "Wisconsin", "Pennsylvania")) |>
+  select(state, winner_v1, pred_v1, conf_low84_v1, conf_high84_v1) |>
+  knitr::kable(col.names = c("State", "Predicted Winner", "Democratic Vote Share", "Low Pred", "High Pred"), align = "c", digits = 2)
+```
+
+Post 1996 Model:
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+# Results from post 96 model
+test |>
+  filter(state %in% c("Arizona", "Georgia", "Michigan", "Nevada", "North Carolina", "Wisconsin", "Pennsylvania")) |>
+  select(state, winner_post96_v1, pred_post96_v1, conf_low96_v1, conf_high96_v1) |>
+  knitr::kable(col.names = c("State", "Predicted Winner", "Democratic Vote Share", "Low Pred", "High Pred"), align = "c", digits = 2)
+```
+
+By taking the log of grant allocation, we find a highly significant prediction value in the ultimate outcome. Furthermore, although the models still overwhelmingly appear to predict that the Democrats will win all of the battleground states, which seems relatively unlikely, these models show additional uncertainty, with the values for both Georgia and North Carolina falling within a range of uncertainty. To get an additional benchmark for the performance of both of these models, I also run out-of-sample cross validation
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+# Out-of-Sample testing of models without the federal grant allocation variable
+
+# Post 1984
+set.seed(02138)
+out_samp_errors <- sapply(1:1000, function(i) {
+  years_out_samp <- sample(train_post84$year, 4)
+  mod <- lm(D_pv ~ GDP_growth_quarterly + mean_5_wk_poll_support + turnout_lag1 + unemployment + log(total_grant), na.rm = TRUE, train_post84[!(train_post84$year %in% years_out_samp),])
+  out_samp_pred <- predict(mod, train_post84[train_post84$year %in% years_out_samp,])
+  out_samp_truth <- train_post84$D_pv[train_post84$year %in% years_out_samp]
+  mean(out_samp_pred - out_samp_truth, na.rm = TRUE)
+})
+
+# Post 1996
+out_samp_errors_post96 <- sapply(1:1000, function(i) {
+  years_out_samp <- sample(train_post96$year, 3)
+  mod <- lm(D_pv ~ GDP_growth_quarterly + mean_5_wk_poll_support + turnout_lag1 + unemployment + log(total_grant), na.rm = TRUE, data = train_post96[!(train_post96$year %in% years_out_samp),])
+  out_samp_pred <- predict(mod, train_post96[train_post96$year %in% years_out_samp,])
+  out_samp_truth <- train_post96$D_pv[train_post96$year %in% years_out_samp]
+  mean(out_samp_pred - out_samp_truth, na.rm = TRUE)
+})
+
+hist(out_samp_errors)
+hist(out_samp_errors_post96)
+```
+
+Though these results are slightly right skewed, we find a relatively small range of out-of-sample errors, especially for the post 84 model, and a high clustering around 0! This suggests that the post 84, especially, may be a strong predictor of out-of-sample outcomes.
+
+To further improve my model, I was interested in including several additional metrics that we currently have access to, namely 1) Democratic vote share in the last election 2) Democratic vote share in the second-last election. I anticipated that these metrics will add an estimation baseline to the predictions
+
+## Update 2: Adding Democratic Vote Share in Last Two Elections
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+
+# (4) - Snakecase, specified data frame value change
+
+# This code is from when I considered adding county turnout -- unfortunately, because this is only available for 2020, I decided to remove this measure
+
+# dem_turnout <- d_county_turnout |>
+#   filter(party == "DEMOCRAT") |>
+#   group_by(state) |>
+#   summarize(dem_turnout = mean(turnout)) |>
+#   mutate(state = snakecase::to_title_case(state))
+# 
+# dem_turnout$state[dem_turnout$state == "Newhampshire"] <- "New Hampshire"
+# dem_turnout$state[dem_turnout$state == "Newjersey"] <- "New Jersey"
+# dem_turnout$state[dem_turnout$state == "Newmexico"] <- "New Mexico"
+# dem_turnout$state[dem_turnout$state == "Newyork"] <- "New Hampshire"
+# dem_turnout$state[dem_turnout$state == "Northcarolina"] <- "North Carolina"
+# dem_turnout$state[dem_turnout$state == "Northdakota"] <- "North Dakota"
+# dem_turnout$state[dem_turnout$state == "Rhodeisland"] <- "Rhode Island"
+# dem_turnout$state[dem_turnout$state == "Southcarolina"] <- "South Carolina"
+# dem_turnout$state[dem_turnout$state == "Southdakota"] <- "South Dakota"
+# dem_turnout$state[dem_turnout$state == "Westvirginia"] <- "West Virginia"
+# 
+
+# Updated models
+mod_84_v2 <- lm(D_pv ~ GDP_growth_quarterly + mean_5_wk_poll_support + turnout_lag1 + unemployment + log(total_grant) + D_pv_lag1 + D_pv_lag2, data = train_post84, na.rm = TRUE)
+
+mod_96_v2 <- lm(D_pv ~ GDP_growth_quarterly + mean_5_wk_poll_support + turnout_lag1 + unemployment + log(total_grant) + D_pv_lag1 + D_pv_lag2, data = train_post96, na.rm = TRUE)
+
+modelsummary(list("Post 84" = mod_84_v2, "Post 96" = mod_96_v2), stars = TRUE, output = "kableExtra")
+```
+
+When adding in these variables, we interestingly find that the R\^2 value of both models is still incredibly high, suggesting that these models have high in-sample prediction ability. To see how well these models perform on out-of-sample data, I again conduct model cross-validation.
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+set.seed(02138)
+
+out_samp_errors <- sapply(1:1000, function(i) {
+  years_out_samp <- sample(train_post84$year, 4)
+  mod <- lm(D_pv ~ GDP_growth_quarterly + mean_5_wk_poll_support + turnout_lag1 + unemployment + log(total_grant) + D_pv_lag1 + D_pv_lag2, na.rm = TRUE, train_post84[!(train_post84$year %in% years_out_samp),])
+  out_samp_pred <- predict(mod, train_post84[train_post84$year %in% years_out_samp,])
+  out_samp_truth <- train_post84$D_pv[train_post84$year %in% years_out_samp]
+  mean(out_samp_pred - out_samp_truth, na.rm = TRUE)
+})
+
+# Post 1996
+out_samp_errors_post96 <- sapply(1:1000, function(i) {
+  years_out_samp <- sample(train_post96$year, 3)
+  mod <- lm(D_pv ~ GDP_growth_quarterly + mean_5_wk_poll_support + turnout_lag1 + unemployment + log(total_grant) + D_pv_lag1 + D_pv_lag2, na.rm = TRUE, data = train_post96[!(train_post96$year %in% years_out_samp),])
+  out_samp_pred <- predict(mod, train_post96[train_post96$year %in% years_out_samp,])
+  out_samp_truth <- train_post96$D_pv[train_post96$year %in% years_out_samp]
+  mean(out_samp_pred - out_samp_truth, na.rm = TRUE)
+})
+
+hist(out_samp_errors)
+hist(out_samp_errors_post96)
+```
+
+Unfortunately, it appears that these models are still left-skewed, but have more values that appear further away from zero. In particular, it appears that these models are underpredicting Democratic vote share relative to the actual outcome. For reference, I also wanted to test how this would translate to 2024 prediction outcomes.
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+
+# Add lag values to test dataset
+
+lag_vote_2024 <- train_post84 |>
+  filter(year == 2020, party == "DEM") |>
+  mutate(D_pv_lag2 = D_pv_lag1,
+         D_pv_lag1 = D_pv) |>
+  select(year, state, D_pv_lag1, D_pv_lag2)
+
+test <- left_join(test, lag_vote_2024, by = "state")
+
+# Produce prediction outcomes
+state_preds_v2 <- predict(mod_84_v2, test, interval = 'confidence')
+state_preds_post96_v2 <- predict(mod_96_v2, test, interval = 'confidence')
+
+test$pred_v2 <- state_preds_v2[,1]
+test$repub_pred_v2 <- 100-test$pred_v2
+test$winner_v2 <- ifelse(test$repub_pred_v2 > test$pred_v2, "REP", "DEM")
+
+test$pred_post96_v2 <- state_preds_post96_v2[,1]
+test$repub_pred_post96_v2 <- 100-test$pred_post96_v2
+test$winner_post96_v2 <- ifelse(test$repub_pred_post96_v2 > test$pred_post96_v2, "REP", "DEM")
+
+test$conf_low84_v2 <- state_preds_v2[,2]
+test$conf_high84_v2 <-state_preds_v2[,3]
+
+test$conf_low96_v2 <- state_preds_post96_v2[,2]
+test$conf_high96_v2 <-state_preds_post96_v2[,3]
+```
+
+Post 1984 Model:
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+# Results from adjusted post 84 model
+test |>
+  filter(state %in% c("Arizona", "Georgia", "Michigan", "Nevada", "North Carolina", "Wisconsin", "Pennsylvania")) |>
+  select(state, winner_v2, pred_v2, conf_low84_v2, conf_high84_v2) |>
+  knitr::kable(col.names = c("State", "Predicted Winner", "Democratic Vote Share", "Low Pred", "High Pred"), align = "c", digits = 2)
+
+```
+
+Post 1996 Model:
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+
+# Post 96 model
+test |>
+  filter(state %in% c("Arizona", "Georgia", "Michigan", "Nevada", "North Carolina", "Wisconsin", "Pennsylvania")) |>
+  select(state, winner_post96_v2, pred_post96_v2, conf_low96_v2, conf_high96_v2) |>
+  knitr::kable(col.names = c("State", "Predicted Winner", "Democratic Vote Share", "Low Pred", "High Pred"), align = "c", digits = 2)
+
+```
+
+Despite this greater skew, we do not see a substantive shift in outcomes, with a Democratic sweep still being predicted. However, it is interesting to note that the post 96 model appears to predict a more conservative Democratic vote share given these specifications, with the Arizona, Georgia, and North Carolina models all predicting uncertain outcomes.
+
+Given that changing the variables included in my models does not seem to have a clear and direct effect on our prediction outcomes, I considered updating their form. To inform this decision, I plotted the relationship between Democratic turnout and each of the explanatory models that I had included in my prediction, aside from federal funding allocation.
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+
+# For loops 
+
+vars_list <- c("GDP_growth_quarterly", "mean_5_wk_poll_support", "turnout_lag1", "unemployment", "D_pv_lag1", "D_pv_lag2")
+
+gdp_graph <- ggplot(data = train_post84) + geom_point(aes(x = GDP_growth_quarterly, y = D_pv)) + ggtitle("GDP Growth") + labs(x = "GDP Growth", y = "Dem Vote Share") + theme_bw()
+
+meanpoll_graph <- ggplot(data = train_post84) + geom_point(aes(x = mean_5_wk_poll_support, y = D_pv)) + ggtitle("Mean Poll Support") + labs(x = "Mean Poll Support (Five Weeks from Election)", y = "Dem Vote Share") + theme_bw()
+
+turnout_graph <- ggplot(data = train_post84) + geom_point(aes(x = turnout_lag1, y = D_pv)) + ggtitle("Lag 1 Turnout") + labs(x = "Turnout in Last Election", y = "Dem Vote Share") + theme_bw()
+
+unemployment_graph <- ggplot(data = train_post84) + geom_point(aes(x = unemployment, y = D_pv)) + ggtitle("Unemployment") + labs(x = "Unemployment Rate", y = "Dem Vote Share") + theme_bw()
+
+pvlag1_graph <- ggplot(data = train_post84) + geom_point(aes(x = D_pv_lag1, y = D_pv)) + ggtitle("Lag 1 Vote Share") + labs(x = "Lag 1 Vote Share", y = "Dem Vote Share") + theme_bw()
+
+pvlag2_graph <- ggplot(data = train_post84) + geom_point(aes(x = D_pv_lag2, y = D_pv)) + ggtitle("Lag 2 Vote Share") + labs(x = "Lag 2 Vote Share", y = "Dem Vote Share") + theme_bw()
+
+ggarrange(gdp_graph, meanpoll_graph, turnout_graph, unemployment_graph, pvlag1_graph, pvlag2_graph)
+```
+
+From these graphs, we can confirm that lagged vote share from the prior two elections and mean poll support are strongly linearly related to our predicted outcome. This suggests that a it might not be necessary to alter the functional form of these variables in our model. However, it appears that the impact of GDP growth, unemployment rate, and turnout in the last election have a rather ambiguous effect.
+
+Out of curiosity, I wanted to how much the results would vary if I only included the three highly predictive variables identified here in my prediction models. I run this analysis below.
+
+## Update 3: Only Poll Support and Vote Share in Last Two Elections
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+
+mod_84_v3 <- lm(D_pv ~ mean_5_wk_poll_support + D_pv_lag1 + D_pv_lag2, data = train_post84, na.rm = TRUE)
+
+mod_96_v3 <- lm(D_pv ~ mean_5_wk_poll_support + D_pv_lag1 + D_pv_lag2, data = train_post96, na.rm = TRUE)
+
+modelsummary(list("Post 84" = mod_84_v3, "Post 96" = mod_96_v3), stars = TRUE, output = "kableExtra")
+
+out_samp_errors <- sapply(1:1000, function(i) {
+  years_out_samp <- sample(train_post84$year, 4)
+  mod <- lm(D_pv ~ mean_5_wk_poll_support + D_pv_lag1 + D_pv_lag2, na.rm = TRUE, train_post84[!(train_post84$year %in% years_out_samp),])
+  out_samp_pred <- predict(mod, train_post84[train_post84$year %in% years_out_samp,])
+  out_samp_truth <- train_post84$D_pv[train_post84$year %in% years_out_samp]
+  mean(out_samp_pred - out_samp_truth, na.rm = TRUE)
+})
+
+# Post 1996
+out_samp_errors_post96 <- sapply(1:1000, function(i) {
+  years_out_samp <- sample(train_post96$year, 3)
+  mod <- lm(D_pv ~ mean_5_wk_poll_support + D_pv_lag1 + D_pv_lag2, na.rm = TRUE, data = train_post96[!(train_post96$year %in% years_out_samp),])
+  out_samp_pred <- predict(mod, train_post96[train_post96$year %in% years_out_samp,])
+  out_samp_truth <- train_post96$D_pv[train_post96$year %in% years_out_samp]
+  mean(out_samp_pred - out_samp_truth, na.rm = TRUE)
+})
+
+hist(out_samp_errors)
+hist(out_samp_errors_post96)
+```
+
+While both of these models have relatively high in-sample fit, they both interestingly have a much smaller range of out-of-sample errors than our previous models. The post-84 model appears especially strong in this metric, with a histogram of out-of-sample errors centered around zero. Though the spread of the out-of-sample errors appears quite large, this is likely because the error measures are relatively small, therefore not detracting from this model's strength. I again explored how this would translate to predictions.
+
+Post 1984 Model:
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+
+# Produce prediction outcomes
+state_preds_v3 <- predict(mod_84_v3, test, interval = 'confidence')
+
+test$pred_v3 <- state_preds_v3[,1]
+test$repub_pred_v3 <- 100-test$pred_v3
+test$winner_v3 <- ifelse(test$repub_pred_v3 > test$pred_v3, "REP", "DEM")
+
+test$conf_low84_v3 <- state_preds_v3[,2]
+test$conf_high84_v3 <-state_preds_v3[,3]
+
+# Results from adjusted post 84 model
+test |>
+  filter(state %in% c("Arizona", "Georgia", "Michigan", "Nevada", "North Carolina", "Wisconsin", "Pennsylvania")) |>
+  select(state, winner_v3, pred_v2, conf_low84_v3, conf_high84_v3) |>
+  knitr::kable(col.names = c("State", "Predicted Winner", "Democratic Vote Share", "Low Pred", "High Pred"), align = "c", digits = 2, caption = "Prediction (Post 1984 Data)")
+
+
+```
+
+Next, given the argument made by Shaw and Petrocik (5), as also addressed by Matt Dardet, that turnout does not predict party-specific outcomes, I was interested in seeing how my models would perform without the lagged turnout variable.
+
+## Update 4: Removing Lagged Turnout
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+# Updated models
+mod_84_v4 <- lm(D_pv ~ GDP_growth_quarterly + mean_5_wk_poll_support + unemployment + log(total_grant) + D_pv_lag1 + D_pv_lag2, data = train_post84, na.rm = TRUE)
+
+mod_96_v4 <- lm(D_pv ~ GDP_growth_quarterly + mean_5_wk_poll_support + unemployment + log(total_grant) + D_pv_lag1 + D_pv_lag2, data = train_post96, na.rm = TRUE)
+
+modelsummary(list("Post 84" = mod_84_v4, "Post 96" = mod_96_v4), stars = TRUE, output = "kableExtra")
+
+# Out-of-sample cross validation
+
+out_samp_errors <- sapply(1:1000, function(i) {
+  years_out_samp <- sample(train_post84$year, 4)
+  mod <- lm(D_pv ~ GDP_growth_quarterly + mean_5_wk_poll_support + unemployment + log(total_grant) + D_pv_lag1 + D_pv_lag2, na.rm = TRUE, train_post84[!(train_post84$year %in% years_out_samp),])
+  out_samp_pred <- predict(mod, train_post84[train_post84$year %in% years_out_samp,])
+  out_samp_truth <- train_post84$D_pv[train_post84$year %in% years_out_samp]
+  mean(out_samp_pred - out_samp_truth, na.rm = TRUE)
+})
+
+# Post 1996
+out_samp_errors_post96 <- sapply(1:1000, function(i) {
+  years_out_samp <- sample(train_post96$year, 3)
+  mod <- lm(D_pv ~ GDP_growth_quarterly + mean_5_wk_poll_support + unemployment + log(total_grant) + D_pv_lag1 + D_pv_lag2, na.rm = TRUE, data = train_post96[!(train_post96$year %in% years_out_samp),])
+  out_samp_pred <- predict(mod, train_post96[train_post96$year %in% years_out_samp,])
+  out_samp_truth <- train_post96$D_pv[train_post96$year %in% years_out_samp]
+  mean(out_samp_pred - out_samp_truth, na.rm = TRUE)
+})
+
+hist(out_samp_errors)
+hist(out_samp_errors_post96)
+
+```
+
+Somewhat aligning with Shaw and Petrocik's argument, the out-of-sample error range appears to be slightly smaller than when turnout was included. However, these errors are still significantly larger than when only the three strongly predictive variables were included. Again, I include election predictions for reference.
+
+Post 1984 Model:
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+
+# Produce prediction outcomes
+state_preds_v4 <- predict(mod_84_v4, test, interval = 'confidence')
+state_preds_96_v4 <- predict(mod_96_v4, test, interval = 'confidence')
+
+test$pred_v4 <- state_preds_v3[,1]
+test$repub_pred_v4 <- 100-test$pred_v4
+test$winner_v4 <- ifelse(test$repub_pred_v4 > test$pred_v4, "REP", "DEM")
+
+test$conf_low84_v4 <- state_preds_96_v4[,2]
+test$conf_high84_v4 <-state_preds_96_v4[,3]
+
+test$pred_96_v4 <- state_preds_96_v4[,1]
+test$repub_pred_96_v4 <- 100-test$pred_96_v4
+test$winner_96_v4 <- ifelse(test$repub_pred_96_v4 > test$pred_96_v4, "REP", "DEM")
+
+test$conf_low96_v4 <- state_preds_96_v4[,2]
+test$conf_high96_v4 <-state_preds_96_v4[,3]
+
+
+# Results from adjusted post 84 model
+test |>
+  filter(state %in% c("Arizona", "Georgia", "Michigan", "Nevada", "North Carolina", "Wisconsin", "Pennsylvania")) |>
+  select(state, winner_v4, pred_v4, conf_low84_v4, conf_high84_v4) |>
+  knitr::kable(col.names = c("State", "Predicted Winner", "Democratic Vote Share", "Low Pred", "High Pred"), align = "c", digits = 2, caption = "Prediction (Post 1984 Data)")
+```
+
+Post 1996 Model:
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+# Post 96 model
+test |>
+  filter(state %in% c("Arizona", "Georgia", "Michigan", "Nevada", "North Carolina", "Wisconsin", "Pennsylvania")) |>
+  select(state, winner_96_v4, pred_96_v4, conf_low96_v4, conf_high96_v4) |>
+  knitr::kable(col.names = c("State", "Predicted Winner", "Democratic Vote Share", "Low Pred", "High Pred"), align = "c", digits = 2, caption = "Prediction (Post 1984 Data)")
+```
+
+These results show a more certain Democratic victory than if turnout was not included.
+
+Finally, I am interested in testing the effect of the overturning of Supreme Court precedent on mobilization. In particular, I believe that there would be a strong effect on Democratic voter outcomes as the values interact with h
+
+# References
+
+1.  Julia. 2020. “Answer to ‘Export R Data to Csv.’” *Stack Overflow*. <https://stackoverflow.com/a/62017887>.; Bobbitt, Zach. 2023. “How to Convert Datetime to Date in R.” Statology. January 25, 2023. <https://www.statology.org/r-convert-datetime-to-date/>. GKi. 2023. “Answer to ‘Extract Month and Year From Date in R.’” *Stack Overflow*. <https://stackoverflow.com/a/76709941>. rafa.pereira. 2016. “Answer to ‘Extract Month and Year From Date in R.’” *Stack Overflow*. <https://stackoverflow.com/a/37704385>.; “Extract the Last N Characters from String in R - Spark By {Examples}.” n.d. Accessed October 26, 2024. <https://sparkbyexamples.com/r-programming/extract-the-last-n-characters-from-string-in-r/>.
+2.  Andina, Matias. 2016. “Answer to ‘How to Remove \$ and % from Columns in R?’” *Stack Overflow*. <https://stackoverflow.com/a/35757945>.; camille. 2022. “Answer to ‘Convert Column Names to Title Case.’” *Stack Overflow*. <https://stackoverflow.com/a/70804865>.
+3.  Andina, Matias. 2016. “Answer to ‘How to Remove \$ and % from Columns in R?’” *Stack Overflow*. <https://stackoverflow.com/a/35757945>. “RPubs - Linear Regression Confidence and Prediction Intervals.” n.d. Accessed October 26, 2024. <https://rpubs.com/aaronsc32/regression-confidence-prediction-intervals>.
+4.  “How to Replace Values in R with Examples - Spark By {Examples}.” n.d. Accessed October 26, 2024. <https://sparkbyexamples.com/r-programming/replace-values-in-r/>. camille. 2022. “Answer to ‘Convert Column Names to Title Case.’” *Stack Overflow*. <https://stackoverflow.com/a/70804865>.
+
+# Data Sources
+
+All data sources are provided by GOV 1372 course staff
+
+Popular Vote Datasets
+
+-   National Popular Vote Data from Wikipedia, Abramowitz (2020), Abramowitz (2020) replication data, and manual changes
+
+-   State Popular Vote Data from MIT elections project, Wikipedia, and manual editing
+
+Economic Data
+
+-   FRED Data from St. Louis FRED
+
+-   Grants Data from Kriner and Reeves (2015) replication data
+
+Polling Data
+
+-   State Polls from FiveThirtyEight poll averages and preprocessing
+
+Data sources for state and county-level turnout and Supreme Court cases are unknown, but were generously provided by the GOV 1372 course staff
