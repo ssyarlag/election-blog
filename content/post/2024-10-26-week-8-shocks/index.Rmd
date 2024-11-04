@@ -601,6 +601,16 @@ These results continue to show a Democratic sweep, with more certainty than most
 
 Moving forward, there are a few additional steps I would like to take. First, I would like to incorporate the Supreme Court precedent data that I modified to include whether or not the shifts were accompanied by a conservative shift in the "median justice" of the court, as described by Rubin in Axios (5). In particular, I would like to evaluate the effect of an interaction term between precedent changes and the court's ideological shifts. However, following this, I am interested in running these models, especially the models that include more than the three highly predictive variables, through Elastic Net in order to engage in feature selection and select my final model.
 
+
+```{r}
+## Additional code added after Week 8 submission to save final data
+
+write.csv(test, "test_1.csv", row.names = FALSE)
+write.csv(train_post84, "train84_1.csv", row.names = FALSE)
+write.csv(train_post96, "train96_1.csv", row.names = FALSE)
+
+```
+
 # References
 
 1.  Julia. 2020. “Answer to ‘Export R Data to Csv.’” *Stack Overflow*. <https://stackoverflow.com/a/62017887>.; Bobbitt, Zach. 2023. “How to Convert Datetime to Date in R.” Statology. January 25, 2023. <https://www.statology.org/r-convert-datetime-to-date/>. GKi. 2023. “Answer to ‘Extract Month and Year From Date in R.’” *Stack Overflow*. <https://stackoverflow.com/a/76709941>. rafa.pereira. 2016. “Answer to ‘Extract Month and Year From Date in R.’” *Stack Overflow*. <https://stackoverflow.com/a/37704385>.; “Extract the Last N Characters from String in R - Spark By {Examples}.” n.d. Accessed October 26, 2024. <https://sparkbyexamples.com/r-programming/extract-the-last-n-characters-from-string-in-r/>.; Rubin, April. 2023. “Supreme Court Ideology Continues to Lean Conservative, New Data Shows.” Axios. July 3, 2023. https://www.axios.com/2023/07/03/supreme-court-justices-political-ideology-chart.

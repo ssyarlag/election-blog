@@ -15,7 +15,7 @@ library(glmnet)
 library(tidyverse)
 
 ## set working directory here
-# setwd("~")
+setwd("/Users/shriyayarlagadda/Desktop/Election-Blog/content/post/2024-09-19-week-3-polling/data")
 
 ####----------------------------------------------------------#
 #### Read, merge, and process data.

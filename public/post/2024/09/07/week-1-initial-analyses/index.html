@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en-us">
-  <head>
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=5765&amp;path=livereload" data-no-instant defer></script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Week 1 - Initial Analyses | A minimal Hugo website</title>
@@ -110,10 +110,10 @@ pop_2p_vote_winner_by_year_map &lt;- pop_2p_vote_w_state |&gt;
 
 line_plot_win_trend
 </code></pre>
-<img src="https://example.org/post/2024/09/07/week-1-initial-analyses/index_files/figure-html/unnamed-chunk-2-1.png" width="672" />
+<img src="/post/2024/09/07/week-1-initial-analyses/index_files/figure-html/unnamed-chunk-2-1.png" width="672" />
 <pre><code class="language-r">pop_2p_vote_winner_by_year_map
 </code></pre>
-<img src="https://example.org/post/2024/09/07/week-1-initial-analyses/index_files/figure-html/unnamed-chunk-2-2.png" width="672" />
+<img src="/post/2024/09/07/week-1-initial-analyses/index_files/figure-html/unnamed-chunk-2-2.png" width="672" />
 <p>To further explore state competitiveness, especially in recent years, I also produced the following map demonstrating the average two-party popular vote margin in each state in each election following 2008. I define margin in this case as the difference between the percentage of a state&rsquo;s voters who voted for the Democratic candidate and the percentage who voted for the Republican candidate. The result below averages this statistic across the 2012, 2016, and 2020 elections for each state. I chose this cutoff to reflect modern trends in state-party alignment, without bias from historical elections.</p>
 <pre><code class="language-r"># Dataframe averaging the margin between Democratic and Republican vote share for 2012, 2016, and 2020 elections (by state)
 pop_2p_vote_by_state_post2008 &lt;- pop_2p_vote_w_state |&gt;
@@ -141,7 +141,7 @@ map_pop_2p_vote_by_state_post2008 &lt;- pop_2p_vote_by_state_post2008 |&gt;
 
 map_pop_2p_vote_by_state_post2008
 </code></pre>
-<img src="https://example.org/post/2024/09/07/week-1-initial-analyses/index_files/figure-html/unnamed-chunk-3-1.png" width="672" />
+<img src="/post/2024/09/07/week-1-initial-analyses/index_files/figure-html/unnamed-chunk-3-1.png" width="672" />
 <p>States that are more red on this map have consistently tended to overwhelmingly vote Republican, while those that are more blue have consistently voted overwhelmingly Democrat in recent years. While states like California and Wyoming appear to often regularly vote Democrat and Republican respectively, it is interesting to observe cases like Ohio or Michigan, which may tend to lean Republican or Democrat, but have a much smaller margin, indicating greater competitiveness.</p>
 <p>Then, to further understand what states have been battlegrounds, I created an additional map, which plots the degree to which a state&rsquo;s Democratic vote share has changed compared to the prior election (Extension Option 3). Assuming that any declines correspond to an equal increase in Republican vote share and increases correspond to an equal decline in Republican vote share (ie: we ignore third party candidates for now), this map shows if a state has become &ldquo;redder&rdquo; or &ldquo;bluer&rdquo; since the previous election.</p>
 <pre><code class="language-r"># New map measuring variation in Democratic vote share from previous election
@@ -160,7 +160,7 @@ swing_maps_data &lt;- pop_2p_vote_w_state |&gt;
 
 swing_maps_data
 </code></pre>
-<img src="https://example.org/post/2024/09/07/week-1-initial-analyses/index_files/figure-html/unnamed-chunk-4-1.png" width="672" />
+<img src="/post/2024/09/07/week-1-initial-analyses/index_files/figure-html/unnamed-chunk-4-1.png" width="672" />
 <h1 id="questions">Questions:</h1>
 <h2 id="1-how-competitive-are-presidential-elections-in-the-united-states">1: How competitive are presidential elections in the United States?</h2>
 <p>Presidential elections in the United States are generally quite competitive. As seen in the line graph above, both primary parties appear to earn a significant share of votes in each election and the winning party changes quite frequently.</p>
