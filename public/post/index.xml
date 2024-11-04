@@ -6,15 +6,8 @@
     <description>Recent content in Posts on A minimal Hugo website</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 30 Oct 2024 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 26 Oct 2024 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://example.org/post/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>Final Prediction</title>
-      <link>https://example.org/post/2024/10/30/final-prediction/</link>
-      <pubDate>Wed, 30 Oct 2024 00:00:00 +0000</pubDate>
-      <guid>https://example.org/post/2024/10/30/final-prediction/</guid>
-      <description>&lt;p&gt;For my final weekly blog post, I produced my final prediction model for the 2024 US Presidential Election.&lt;/p&gt;&#xA;&lt;h2 id=&#34;methodological-note&#34;&gt;Methodological Note&lt;/h2&gt;&#xA;&lt;p&gt;Each of the models that I have developed over the past few weeks have predicted a strong performance for Vice President Harris in all seven predicted &amp;ldquo;swing&amp;rdquo; states (4) . While this does not necessarily align with what some major forecasters predict for the election (4), it is unclear how to evaluate the performance of these models without relying on this benchmark.&lt;/p&gt;</description>
-    </item>
     <item>
       <title>Week 8 - Shocks</title>
       <link>https://example.org/post/2024/10/26/week-8-shocks/</link>
