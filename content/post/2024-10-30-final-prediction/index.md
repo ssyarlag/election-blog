@@ -198,10 +198,13 @@ Khalilov, Murad. 2024. “Answer to ‘Rename All Columns to Title Case with {dp
 
 (2) Nelamali, Naveen. 2022. “Replace Values Based on Condition in R.” Spark By {Examples}. June 16, 2022. https://sparkbyexamples.com/r-programming/replace-values-based-on-condition-in-r/.; Shah, Ronak. 2021. “Answer to ‘How Can I Add a Row with the Mean of Each Numeric Column.’” Stack Overflow. https://stackoverflow.com/a/69264173.; “How to Replace Values in R with Examples - Spark By {Examples}.” n.d. Accessed November 1, 2024. https://sparkbyexamples.com/r-programming/replace-values-in-r/.
 
-(3) Nelamali, Naveen. 2022. “Replace Values Based on Condition in R.” Spark By {Examples}. June 16, 2022. https://sparkbyexamples.com/r-programming/replace-values-based-on-condition-in-r/.; Friedman, Andrew Levinson, Lakshmi Ketineni and Dov. n.d.-a. “Maine Election 2016: Live Results.” WSJ. Accessed November 4, 2024. https://www.wsj.com/election/2016/general/state/maine.; Shah, Ronak. 2021. “Answer to ‘How Can I Add a Row with the Mean of Each Numeric Column.’” Stack Overflow. https://stackoverflow.com/a/69264173.
+(3) Levinson, Andrew, Lakshmi Ketineni, and Dov Friedman. n.d.-a. “Maine Election 2016: Live Results.” WSJ. Accessed November 4, 2024. https://www.wsj.com/election/2016/general/state/maine.
 ———. n.d.-b. “Nebraska Election 2016: Live Results.” WSJ. Accessed November 4, 2024. https://www.wsj.com/election/2016/general/state/nebraska.
+Nelamali, Naveen. 2022. “Replace Values Based on Condition in R.” Spark By {Examples}. June 16, 2022. https://sparkbyexamples.com/r-programming/replace-values-based-on-condition-in-r/; Shah, Ronak. 2021. “Answer to ‘How Can I Add a Row with the Mean of Each Numeric Column.’” Stack Overflow. https://stackoverflow.com/a/69264173.
+———. 
 “Live Election Results: 2020 Maine Results.” n.d. Accessed November 4, 2024. https://www.politico.com/2020-election/results/maine/.
 “Nebraska Election Results 2020 | Live Map Updates | Voting by County & District.” n.d. Accessed November 4, 2024. https://www.politico.com/2020-election/results/nebraska/.; “How to Replace Values in R with Examples - Spark By {Examples}.” n.d. Accessed November 1, 2024. https://sparkbyexamples.com/r-programming/replace-values-in-r/.
+
 
 (4) “2024 Presidential Election Predictions \| The Hill and DDHQ.” n.d. The Hill. Accessed October 31, 2024. <https://elections2024.thehill.com/forecast/2024/president/>. “Harris v Trump: 2024 Presidential Election Prediction Model.” n.d. The Economist. Accessed October 31, 2024. <https://www.economist.com/interactive/us-2024-election/prediction-model/president>. Morris, G. Elliott.
     2024. “Who Is Favored To Win The 2024 Presidential Election?” FiveThirtyEight. June 11, 2024. <https://projects.fivethirtyeight.com/2024-election-forecast/>.
@@ -215,7 +218,7 @@ Khalilov, Murad. 2024. “Answer to ‘Rename All Columns to Title Case with {dp
 (6) Coffé, Hilde, and Åsa von Schoultz.
     2021. “How Candidate Characteristics Matter: Candidate Profiles, Political Sophistication, and Vote Choice.” Politics 41 (2): 137–55. <https://doi.org/10.1177/0263395720922077>. ICPSR. n.d. “Candidate Characteristics.” ICPSR. Accessed October 31, 2024. <https://www.icpsr.umich.edu/web/pages/instructors/setups/notes/candidate-characteristics.html>. Kulachai, Waiphot, Unisa Lerdtomornsakul, and Patipol Homyamyen.
     2022. “Factors Influencing Voting Decision: A Comprehensive Literature Review.” Social Sciences 12 (9): 469. <https://doi.org/10.3390/socsci12090469>. Schwarz, Susanne, and Alexander Coppock.
-    2023. “What Have We Learned about Gender from Candidate Choice Experiments? A Meta-Analysis of Sixty-Seven Factorial Survey Experiments.” The Journal of Politics 84 (2): 655–68. <https://doi.org/10.1086/716290>.
+    2023. “What Have We Learned about Gender from Candidate Choice Experiments? A Meta-Analysis of Sixty-Seven Factorial Survey Experiments.” The Journal of Politics 84 (2): 655–68. <https://doi.org/10.1086/716290>. Pedersen, Rasmus T., Jens Olav Dahlgaard, and Manuele Citi. 2019. “Voter Reactions to Candidate Background Characteristics Depend on Candidate Policy Positions.” Electoral Studies 61 (October):102066. https://doi.org/10.1016/j.electstud.2019.102066.
 
 (7) Schneider, Howard.
     2024. “Trump Wants to Compare Now to Four Years Ago. Here’s What It Looks like \| Reuters.” Reuters, October 30, 2024. <https://www.reuters.com/world/us/does-trump-really-want-compare-now-four-years-ago-2024-10-30/>.
