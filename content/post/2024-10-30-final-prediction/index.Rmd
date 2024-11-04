@@ -64,7 +64,7 @@ For my final weekly blog post, I produced my final prediction model for the 2024
 # Rebuilding training and test data (to make sure to include data from Nebraska and Maine districts)
 # Step 1 - Initial Data Cleaning
 
-# (1) - Add snakecase and gsub
+# (1)
 
 # Fed Grants Data by State
 cleaned_d_grants <- d_grants |>
@@ -90,7 +90,7 @@ cleaned_d_grants_post_1996 <- d_grants |>
   summarize(total_grant= sum(grant_mil))
 
 
-# Cleaned Turnout data
+# Cleaned Turnout data - adding lagged turnout for previous two elections
 d_turnout$vep_turnout <- gsub("\\%", "", d_turnout$vep_turnout)
 d_turnout <- d_turnout[order(d_turnout$state, d_turnout$year), ]
 d_turnout$turnout_lag1 <- lag(d_turnout$vep_turnout, n = 2)
@@ -107,6 +107,7 @@ d_state_polls_clean <- d_state_polls |>
   group_by(year, state, party) |>
   summarize(mean_1_wk_poll_support = mean(poll_support))
 
+# Create incumbency data
 incumbency <- d_popvote |>
   mutate(party = snakecase::to_title_case(party)) |>
   mutate(party = ifelse(party == "Democrat", "DEM", "REP")) |>
@@ -117,18 +118,22 @@ incumbency <- d_popvote |>
                                        )) |>
   select(year, party, incumbent, incumbent_party, dem_party_incumbent)
 
+# Cleaning state popular vote
 d_state_popvote <- d_state_popvote |>
   select(year, state, D_pv, R_pv, D_pv_lag1, D_pv_lag2)
 
+# Cleaning FRED
 d_fred <- d_fred |>
   select(year, quarter, GDP_growth_quarterly, unemployment)
 
+# Cleaning COVI data
 covi <- covi |>
   mutate(state_abb = state) |>
   select(state_abb, year, InitialCOVI)
 
 # Supreme Court dataset built from provided course data, but augmented with data on conservatism shift from Rubin, 2023 (Rubin, April. 2023. “Supreme Court Ideology Continues to Lean Conservative, New Data Shows.” Axios. July 3, 2023. https://www.axios.com/2023/07/03/supreme-court-justices-political-ideology-chart.)
 
+# Cleaning Supreme Court data
 sc_prec <- sc_prec |>
   mutate(year = pres_year,
          prec_turns = count,
@@ -141,6 +146,7 @@ sc_prec <- sc_prec |>
 # (2) - replacing particular values
 
 # Training Data post 1984 - merging several datasets made earlier together
+# Merged grant data on grant year to account for the fact that data is missing after 2008 -- use 2008 data for all following elections
 
 # Dropped District of Columbia because it is a strong outlier
 
@@ -218,6 +224,8 @@ train_1996$dem_party_incumbent <- ifelse(train_1996$dem_party_incumbent == TRUE,
 
 # (3)
 
+# Create lagged turnout data -- ended up not using since not relevant to my test data
+
 # turnout_lag_2024 <- d_turnout[order(d_turnout$state, d_turnout$year), ]
 # turnout_lag_2024$turnout_lag2 = lag(d_turnout$vep_turnout, n = 2)
 # turnout_lag_2024 <- turnout_lag_2024 |>
@@ -225,6 +233,7 @@ train_1996$dem_party_incumbent <- ifelse(train_1996$dem_party_incumbent == TRUE,
 #   mutate(turnout_lag1 = vep_turnout) |>
 #   select(state, turnout_lag1, turnout_lag2)
 
+# Created lagged vote share data
 dpv_lag_2024 <- d_state_popvote |>
   filter(year == 2020) |>
   select(state, D_pv, D_pv_lag1) |>
@@ -242,7 +251,6 @@ test$state_abb[test$state == 'Maine Cd 2'] <- "ME"
 test$state_abb[test$state == 'Nebraska Cd 2'] <- "NE"
 test$grant_year[test$grant_year == 2024] <- 2008
 
-
 test <- test |>
   left_join(cleaned_d_grants, by = c("state_abb", "grant_year")) |>
   left_join(dpv_lag_2024, by = "state") |>
@@ -257,19 +265,24 @@ test <- test |>
 test$incumbent <- ifelse(test$incumbent == TRUE, 1, 0)
 test$dem_party_incumbent <- ifelse(test$dem_party_incumbent == TRUE, 1, 0)
 
+# Manually adding new economic information for Q3
 test$quarter = 3
 test$GDP_growth_quarterly = 2.8
 test$unemployment = 4.2
 
+# Manually adding Maine and Nebraska lagged voting data
 test$D_pv_lag1[test$state == 'Maine Cd 2'] <- 44.6
 test$D_pv_lag2[test$state == 'Maine Cd 2'] <- 41.0
 
 test$D_pv_lag1[test$state == 'Nebraska Cd 2'] <- 52.4
 test$D_pv_lag2[test$state == 'Nebraska Cd 2'] <- 46.0
   
+
+# Evaluating shape of total grant to see if the log relationship still holds
+# These show that taking log is important to produce direct relationship
+
 scatter1 <- ggplot(data = train_1984) +
   geom_point(aes(x = total_grant, y = D_pv))
-
 
 scatter2 <- ggplot(data = train_1984) +
   geom_point(aes(x = log(total_grant), y = D_pv))
@@ -282,15 +295,14 @@ Each of the models that I have developed over the past few weeks have predicted 
 
 In my previous blogs, I used out-of-sample cross validation to evaluate my models, leaving out a random set of years during each repetition of training my model and testing how well the subsetted model performed on the left-out years. In doing so, I was able to test how well my model predicted state-level outcomes for the average election between either 1984 and 2020 or 1996 and 2020 (depending on the dataset that was used). 
 
-However, as we have discussed in class, there might be several factors that differentiate this election from others. If this is the case, the underlying factors that define voter behavior -- and would thus be included in an election prediction model -- may change from election to election. Given that our task is to build a model that best predicts the upcoming 2024 US Presidential Election, aiming to predict voter behavior in the "average" election may not best predict a specific one.
+However, as we have discussed in class, there might be several factors that differentiate this election from others. If this is the case, the underlying factors that shape voter behavior -- and would thus be included in an election prediction model -- may change from election to election. Given that our task is to build a model that best predicts the upcoming 2024 US Presidential Election, aiming to predict voter behavior in the "average" election may not best predict a specific one.
 
-In this blog, I have decided to evaluate my models based on *how well they predict the outcome of the 2016 election* (when the 2016 election is excluded from the data).This is because I argue that the 2016 election is the closest available analog to the upcoming election, with Donald Trump once again running against a female, moderate Democrat, replacing a male incumbent Democrat in a growing economy (as indicated by a 2016 Q3 GDP growth rate of 2.9 and a 2024 Q3 GDP growth rate of 2.8) (5). By predicting how well each model does in predicting a similarly structured election, we can effectively control for a number of candidate and contextual characteristics -- which could conceivably affect how voters choose to cast their ballots (6).
+In this blog, I have decided to evaluate my models based on *how well they predict the outcome of the 2016 election* (when the 2016 election is excluded from the data).This is because I argue that the 2016 election is the closest available analog to the upcoming election, with Donald Trump once again running against a female Democrat, replacing a male incumbent Democrat in a growing economy (as indicated by a 2016 Q3 GDP growth rate of 2.9 and a 2024 Q3 GDP growth rate of 2.8) (5). By testing how well each model does in predicting a similarly structured election, we can effectively control for a number of candidate and contextual characteristics -- which could conceivably affect how voters choose to cast their ballots (6).
 
 While one might instead consider 2020, given its comparative recency, the fact that the year constituted an economic (as we discussed in Week 2) and situational outlier (with the COVID-19 pandemic) makes it difficult for us to compare the elections (7).
 
-
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
-# Model Testing: Leave-One-Out for all eight models (2) -- add label for taking colmeans
+# Model Testing: Leave-One-Out for all eight models 
 
 ####### 1984 Models:
 
@@ -581,22 +593,22 @@ output_96_mean <- rbind(output_96, data.frame(state = 'Mean', t(colMeans(output_
 
 Going into this week, I was interested in testing eight OLS models predicting Democratic vote share that I built last week (four models across two sets of data), using leave-one-out out of sample validation. Thank you, again, to Matt Dardet for his starter code.
 
-However, I wanted to consider two additional pieces of data. First, I consider data from the Cost of Voting Index, a metric created by Pomante that reflects the degree of challenge that voters face when seeking to cast their ballot (10). Second, I added data regarding the Supreme Court's overturning of precedent, specifically adding an interaction term between the number of precedents a court overturned and an indicator variable that I created using data from Rubin, 2023 (11). Election laws -- and the guidelines that they may place on who is able to cast a vote -- may have a substantial impact on elections, especially through disproportionately affecting certain demographic groups (12). Similarly, rhetoric regarding the Supreme Court's overturning of Roe v. Wade and the potential for the next president to shape the Supreme Court's makeup has also impacted campaign strategies, leading me to consider how this may be predictive in this upcoming election (13) 
+However, I wanted to consider two additional pieces of data. First, I consider data from the Cost of Voting Index, a metric created by Pomante that reflects the degree of challenge that voters face when seeking to cast their ballot (10). Second, I added data regarding the Supreme Court's overturning of precedent, specifically adding an interaction term between the number of precedents the court overturned in the previous four years and an indicator variable that representing whether the court had a conservative shift in its decisionmaking that I created using data from Rubin, 2023 (11). As discussed in our course, election laws -- and the guidelines that they may place on who is able to cast a vote -- may have a substantial impact on elections, especially through disproportionately affecting certain demographic groups (12). Similarly, rhetoric regarding the Supreme Court's overturning of Roe v. Wade and the potential for the next president to shape the Supreme Court's makeup has also impacted campaign strategies, leading me to consider how this may be predictive in this upcoming election (13) 
 
-Importantly, I also updated my training data since last week, replacing the variable of mean poll predictions five weeks out from the election with poll predictions one week out from the election. Aside from the fact that this data is now available, this metric also allows me to better account for the underlying factor that I hope to include in my model -- polling predictions. Additionally, recognizing that my metric of grant allocation was incorrectly measured. In previous weeks, I calculated one metric of grant spending across decades for each state, rather than calculating spending in the year or years prior to an election. This variable in this form definitely did not drive voting outcomes, as it would be impossible for someone in, for example, the 2000 election to predict how funds would be allocated to their state from 2000 to 2008. Instead, I summed the total funding allocated to each state during the previous election cycle. While this metric is slightly different than the one that Kriner and Reeves used in their study finding significant results (they focused on testing recency bias in voting by focusing on funding allocated in the year before an election), this metric also allows us to aggregate upwards, potentially limiting the missing data challenges from not having data for elections after 2008 (14)
+Importantly, I also updated my training data since last week, replacing the variable of mean poll predictions five weeks out from the election with poll predictions one week out from the election. Aside from the fact that this data is now available, this metric also allows me to better account for the underlying factor that I hope to include in my model -- polling predictions. Additionally, recognizing that my metric of grant allocation was incorrectly measured, I slightly altered it. In previous weeks, I calculated one metric of grant spending across decades for each state, rather than calculating spending in the year or years prior to an election. This variable in this form definitely did not drive voting outcomes, as it would be impossible for someone in, for example, the 2000 election to predict how funds would be allocated to their state from 2000 to 2008. Instead, I summed the total funding allocated to each state during the previous election cycle. While this metric is slightly different than the one that Kriner and Reeves used in their study finding significant results (they focused on testing recency bias in voting by focusing on funding allocated in the year before an election), this metric also allows us to aggregate upwards, potentially limiting the missing data challenges from not having data for elections after 2008 (14)
 
+Including these new variables, I tested a total of 32 different OLS regression models predicting Democratic vote share using leave-one-out out-of-sample validation, creating four versions of each of the eight models from last week - one original, one including the Cost of Voting Index, one including the Supreme Court shift interaction term, and one including both. 
 
-Including these new variables, I tested a total of 24 different OLS regression models using leave-on-out out-of-sample validation, creating four versions of each of the eight models from last week - one original, one including the Cost of Voting Index, one including the Supreme Court shift interaction term, and one including both. 
+To evaluate the success of each model, I calculated the prediction error (between the OLS predicted value and the true Democratic vote share) for the 2016 election in each state. Then, I subsetted to states that have been considered "battlegrounds" in the upcoming election, calculating the mean error of only these seven states (4). I decided to subset to only battlegrounds because, barring the surprise flipping of a state, many commentators argue that these states are the ones that will drive the election's outcome. Therefore, I want to select a model that does the best job at predicting the outcomes of these states. 
 
-To evaluate the success of each model, I calculated the prediction error (between the OLS predicted value and the true Democratic vote share) for the 2016 election in each state. Then, I subsetted to states that have been considered "battlegrounds" in the upcoming election, calculating the mean error of only these seven states. I decided to subset to only battlegrounds because, barring the surprise flipping of a state, many commentators argue that these states are the ones that will drive the election's outcome. Therefore, I want to select a model that does the best job at predicting the outcomes of these states. 
+One primary limitation of this approach is that certain characteristics of these states, such as their demographics or issues of interest, may have changed slightly between 2016 and 2024 - a future iteration of this project may want to consider adding additional weights to consider these differences. However, under the assumption that each swing state in 2024 is more like itself in 2016 than the average state, this the subsetted model should theoretically offer better predictions.
 
-One primary limitation of this approach is that certain characteristics of these states, such as their demographics or issues of interest, may have changed slightly between 2016 and 2024 - a future project may want to consider adding additional weights to consider these differences. However, under the assumption that each swing state in 2024 is more like itself in 2016 than the average state, this the subsetted model should theoretically offer better predictions.
-
-I ultimately selected the model with the lowest mean prediction error out of these subsetted data, running the model through ElasticNet to produce my ultimate prediction model.
+I ultimately selected the model with the lowest mean prediction error out of these subsetted data (1.65 percentage points), running the model through ElasticNet to produce my ultimate prediction model (using starter code from Matt Dardet). This model is the one described below. When using ElasticNet, I found a lambda value of 0.03 for this Democratic model. In order to also find a comparable value for Republican vote share to predict two-party vote share, I also trained a second model with the same parameters of my primary model to predict Republican vote share. Again, I found the same lambda value of 0.03 when running this model through ElasticNet. However, I emphasize that my Democratic prediction model is the one that I put forward as "my" model in this project.
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 
-# (9)
+# (9) Calculating the mean error for 1984 models
+
 output_84_swing <- output_84 |>
   filter(state %in% c("Arizona", "Georgia", "Michigan", "Nevada", "North Carolina", "Wisconsin", "Pennsylvania"))
 
@@ -605,7 +617,8 @@ output_84_swing_mean <- rbind(output_84_swing, data.frame(state = 'Mean', t(colM
 ```
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
-# (9)
+# (9) Calculating the mean error for 1996 models
+
 output_96_swing <- output_96 |>
   filter(state %in% c("Arizona", "Georgia", "Michigan", "Nevada", "North Carolina", "Wisconsin", "Pennsylvania"))
 
@@ -615,17 +628,20 @@ output_96_swing_mean <-rbind(output_96_swing, data.frame(state = 'Mean', t(colMe
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 
-# (15) - Includes new GLM package for elastic net with confidence intervals
+# (15) - Regularizing models with ElasticNet
 
 # OLS Model 
 
 final_modelOLS <- lm(D_pv ~ mean_1_wk_poll_support + D_pv_lag1 + D_pv_lag2 + InitialCOVI + sc_interact, data = train_1984, na.rm = TRUE)
 
+final_modelOLSRep <- lm(R_pv ~ mean_1_wk_poll_support + D_pv_lag1 + D_pv_lag2 + InitialCOVI + sc_interact, data = train_1984, na.rm = TRUE)
+
+
 # Regularization with Elastic Net
 
 reg_data <- train_1984 |>
   ungroup() |>
-  select(year, state, D_pv, mean_1_wk_poll_support, D_pv_lag1, D_pv_lag2,  InitialCOVI, sc_interact) |>
+  select(year, state, D_pv, R_pv, mean_1_wk_poll_support, D_pv_lag1, D_pv_lag2,  InitialCOVI, sc_interact) |>
   drop_na()
 
 reg_data_test <- test |>
@@ -641,6 +657,7 @@ x.train <- reg_data |>
   as.matrix()
 
 y.train <- reg_data$D_pv
+y.train.rep <- reg_data$R_pv
 
 x.test <- reg_data_test |>
   ungroup() |> 
@@ -652,36 +669,35 @@ set.seed(02138)
 enet.final <- cv.glmnet(x = x.train, y = y.train, alpha = 0.5)
 lambda.min.enet.final<- enet.final$lambda.min
 
-
-en.pred <- predict(enet.final, s = lambda.min.enet.final, newx = x.test, interval = "confidence")
-
-# Calculate average prediction error
-pred_se <- enet.final$lambda.1se
-
-reg_data_test$final_pred <- en.pred[,1]
+enet.final.rep <- cv.glmnet(x = x.train, y = y.train.rep, alpha = 0.5)
+lambda.min.enet.final.rep <- enet.final$lambda.min
 
 ```
 
 
 # My Final Prediction
 
+### Final Model and Description
+
 My final model is a regularized regression model aimed at predicting Democratic vote share, including five parameters.
 
 At the national level, I only include one variable - the interaction between the conservatism of the Supreme Court and the number of precedents that it overturned in the prior four years.
 
-At the state level, thus varying across both elections and state, I include average poll support one week out from the election, Democratic vote share in the previous two elections, and the Cost of Voting Index. The coefficients of this model -- both in its original OLS form and when regularized using Elastic Net -- are listed below
+At the state level, thus varying across both elections and state, I include average poll support one week out from the election, Democratic vote share in the previous two elections, and the Cost of Voting Index. The coefficients of this model -- both in its original OLS form and when regularized using Elastic Net -- are listed below, based upon starter code from Matt Dardet.
 
 Notably, I also dropped training data from Washington DC, following the precedent that we adopted in Week 1 of our course given its status as a strongly Democratic outlier.
 
+### Coefficients and Interpretation
+
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
-
-d.coefplot <- data.frame("OLS" = coef(final_modelOLS)[-1],
+# Table with coefficients from model (again, based on example from Matt Dardet)
+d.coeftable <- data.frame("OLS" = coef(final_modelOLS)[-1],
                          "Elastic Net" = coef(enet.final, s = lambda.min.enet.final)[-1]) |> 
   rownames_to_column("coef_name") |>
   knitr::kable(col.names = c("Coefficient", "OLS", "Elastic Net"), align = "c")
 
-d.coefplot
+d.coeftable
 ```
 
 Interpreting the Elastic Net coefficients, I find the following interpretations of my model:
@@ -694,17 +710,18 @@ Interpreting the Elastic Net coefficients, I find the following interpretations 
 
 4) InitialCOVI: Holding all other variables constant, a one unit increase in the Cost of Voting Index score results in a 0.02 percentage point increase in a candidate's predicted vote share
 
-5) Sc_interact: Holding all other variables constant and assuming a conservative shift, each additional precedent overturn during the four years prior to an election increases a candidate's predicted vote share by 0.1799611 percentage points.
+5) Sc_interact: Holding all other variables constant and assuming a conservative shift, each additional precedent overturn during the four years prior to an election increases a candidate's predicted vote share by 0.18 percentage points.
 
-These coefficients, especially D_pv_lag2, seem quite counterintuitive to me. However, it is interesting to me that the ultimate results of my model seem relatively close to what major pollsters are predicting (8)
+These coefficients, especially D_pv_lag2, seem quite counterintuitive to me. However, it is interesting to me that the ultimate results of my model seem relatively close to what major pollsters are predicting. (8)
 
-## Validation
+### Validation
 
 The final OLS model has high internal validity, with an adjusted R^2 value of 0.9455. As demonstrated earlier, the model also has higher leave-one-out out-of-sample performance than any of the other models that I tested, predicting 2016 results. However, I also include a histogram of errors when conducting a more generalized cross-validation test. Thank you, again to Matt for his starter code.
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 #summary(final_modelOLS)
 
+# Out of sample cross-validation
 out_samp_errors <- sapply(1:1000, function(i) {
   years_out_samp <- sample(train_1984$year, 4)
   mod <- lm(D_pv ~ mean_1_wk_poll_support + D_pv_lag1 + D_pv_lag2 + InitialCOVI + sc_interact, na.rm = TRUE, data = train_1984[!(train_1984$year %in% years_out_samp),])
@@ -718,92 +735,120 @@ hist(out_samp_errors)
 
 Aside from the occasional large negative outlier, this model also generally performs well across elections, with mean errors centered around 0. It is especially interesting that the average error skews slighly negative, meaning that, if anything, the model tends to underpredict Democratic performance on average.
 
-## What I did consider
+## Justification
 
-While my ultimate selection of this model is based upon strong performance under leave-on-out cross validation, I also want to highlight why I selected the variables that I included in my initial few models.
+### What I considered
 
-I was initially inspired by one of the most "parsimonious" (as referred to by Matt Dardet) election prediction models that we have studied in GOV 1372 - Alan Abramowitz's Time for Change Model. However, I wanted to develop a model that would have predictive power for non-incumbents, especially given that it is hard to afford the incumbency advantage to either of the candidates in this election (as we discussed in Week 4).
+While my ultimate selection of this model is based upon strong performance under leave-one-out cross validation, I also want to highlight why I selected the variables that I included in my initial few models.
+
+I was initially inspired by one of the most "parsimonious" (as referred to by Matt Dardet) election prediction models that we have studied in GOV 1372 - Alan Abramowitz's Time for Change Model from Week 4. However, I wanted to develop a model that would have predictive power for non-incumbents, especially given that it is hard to afford the incumbency advantage to either of the candidates in this election (as we discussed in Week 4).
 
 Because of this, I started with one of the "fundamental" features that was included in the Time for Change model -- GDP growth in the quarter before the election. I also complemented this with measures of unemployment - a metric that perhaps has a greater effect one's day-to-day lifestyle than could be measured by GDP growth. In doing so, I wanted to adopt the "fundamentals" strategy that many election forecasters, including Tien & Lewis-Beck and Morris, incorporate into their models, considering the centrality of economic variables in a voter's decisionmaking calculus (16). In particular, it felt vital to consider these factors at a national level, especially given our discussion about how national level metrics of economic performance tend to better predict outcomes than those measured at a more local level (17)
 
 Adding to this, I also wanted to consider the influence of polls - a metric notably included in several prominent popular forecasts, including those by Morris and Silver, as well as academic models like Pollyvote (18).
 
-Then, I several additional factors based on our findings from previous blogs and our discussion of potentially relevant factors in this election. Aside from the COVI and Supreme Court Interaction metrics as justified earlier, I considered metrics of grant spending and turnout. I included grant spending because of Kriner and Reeves' finding that the variable was a significant predictor of turnout (14). Finally, I considered previous Democratic vote share, given that it could provide an effective benchmark of previous state performance.
+Then, I considered several additional factors based on our findings from previous blogs and our discussion of potentially relevant factors in this election. Aside from the COVI and Supreme Court Interaction metrics as justified earlier, I considered metrics of grant spending and turnout. I included grant spending because of Kriner and Reeves' finding that the variable was a significant predictor of turnout (14). Finally, I considered previous Democratic vote share, given that it could provide an effective benchmark of previous state performance. In last week's blog, we see that these variables are highly predictive in a scatterplot.
 
 I also considered including turnout in the previous election as a parameter to test. However, upon Matt Dardet's recommendation, I ultimately removed this parameter, reflecting Shaw and Petrocik's findings that turnout does not affect the polling results of either party (19). Nevertheless, I include models with and without this parameter for comparison in my code.
 
 Using these metrics, I made the specific choice to predict Democratic vote share, rather than Democratic two-party vote share. Inspired by my classmate Alex Heuss, I believed that this metric would more appropriately reflect actual outcomes. Although there has not been a significant third-party candidate officially in the election since Robert Kennedy dropped out, the fact that his name remains on the ballot and many voters may vote for other candidates because of apathy towards both primary candidates may mean that this election cannot be truly considered a two-party race (20). 
 
-## What I didn't include
+### What I didn't include
 
-Notably, I did not include any components of my model that directly measured either demographics or campaign events. As demonstrated by both Kim and Zilinsky's work, as well as my work which sought to replicate it, demographic factors arguably did not have a substantial predictive impact in our modeling (21). Similarly, my analysis of campaign events like advertising and campaign events did not prove to be significant, aligning (as I discussed in previous weeks), with Kalla and Broockman's work (22). However, it could be possible that, in the unique context of the 2024 election, these variables could be relevant. Therefore, I exclude these conditions with a degree of caution.
+Notably, I did not include any model components that directly measured either demographics or campaign events. As demonstrated by both Kim and Zilinsky's work, as well as my work which sought to replicate it, demographic factors arguably did not have a substantial predictive impact in our modeling (21). Similarly, my analysis of campaign events like advertising and campaign events did not prove to be significant, aligning (as I discussed in previous weeks), with Kalla and Broockman's work (22). However, it could be possible that, in the unique context of the 2024 election, these variables could be relevant. Therefore, I exclude these conditions with a degree of caution.
 
 ## Limitations
 
 There are several notable limitations to immediately note with my model. 
 
-First, I faced significant missing data challenges with my variable for lagged turnout, with many states missing this information. This may have affected the outcomes of the regressions that considered this variable. Similarly, my vote share data did not include outcomes at the district level for Maine and Nebraska. Although I manually added these data to my test data, the lack of these data points could have conceivably affected my model training. Finally, since we do not have polling data available for every state, I was not able to produce final predictions for every state. 
+First, I faced significant missing data challenges with my variable for lagged turnout, with many states missing this information. This may have affected the outcomes of the regressions that considered this variable. Similarly, my vote share data did not include outcomes at the district level for Maine and Nebraska. Although I manually added these data to my test data, the lack of these data points in my training data could have conceivably affected my model training. Finally, since we do not have polling data available for every state, I was not able to produce final predictions for every state. 
 
 Second, the dataset on federal grant allocation that we had access to only calculates grant spending up to 2008, causing me to use 2008 data for all future elections. Again, this likely affected the outcomes of my regressions.
 
-Third, given that I did not predict two-party vote share, it is possible that a candidate could win a state without receiving over 50 percent of the predicted vote share in this model (as seen by the 2016 Colorado data that we use in this study). However, I use a heuristic of 50% to predict a win for simplicity.
+Third, unlike prominent pollsters like Morris, I averaged the values of all polls without considering their rating. This may have led to the overweighting of less reliable polls (18). 
+
+Finally, it may be possible that the underlying data in each of these models may have a distribution that is not conducive to linear regression. This would make my choice of model -- selected initially for parsimony -- slightly ineffective. (23)
 
 ## Final Results
 
-Below, I provide the final predictions from both the OLS and Regularized versions of my model. While I use the results of the regularized model as my final prediction, I include the OLS model as well because of our ability to generate more reliable confidence intervals for OLS models than regularized models (23). Given that the predictions for both are relatively similar, the OLS prediction intervals may provide a reasonable estimate of a range for the regularized model as well.
+Below, I provide the final predictions from both the OLS and Regularized versions of my model for each of the battleground states (4). While I use the results of the regularized model as my final prediction, I include the OLS model as well because of our ability to generate more reliable confidence intervals for OLS models than regularized models (24). Given that the predictions for both are relatively similar, the OLS prediction intervals may provide a reasonable estimate of a range for the regularized model as well.
 
-OLS Prediction
+OLS Prediction (with intervals)
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
+# (25)
 
+#OLS Predictions
 final_pred <- predict(final_modelOLS, test, interval = 'confidence')
+final_pred_repub <- predict(final_modelOLSRep, test, interval = 'confidence')
 
 test$finalpred <- final_pred[,1]
-test$finalrepubpred <- 100-test$finalpred
+test$finalrepubpred <- final_pred_repub[,1]
 test$finalwinner <- ifelse(test$finalrepubpred > test$finalpred, "REP", "DEM")
+test$margin <- test$finalpred - test$finalrepubpred
 
 test$conf_lowfinal <- final_pred[,2]
 test$conf_highfinal <-final_pred[,3]
 
+test$conf_lowrepfinal <- final_pred_repub[,2]
+test$conf_highrepfinal <-final_pred_repub[,3]
+
 test_final <- test |>
-  select(state, finalpred, finalwinner, conf_lowfinal, conf_highfinal)
+  select(state, finalpred, finalrepubpred, finalwinner, conf_lowfinal, conf_highfinal)
 
 test_final_output <- test_final |>
-  filter(state %in% c("Arizona", "Georgia", "Michigan", "Nevada", "North Carolina", "Wisconsin", "Pennsylvania")) |>
-  select(state, finalwinner, finalpred, conf_lowfinal, conf_highfinal)
-
-reg_final_output <- reg_data_test |>
-  filter(state %in% c("Arizona", "Georgia", "Michigan", "Nevada", "North Carolina", "Wisconsin", "Pennsylvania")) |>
-  mutate(winner = ifelse(final_pred > 50, "DEM", "REP")) |>
-  select(state, winner, final_pred)
+  filter(state %in% c("Arizona", "Georgia", "Michigan", "Nevada", "North Carolina", "Wisconsin", "Pennsylvania"))
 
 
-knitr::kable(test_final_output, col.names = c("State", "Democratic Vote Share", "Predicted Winner", "Low Pred", "High Pred"), align = "c", digits = 2)
+knitr::kable(test_final_output, col.names = c("State", "Democratic Vote Share", "Republican Vote Share", "Predicted Winner", "Low Dem Pred", "High Dem Pred"), align = "c", digits = 2)
 ```
 
 Regularized Prediction
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
-knitr::kable(reg_final_output, col.names = c("State", "Predicted Winner", "Democratic Vote Share"), align = "c", digits = 2)
+# Regularized predictions
+# (25)
+
+en.pred <- predict(enet.final, s = lambda.min.enet.final, newx = x.test, interval = "confidence")
+en.pred.rep <- predict(enet.final.rep, s = lambda.min.enet.final.rep, newx = x.test, interval = "confidence")
+
+# Calculate average prediction error
+pred_se <- enet.final$lambda.1se
+
+# Add predictions to table
+reg_data_test$final_pred <- en.pred[,1]
+reg_data_test$final_pred_rep <- en.pred.rep[,1]
+
+reg_final_output <- reg_data_test |>
+  filter(state %in% c("Arizona", "Georgia", "Michigan", "Nevada", "North Carolina", "Wisconsin", "Pennsylvania")) |>
+  mutate(winner = ifelse(final_pred > final_pred_rep, "DEM", "REP")) |>
+  select(state, winner, final_pred, final_pred_rep)
+
+knitr::kable(reg_final_output, col.names = c("State", "Predicted Winner", "Democratic Vote Share", "Republican Vote Share"), align = "c", digits = 2)
 ```
 
 Predicted Electoral Vote Count (for states with polling data)
-```{r}
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+
+# Merging data with electors
 ec_filtered <- ec |>
   filter(year == 2024) |>
   rename(state_abb = stateab) |>
   select(!year)
 
 reg_data_preds <- reg_data_test |>
-  select(state, final_pred)
+  select(state, final_pred, final_pred_rep) |>
+  mutate(winner = ifelse(final_pred > final_pred_rep, "DEM", "REP"),
+         D_pv2p = final_pred/(final_pred + final_pred_rep))
 
 final_pred_map <- ec_filtered |>
-  right_join(reg_data_preds, by = "state") |>
-  mutate(winner = ifelse(final_pred > 50, "DEM", "REP"))
+  right_join(reg_data_preds, by = "state")
 
+# Manually adding number of electors (25)
 final_pred_map$electors[final_pred_map$state == 'Nebraska Cd 2'] <- 1
 final_pred_map$electors[final_pred_map$state == 'Maine Cd 2'] <- 1
 
+# Total electors by candidate
 final_pred_map |>
   group_by(winner) |>
   summarize("Total Electors" = sum(electors)) |>
@@ -813,6 +858,7 @@ final_pred_map |>
 states_map <- map_data("state")
 final_pred_map$region = tolower(final_pred_map$state)
 
+# Final election map
 final_pred_map |>
   left_join(states_map, by = "region") |>
   ggplot(mapping = aes(x = long, y = lat, group = group)) + geom_polygon(aes(fill = winner), color = "black") +
@@ -822,6 +868,7 @@ final_pred_map |>
 
 ```
 
+This model proves incredibly optimistic for the Harris campaign, resulting in wins in not only all of the battleground states, but also, curiously, Florida (although the margin in Florida is less than 0.15 percentage points and neither candidate earns over 50% of the vote). However, it is also interesting to consider that the prediction intervals of these measures may overlap with each other, such as in the case of Florida. While this does not necessarily align with what several pollsters predict for the election, it will be interesting to see how well this model shapes up in the final election! (4) Thank you again, as in all of the previous blogs, to Matt Dardet for his detailed starter code across the past several weeks, which I reference throughout this blog.
 
 # References:
 
@@ -835,7 +882,7 @@ Khalilov, Murad. 2024. “Answer to ‘Rename All Columns to Title Case with {dp
 
 (2) Nelamali, Naveen. 2022. “Replace Values Based on Condition in R.” Spark By {Examples}. June 16, 2022. https://sparkbyexamples.com/r-programming/replace-values-based-on-condition-in-r/.; Shah, Ronak. 2021. “Answer to ‘How Can I Add a Row with the Mean of Each Numeric Column.’” Stack Overflow. https://stackoverflow.com/a/69264173.; “How to Replace Values in R with Examples - Spark By {Examples}.” n.d. Accessed November 1, 2024. https://sparkbyexamples.com/r-programming/replace-values-in-r/.
 
-3) Nelamali, Naveen. 2022. “Replace Values Based on Condition in R.” Spark By {Examples}. June 16, 2022. https://sparkbyexamples.com/r-programming/replace-values-based-on-condition-in-r/.; Friedman, Andrew Levinson, Lakshmi Ketineni and Dov. n.d.-a. “Maine Election 2016: Live Results.” WSJ. Accessed November 4, 2024. https://www.wsj.com/election/2016/general/state/maine.; Shah, Ronak. 2021. “Answer to ‘How Can I Add a Row with the Mean of Each Numeric Column.’” Stack Overflow. https://stackoverflow.com/a/69264173.
+(3) Nelamali, Naveen. 2022. “Replace Values Based on Condition in R.” Spark By {Examples}. June 16, 2022. https://sparkbyexamples.com/r-programming/replace-values-based-on-condition-in-r/.; Friedman, Andrew Levinson, Lakshmi Ketineni and Dov. n.d.-a. “Maine Election 2016: Live Results.” WSJ. Accessed November 4, 2024. https://www.wsj.com/election/2016/general/state/maine.; Shah, Ronak. 2021. “Answer to ‘How Can I Add a Row with the Mean of Each Numeric Column.’” Stack Overflow. https://stackoverflow.com/a/69264173.
 ———. n.d.-b. “Nebraska Election 2016: Live Results.” WSJ. Accessed November 4, 2024. https://www.wsj.com/election/2016/general/state/nebraska.
 “Live Election Results: 2020 Maine Results.” n.d. Accessed November 4, 2024. https://www.politico.com/2020-election/results/maine/.
 “Nebraska Election Results 2020 | Live Map Updates | Voting by County & District.” n.d. Accessed November 4, 2024. https://www.politico.com/2020-election/results/nebraska/.; “How to Replace Values in R with Examples - Spark By {Examples}.” n.d. Accessed November 1, 2024. https://sparkbyexamples.com/r-programming/replace-values-in-r/.
@@ -861,7 +908,7 @@ Khalilov, Murad. 2024. “Answer to ‘Rename All Columns to Title Case with {dp
 
 (9) Shah, Ronak.
     2021. “Answer to ‘How Can I Add a Row with the Mean of Each Numeric Column.’” Stack Overflow. <https://stackoverflow.com/a/69264173>.
-(6) Model Summary Help Page; “Gross Domestic Product \| U.S. Bureau of Economic Analysis (BEA).” n.d. Accessed November 1, 2024. <https://www.bea.gov/data/gdp/gross-domestic-product>.; Kosourova, Elena.
+Model Summary Help Page; “Gross Domestic Product \| U.S. Bureau of Economic Analysis (BEA).” n.d. Accessed November 1, 2024. <https://www.bea.gov/data/gdp/gross-domestic-product>.; Kosourova, Elena.
     2022. “How to Append Rows to a Data Frame in R (with 7 Code Examples).” Dataquest. July 28, 2022. <https://www.dataquest.io/blog/append-to-dataframe-in-r/>.
 
 (10) “Code Book Master 1996 2024 Election Voting Re.Docx.” n.d. Google Docs. Accessed November 2, 2024. https://docs.google.com/document/u/1/d/1XeoTI0GDit2X0KxlZ0kwX0oVSkOS-19P/edit?usp=drive_web&ouid=118424910218509828098&rtpof=true&usp=embed_facebook.
@@ -898,10 +945,12 @@ Bouranova, Alene. 2024. “Is Voting for a Third-Party Candidate Effective or Is
 
 (22) Kalla, Joshua L., and David E. Broockman. 2018. “The Minimal Persuasive Effects of Campaign Contact in General Elections: Evidence from 49 Field Experiments.” American Political Science Review 112 (1): 148–66. https://doi.org/10.1017/S0003055417000363.
 
-(23) Javanmard, Adel, and Andrea Montanari. 2014. “Conﬁdence Intervals and Hypothesis Testing for High-Dimensional Regression.” Journal of Machine Learning Research 15:2869–2909. EdM. 2020. “Answer to ‘How Do I Calculate Confidence Intervals on an Elastic Net Regression in R.’” Cross Validated. https://stats.stackexchange.com/a/478188.
+(23) Personal conversation, Jamie Liu, November 1, 2024
+
+(24) Javanmard, Adel, and Andrea Montanari. 2014. “Conﬁdence Intervals and Hypothesis Testing for High-Dimensional Regression.” Journal of Machine Learning Research 15:2869–2909. EdM. 2020. “Answer to ‘How Do I Calculate Confidence Intervals on an Elastic Net Regression in R.’” Cross Validated. https://stats.stackexchange.com/a/478188.
 ilanman. 2016. “Answer to ‘Confidence Intervals for Ridge Regression.’” Stack Overflow. https://stackoverflow.com/a/40509534.
 
-
+(25) “RPubs - Linear Regression Confidence and Prediction Intervals.” n.d. Accessed October 26, 2024. https://rpubs.com/aaronsc32/regression-confidence-prediction-intervals.
 
 # Data Sources
 
@@ -913,8 +962,7 @@ Popular Vote Datasets
 
 -   State Popular Vote Data from MIT elections project, Wikipedia, and manual editing
 
--   Additional data from Politico and Wall Street Journal added to test dataset to enable lagged predictions
-Economic Data
+-   Additional data from Politico and Wall Street Journal for Maine and Nebraska District 2 added to test dataset to enable lagged predictions
 
 Economic Data
 
@@ -932,7 +980,8 @@ Elector Data
 Cost of Voting Index
 - Created by Michael Pomante II, but also generously facilitated by GOV 1372 course staff
 
-Data sources for state and county-level turnout, protests, and Supreme Court cases are unknown, but were generously provided by the GOV 1372 course staff. However, I append the Supreme Court data with a metric of how the Supreme Court's leaninted over time with data from Axios (Rubin, April. 2023. “Supreme Court Ideology Continues to Lean Conservative, New Data Shows.” Axios. July 3, 2023. https://www.axios.com/2023/07/03/supreme-court-justices-political-ideology-chart.
+Turnout
+- Calculated from the Current Population Survey by Michael McDonald's US Elections Project
 
-
+Data sources for Supreme Court cases are unknown, but were generously provided by the GOV 1372 course staff. However, I append the Supreme Court data with a metric of how the Supreme Court's lean changed over time with data from Axios (Rubin, April. 2023. “Supreme Court Ideology Continues to Lean Conservative, New Data Shows.” Axios. July 3, 2023. https://www.axios.com/2023/07/03/supreme-court-justices-political-ideology-chart.
 
