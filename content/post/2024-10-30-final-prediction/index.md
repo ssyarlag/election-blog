@@ -47,7 +47,7 @@ While one might instead consider 2020, given its comparative recency, the fact t
 
 Going into this week, I was interested in testing eight OLS models predicting Democratic vote share that I built last week (four models across two sets of data), using leave-one-out out of sample validation. Thank you, again, to Matt Dardet for his starter code.
 
-However, I wanted to consider two additional pieces of data. First, I consider data from the Cost of Voting Index, a metric created by Pomante that reflects the degree of challenge that voters face when seeking to cast their ballot (10). Second, I added data regarding the Supreme Court's overturning of precedent, specifically adding an interaction term between the number of precedents the court overturned in the previous four years and an indicator variable that representing whether the court had a conservative shift in its decisionmaking that I created using data from Rubin, 2023 (11). As discussed in our course, election laws -- and the guidelines that they may place on who is able to cast a vote -- may have a substantial impact on elections, especially through disproportionately affecting certain demographic groups (12). Similarly, rhetoric regarding the Supreme Court's overturning of Roe v. Wade and the potential for the next president to shape the Supreme Court's makeup has also impacted campaign strategies, leading me to consider how this may be predictive in this upcoming election (13) 
+However, I wanted to consider two additional pieces of data. First, I consider data from the Cost of Voting Index, a metric created by Pomante that reflects the degree of challenge that voters face when seeking to cast their ballot (10). Second, I added data regarding the Supreme Court's overturning of precedent, specifically adding an interaction term between the number of precedents the court overturned in the previous four years and an indicator variable that representing whether the court had a conservative shift in its decisionmaking that I created using data from Rubin, 2023 (11). As discussed in our course, election laws -- and the guidelines that they may place on who is able to cast a vote -- could have a substantial impact on elections, especially through disproportionately affecting certain demographic groups (12). Similarly, rhetoric regarding the Supreme Court's overturning of Roe v. Wade and the potential for the next president to shape the Supreme Court's makeup has also impacted campaign strategies, leading me to consider how this may be predictive in this upcoming election (13) 
 
 Importantly, I also updated my training data since last week, replacing the variable of mean poll predictions five weeks out from the election with poll predictions one week out from the election. Aside from the fact that this data is now available, this metric also allows me to better account for the underlying factor that I hope to include in my model -- polling predictions. Additionally, recognizing that my metric of grant allocation was incorrectly measured, I slightly altered it. In previous weeks, I calculated one metric of grant spending across decades for each state, rather than calculating spending in the year or years prior to an election. This variable in this form definitely did not drive voting outcomes, as it would be impossible for someone in, for example, the 2000 election to predict how funds would be allocated to their state from 2000 to 2008. Instead, I summed the total funding allocated to each state during the previous election cycle, but still took the log of this metric given the shape of the data. While this metric is slightly different than the one that Kriner and Reeves used in their study finding significant results (they focused on testing recency bias in voting by focusing on funding allocated in the year before an election), this metric also allows us to aggregate upwards, potentially limiting the missing data challenges from not having data for elections after 2008 (14)
 
@@ -206,24 +206,24 @@ Nelamali, Naveen. 2022. “Replace Values Based on Condition in R.” Spark By {
 “Nebraska Election Results 2020 | Live Map Updates | Voting by County & District.” n.d. Accessed November 4, 2024. https://www.politico.com/2020-election/results/nebraska/.; “How to Replace Values in R with Examples - Spark By {Examples}.” n.d. Accessed November 1, 2024. https://sparkbyexamples.com/r-programming/replace-values-in-r/.
 
 
-(4) “2024 Presidential Election Predictions \| The Hill and DDHQ.” n.d. The Hill. Accessed October 31, 2024. <https://elections2024.thehill.com/forecast/2024/president/>. “Harris v Trump: 2024 Presidential Election Prediction Model.” n.d. The Economist. Accessed October 31, 2024. <https://www.economist.com/interactive/us-2024-election/prediction-model/president>. Morris, G. Elliott.
+(4) Eg: “2024 Presidential Election Predictions \| The Hill and DDHQ.” n.d. The Hill. Accessed October 31, 2024. <https://elections2024.thehill.com/forecast/2024/president/>. “Harris v Trump: 2024 Presidential Election Prediction Model.” n.d. The Economist. Accessed October 31, 2024. <https://www.economist.com/interactive/us-2024-election/prediction-model/president>. Morris, G. Elliott.
     2024. “Who Is Favored To Win The 2024 Presidential Election?” FiveThirtyEight. June 11, 2024. <https://projects.fivethirtyeight.com/2024-election-forecast/>.
 
-(5) Fink, Jenni.
+(5)Eg: Fink, Jenni.
     2024. “How Donald Trump’s Chances Compare to Past Elections at 50 Day Mark - Newsweek.” Newsweek. September 17, 2024. <https://www.newsweek.com/donald-trump-presidential-polls-election-2024-1954820>. O’Connell, Ryan.
     2025. “Is This 2016 All Over Again?” The Globalist. October 2, 2024. <https://www.theglobalist.com/united-states-politics-2024-us-presidential-elections-kamala-harris-donald-trump/>. Paz, Christian.
     2026. “Can We Trust the Polls This Year?” Vox. September 10, 2024. <https://www.vox.com/2024-elections/370649/trust-polls-2016-2020-election-2024-pollster-polling-miss>. Rogerson, Riley.
     2027. “‘Déjà Vu All Over Again’: Senators Say the 2024 Race Is Suddenly Looking Like 2016.” NOTUS. August 2, 2024. <https://www.notus.org/congress/deja-vu-senators-2024-race-like-2016>.
 
-(6) Coffé, Hilde, and Åsa von Schoultz.
+(6) Eg: Coffé, Hilde, and Åsa von Schoultz.
     2021. “How Candidate Characteristics Matter: Candidate Profiles, Political Sophistication, and Vote Choice.” Politics 41 (2): 137–55. <https://doi.org/10.1177/0263395720922077>. ICPSR. n.d. “Candidate Characteristics.” ICPSR. Accessed October 31, 2024. <https://www.icpsr.umich.edu/web/pages/instructors/setups/notes/candidate-characteristics.html>. Kulachai, Waiphot, Unisa Lerdtomornsakul, and Patipol Homyamyen.
     2022. “Factors Influencing Voting Decision: A Comprehensive Literature Review.” Social Sciences 12 (9): 469. <https://doi.org/10.3390/socsci12090469>. Schwarz, Susanne, and Alexander Coppock.
     2023. “What Have We Learned about Gender from Candidate Choice Experiments? A Meta-Analysis of Sixty-Seven Factorial Survey Experiments.” The Journal of Politics 84 (2): 655–68. <https://doi.org/10.1086/716290>. Pedersen, Rasmus T., Jens Olav Dahlgaard, and Manuele Citi. 2019. “Voter Reactions to Candidate Background Characteristics Depend on Candidate Policy Positions.” Electoral Studies 61 (October):102066. https://doi.org/10.1016/j.electstud.2019.102066.
 
-(7) Schneider, Howard.
+(7) Eg: Schneider, Howard.
     2024. “Trump Wants to Compare Now to Four Years Ago. Here’s What It Looks like \| Reuters.” Reuters, October 30, 2024. <https://www.reuters.com/world/us/does-trump-really-want-compare-now-four-years-ago-2024-10-30/>.
 
-(8) Morris, G. Elliott. 2024. “Who Is Favored To Win The 2024 Presidential Election?” FiveThirtyEight. June 11, 2024. https://projects.fivethirtyeight.com/2024-election-forecast/.
+(8) Eg: Morris, G. Elliott. 2024. “Who Is Favored To Win The 2024 Presidential Election?” FiveThirtyEight. June 11, 2024. https://projects.fivethirtyeight.com/2024-election-forecast/.
 
 (9) Shah, Ronak.
     2021. “Answer to ‘How Can I Add a Row with the Mean of Each Numeric Column.’” Stack Overflow. <https://stackoverflow.com/a/69264173>.
@@ -235,10 +235,10 @@ Index, Cost of Voting. n.d. “Cost of Voting Index.” Cost of Voting Index. Ac
 
 (11)  Rubin, April. 2023. “Supreme Court Ideology Continues to Lean Conservative, New Data Shows.” Axios. July 3, 2023. https://www.axios.com/2023/07/03/supreme-court-justices-political-ideology-chart.
 
-(12)  Foley, Jordan M, Michael W Wagner, Ceri Hughes, Jiyoun Suk, Katherine J Cramer, Lewis A Friedland, and Dhavan V Shah. 2021. “Free and Fair? The Differential Experiences of Voting Barriers and Voting Policies in American Midterm Elections.” International Journal of Public Opinion Research 33 (3): 703–12. https://doi.org/10.1093/ijpor/edab009.
-Thompson, Daniel M., Jennifer A. Wu, Jesse Yoder, and Andrew B. Hall. 2020. “Universal Vote-by-Mail Has No Impact on Partisan Turnout or Vote Share.” Proceedings of the National Academy of Sciences 117 (25): 14052–56. https://doi.org/10.1073/pnas.2007249117.
+(12) Eg: Grimmer, Justin, Eitan Hersh, Marc Meredith, Jonathan Mummolo, and Clayton Nall. 2018. “Obstacles to Estimating Voter ID Laws’ Effect on Turnout.” The Journal of Politics 80 (3): 1045–51.; Foley, Jordan M, Michael W Wagner, Ceri Hughes, Jiyoun Suk, Katherine J Cramer, Lewis A Friedland, and Dhavan V Shah. 2021. “Free and Fair? The Differential Experiences of Voting Barriers and Voting Policies in American Midterm Elections.” International Journal of Public Opinion Research 33 (3): 703–12. https://doi.org/10.1093/ijpor/edab009.
+Thompson, Daniel M., Jennifer A. Wu, Jesse Yoder, and Andrew B. Hall. 2020. “Universal Vote-by-Mail Has No Impact on Partisan Turnout or Vote Share.” Proceedings of the National Academy of Sciences 117 (25): 14052–56. https://doi.org/10.1073/pnas.2007249117. 
 
-(13) Badas, Alex, and Elizabeth Simas. 2022. “The Supreme Court as an Electoral Issue: Evidence from Three Studies.” Political Science Research and Methods 10 (1): 49–67. https://doi.org/10.1017/psrm.2021.20.
+(13) Eg: Badas, Alex, and Elizabeth Simas. 2022. “The Supreme Court as an Electoral Issue: Evidence from Three Studies.” Political Science Research and Methods 10 (1): 49–67. https://doi.org/10.1017/psrm.2021.20.
 Chemerinsky, Erwin. 2024. “Opinion: How Much Will the Supreme Court Matter in the 2024 Election?” Los Angeles Times. October 6, 2024. https://www.latimes.com/opinion/story/2024-10-06/election-donald-trump-kamala-harris-supreme-court. Etzerodt, Søren Frank. 2024. “The Electoral Consequences of Abortion Politicization in the US.” European Journal of Politics and Gender, August, 1–5. https://doi.org/10.1332/25151088Y2024D000000049. Nadeem, Reem. 2024. “2. Issues and the 2024 Election.” Pew Research Center (blog). September 9, 2024. https://www.pewresearch.org/politics/2024/09/09/issues-and-the-2024-election/.
 
 (14) Kriner, Douglas L., and Andrew Reeves. 2012. “The Influence of Federal Spending on Presidential Elections.” American Political Science Review 106 (2): 348–66. https://doi.org/10.1017/S0003055412000159.
@@ -257,7 +257,7 @@ Silver, Nate. 2024. “2024 Presidential Election Model Methodology Update.” J
 
 (19) Shaw, Daron R., and John R. Petrocik. 2020. The Turnout Myth: Voting Rates and Partisan Outcomes in American National Elections. Oxford University Press.
 
-(20) Axelrod, Tal. 2024. “Third-Party Candidates Could Be Swing-State Spoilers Even after Intense Democrat Efforts.” ABC News. November 1, 2024. https://abcnews.go.com/Politics/democrats-hard-block-party-candidates-spoilers/story?id=115273808.
+(20) Eg: Axelrod, Tal. 2024. “Third-Party Candidates Could Be Swing-State Spoilers Even after Intense Democrat Efforts.” ABC News. November 1, 2024. https://abcnews.go.com/Politics/democrats-hard-block-party-candidates-spoilers/story?id=115273808.
 Bouranova, Alene. 2024. “Is Voting for a Third-Party Candidate Effective or Is It a Wasted Vote? (And Other Third-Party Questions).” Boston University. October 28, 2024. https://www.bu.edu/articles/2024/is-voting-third-party-a-wasted-vote/. Morris, G. Elliott. 2024. “Who Is Favored To Win The 2024 Presidential Election?” FiveThirtyEight. June 11, 2024. https://projects.fivethirtyeight.com/2024-election-forecast/.
 
 (21) Kim, Seo-young Silvia, and Jan Zilinsky. 2024. “Division Does Not Imply Predictability: Demographics Continue to Reveal Little About Voting and Partisanship.” Political Behavior 46 (1): 67–87. https://doi.org/10.1007/s11109-022-09816-z.
@@ -266,7 +266,7 @@ Bouranova, Alene. 2024. “Is Voting for a Third-Party Candidate Effective or Is
 
 (23) Personal conversation, Jamie Liu, November 1, 2024
 
-(24) Javanmard, Adel, and Andrea Montanari. 2014. “Conﬁdence Intervals and Hypothesis Testing for High-Dimensional Regression.” Journal of Machine Learning Research 15:2869–2909. EdM. 2020. “Answer to ‘How Do I Calculate Confidence Intervals on an Elastic Net Regression in R.’” Cross Validated. https://stats.stackexchange.com/a/478188.
+(24) Eg: Javanmard, Adel, and Andrea Montanari. 2014. “Conﬁdence Intervals and Hypothesis Testing for High-Dimensional Regression.” Journal of Machine Learning Research 15:2869–2909. EdM. 2020. “Answer to ‘How Do I Calculate Confidence Intervals on an Elastic Net Regression in R.’” Cross Validated. https://stats.stackexchange.com/a/478188.
 ilanman. 2016. “Answer to ‘Confidence Intervals for Ridge Regression.’” Stack Overflow. https://stackoverflow.com/a/40509534.
 
 (25) “RPubs - Linear Regression Confidence and Prediction Intervals.” n.d. Accessed October 26, 2024. https://rpubs.com/aaronsc32/regression-confidence-prediction-intervals.
