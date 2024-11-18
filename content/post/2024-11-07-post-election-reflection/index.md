@@ -210,8 +210,9 @@ The New York Times. 2024a. “Maine Second District Presidential Election Result
 ———. 2024b. “Nebraska Second District Presidential Election Results,” November 5, 2024, sec. U.S. https://www.nytimes.com/interactive/2024/11/05/us/elections/results-nebraska-president-district-2.html.
 
 (5) Build a data frame—Tibble. (n.d.). Retrieved November 17, 2024, from https://tibble.tidyverse.org/reference/tibble.html
+(5) hadley. (2010, June 2). Answer to “How to move or position a legend in ggplot2” [Online post]. Stack Overflow. https://stackoverflow.com/a/2954610
 
-(6) G, Ben. 2018. “Answer to ‘Left Join Only Selected Columns in R with the Merge() Function.’” Stack Overflow. https://stackoverflow.com/a/50746374.
+(6) G, Ben. 2018. “Answer to ‘Left Join Only Selected Columns in R with the Merge() Function.’” Stack Overflow. https://stackoverflow.com/a/50746374.; hadley. (2010, June 2). Answer to “How to move or position a legend in ggplot2” [Online post]. Stack Overflow. https://stackoverflow.com/a/2954610
 
 (7) Swenson, A. (2024, September 24). Several states are making late changes to election rules, even as voting is set to begin | AP News. AP News. https://apnews.com/article/election-2024-voting-ballots-certification-state-laws-c6d5a339503771596758a733851bfeae
 

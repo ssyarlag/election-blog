@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en-us">
-  <head>
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=4321&amp;path=livereload" data-no-instant defer></script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Post-Election Reflection | A minimal Hugo website</title>
@@ -155,7 +155,7 @@
 </table>
 <p>Figure 4 - Predicted Winners by State (excluding states without polling data)</p>
 <p>(Thank you to Matt for the starter code!)</p>
-<img src="https://example.org/post/2024/11/07/post-election-reflection/index_files/figure-html/unnamed-chunk-4-1.png" width="672" />
+<img src="/post/2024/11/07/post-election-reflection/index_files/figure-html/unnamed-chunk-4-1.png" width="672" />
 <p>Clearly, this model vastly overpredicted Kamala Harris&rsquo;s performance in this election.</p>
 <h1 id="trends-in-model-accuracy">Trends in Model Accuracy</h1>
 <p>My model demonstrates a strong performance for Democrats everywhere, including in a state that was largely predicted to vote Republican even prior to the election (although only by a very small margin) based on the polls. This suggests that the other variables I included in my model might be positively skewing Democratic performance. To explore this further, I calculated the mean absolute performance error of each prediction type and ranked states based on how well my model predicted their Democratic and Republican vote shares.</p>
@@ -356,7 +356,7 @@
 <p>This analysis demonstrates that my model generally did better at predicting Democratic vote shares than Republican vote shares, with the magnitude of the prediction error generally being lower for the Democratic outcomes. In particular, the mean absolute performance error for Democratic performance was 3.30, while that for Republican performance was 5.47. However, my model consistently both overpredicted Democratic performance and underpredicted Republican performance, leading to large prediction errors when trying to predict state winners.</p>
 <p>Interestingly, this analysis suggests that the model also did a better job at predicting Democratic Vote Share than Republican vote share in the seven swing states. In terms of raw numbers, the absolute value of the best Republican prediction is larger than six out of the seven Democratic prediction errors, indicating that the Democratic model clearly had better performance. However, when also considering all of the other states, it seems like the model did a slightly better job at predicting the battleground states&rsquo; Democratic turnout, with four out of the seven appearing in the top 10 Democratic predictions and only three out of the seven appearing in the top 10 Republican predictions.</p>
 <p>To understand geographic trends further, I charted my model&rsquo;s performance on both metrics.</p>
-<p><img src="https://example.org/post/2024/11/07/post-election-reflection/index_files/figure-html/unnamed-chunk-11-1.png" width="672" /><img src="https://example.org/post/2024/11/07/post-election-reflection/index_files/figure-html/unnamed-chunk-11-2.png" width="672" /></p>
+<p><img src="/post/2024/11/07/post-election-reflection/index_files/figure-html/unnamed-chunk-11-1.png" width="672" /><img src="/post/2024/11/07/post-election-reflection/index_files/figure-html/unnamed-chunk-11-2.png" width="672" /></p>
 <p>These maps seem to demonstrate that my models were especially inaccurate in states that were not deemed swing states in the 2024 election, such as California, Florida, Texas, Maryland, Massachusetts, and New York. This is likely because I selected my model based on its performance in predicting outcomes in the seven 2024 swing states.</p>
 <p>Nevertheless, it is interesting to note that my model had greater prediction errors in some swing states than others. For example, we see from both the visual analysis and the tables above that the model had worse prediction errors in Arizona and Nevada (the bottom two battleground states in terms of both Democratic and Republican prediction errors) than Wisconsin and Georgia.</p>
 <h1 id="hypotheses">Hypotheses</h1>
@@ -386,8 +386,9 @@ Zou, Hui, and Trevor Hastie. 2005. “Regularization and Variable Selection Via 
 akrun. 2020. “Answer to ‘How Do I Find Top 5 Values in a Data Frame Column?’” Stack Overflow. <a href="https://stackoverflow.com/a/63221153">https://stackoverflow.com/a/63221153</a>.
 The New York Times. 2024a. “Maine Second District Presidential Election Results,” November 5, 2024, sec. U.S. <a href="https://www.nytimes.com/interactive/2024/11/05/us/elections/results-maine-president-district-2.html">https://www.nytimes.com/interactive/2024/11/05/us/elections/results-maine-president-district-2.html</a>.
 ———. 2024b. “Nebraska Second District Presidential Election Results,” November 5, 2024, sec. U.S. <a href="https://www.nytimes.com/interactive/2024/11/05/us/elections/results-nebraska-president-district-2.html">https://www.nytimes.com/interactive/2024/11/05/us/elections/results-nebraska-president-district-2.html</a>.</p>
-<p>(5) Build a data frame—Tibble. (n.d.). Retrieved November 17, 2024, from <a href="https://tibble.tidyverse.org/reference/tibble.html">https://tibble.tidyverse.org/reference/tibble.html</a></p>
-<p>(6) G, Ben. 2018. “Answer to ‘Left Join Only Selected Columns in R with the Merge() Function.’” Stack Overflow. <a href="https://stackoverflow.com/a/50746374">https://stackoverflow.com/a/50746374</a>.</p>
+<p>(5) Build a data frame—Tibble. (n.d.). Retrieved November 17, 2024, from <a href="https://tibble.tidyverse.org/reference/tibble.html">https://tibble.tidyverse.org/reference/tibble.html</a>
+(5) hadley. (2010, June 2). Answer to “How to move or position a legend in ggplot2” [Online post]. Stack Overflow. <a href="https://stackoverflow.com/a/2954610">https://stackoverflow.com/a/2954610</a></p>
+<p>(6) G, Ben. 2018. “Answer to ‘Left Join Only Selected Columns in R with the Merge() Function.’” Stack Overflow. <a href="https://stackoverflow.com/a/50746374.;">https://stackoverflow.com/a/50746374.;</a> hadley. (2010, June 2). Answer to “How to move or position a legend in ggplot2” [Online post]. Stack Overflow. <a href="https://stackoverflow.com/a/2954610">https://stackoverflow.com/a/2954610</a></p>
 <p>(7) Swenson, A. (2024, September 24). Several states are making late changes to election rules, even as voting is set to begin | AP News. AP News. <a href="https://apnews.com/article/election-2024-voting-ballots-certification-state-laws-c6d5a339503771596758a733851bfeae">https://apnews.com/article/election-2024-voting-ballots-certification-state-laws-c6d5a339503771596758a733851bfeae</a></p>
 <p>(8) Lopez, G. (2024, November 8). How Inflation Shaped Voting. The New York Times. <a href="https://www.nytimes.com/2024/11/08/briefing/how-inflation-shaped-voting.html">https://www.nytimes.com/2024/11/08/briefing/how-inflation-shaped-voting.html</a>
 Zahn, M. (2024, November 8). Why inflation helped tip the election toward Trump, according to experts. ABC News. <a href="https://abcnews.go.com/Business/inflation-helped-tip-election-trump-experts/story?id=115601699">https://abcnews.go.com/Business/inflation-helped-tip-election-trump-experts/story?id=115601699</a></p>
