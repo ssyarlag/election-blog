@@ -29,7 +29,7 @@ I trained this model using state-level data from each Presidential election afte
 
 While my ultimate model included the factors above, I decided on these specifications and shape after testing a total of 32 different models, which varied by the predictors included and the data that was used (I tested models trained on two different datasets -- one that included all state-level Presidential election outcomes after 1984 and another that only included this data after the 1996 Presidential election). As a benchmark of performance, I evaluated how effectively each of these models predicted the vote share that Hillary Clinton received during the 2016 presidential election in each of the seven "battleground" states of the 2024 election (3). 
 
-Given that the model described above had the lowest absolute prediction error, I selected it as my prediction model for the election, before regularizing the model using Elastic-Net.
+Given that the model described above had the lowest absolute prediction error, I selected it as my prediction model for the election, before regularizing the model using Elastic-Net (2).
 
 ### Model Estimation and Final Prediction
 
@@ -72,14 +72,11 @@ Predicted Winners by State (excluding states without polling data)
 
 <img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-4-1.png" width="672" />
 
-Clearly, this model vastly overpredicted Kamala Harris's performance in this election.
-
-
 # Trends in Model Accuracy
 
 
 
-My model demonstrates a strong performance for Democrats everywhere, including in a state that was largely predicted to vote Republican even prior to the election (although only by a very small margin) based on the polls. This suggests that the other variables I included in my model might be positively skewing Democratic performance. To explore this further, I calculated the Mean Absolute Error of each prediction type and ranked states based on how well my model predicted their Democratic and Republican vote shares.
+My model demonstrates a strong performance for Democrats everywhere, including in a state that was largely predicted to vote Republican even prior to the election based on the polls (although my model predicted this result only by a small margin) (3). This suggests that the other variables I included in my model might be positively skewing Democratic performance. To explore this further, I calculated the Mean Absolute Error of each prediction type and ranked states based on how well my model predicted their Democratic and Republican vote shares.
 
 
 | Dem. Mean AE | Rep. Mean AE |
@@ -172,7 +169,7 @@ Finally, I think part of my Republican prediction error may have resulted from m
 
 ## Validation Methods
 
-However, I think the bigger issue with my study may have been my validation method, which assumed that this election would be largely similar to the 2016 election. For one, my assumption partially relied on the fact that the US economy was growing at similar rates prior to both elections. However, I did not consider an incredibly salient economic variable in the minds of many voters -- inflation (9). Though inflation was only at about 1.6% in October 2016, inflation was at a significantly higher 2.6% in October 2024 -- a figure that also followed years of above average inflation (10). This, combined with Obama's relative popularity at the end of his term compared to Biden's popularity, may have weakened my ability to compare the two elections, even if both resulted in a Democratic loss (11). In other words, though my initial ideas of how to build my model were based on the precedent of simplicity and reliance on the fundamentals of economic performance and approval, as described in Alan Abramowitz's Time for Change model, my final choice in validation did not do well at approximating these underlying factors.
+However, I think the bigger issue with my study may have been my validation method, which assumed that this election would be largely similar to the 2016 election. For one, my assumption partially relied on the fact that the US economy was growing at similar rates prior to both elections, but I did not consider an incredibly salient economic variable in the minds of many voters -- inflation (9). Though inflation was only at about 1.6% in October 2016, inflation was at a significantly higher 2.6% in October 2024 -- a figure that also followed years of above average inflation (10). This, combined with Obama's relative popularity at the end of his term compared to Biden's popularity, may have weakened my ability to compare the two elections, even if both resulted in a Democratic loss (11). In other words, though my initial ideas of how to build my model were based on the precedent of simplicity and reliance on the fundamentals of economic performance and approval, as described in Alan Abramowitz's Time for Change model, my final choice in validation did not do well at approximating these underlying factors.
 
 Ultimately, using this flawed method also likely exacerbated issues of omitted variable bias that may have plagued my model. A strong example of this is my exclusion of inflation. While I initially considered the economic variables of GDP growth and unemployment because of the example of Time for Change and a belief that unemployment was a salient issue because it directly impacts voters' livelihoods, considering the role of inflation likely would have substantially changed my model (12). However, even putting aside variables that I did not consider from the beginning, this validation method suggested that other models that included additional parameters were less accurate than the primarily polling/previous performance based model that I chose -- perhaps this would not be the case if I validated my models using a different election or used a more general form of cross-validation.
 
@@ -182,13 +179,13 @@ The first series of tests that I would run to evaluate my existing model would b
 
 Second, I would test how changing the parameters of my model to include Republican polling values and lagged Republican vote share for the previous two elections when predicting Republican vote share would impact my results. If I find that my predictions of Republican vote share are more accurate when replacing mean_1_wk_poll_support, D_pv_lag1 and D_pv_lag2 with their Republican counterparts, this would lend credence to my hypothesis that it was problematic to use the same prediction variables for both predictions.
 
-Finally, I would re-run my validation tests on the 32 models that I described in my last blog post, but use repetitive cross-validation instead of a single leave-one-out validation test. If the best performing model under this alternative form of validation more accurately predicted the outcome of the 2024 election, this could suggest that the average election (across either of the datasets that I would validate on, given the different training datasets that I considered) would better predict the 2024 election than the 2016 election. If this occurred, it could potentially lend credence to the argument that elections, on average, are more similar than I had perceived them to be. Alternatively, I could consider finding an election that is more similar to the 2024 Presidential Election than the 2016 Presidential Election and conducting leave-one-out validation on that other election. However, the changing dimension of time could make this especially challenging, especially if being used to predict future elections when we do not have the advantage of knowing how salient issues translate into voting outcomes.
+Finally, I would re-run my validation tests on the 32 models that I described in my last blog post, but use repetitive cross-validation instead of a single leave-one-out validation test. If the best performing model under this alternative form of validation more accurately predicted the outcome of the 2024 election, this could suggest that the average election (across either of the datasets that I would validate on, given the different training datasets that I considered) would better predict the 2024 election than the 2016 election. If this occurred, it could potentially lend credence to the argument that elections, on average, are more similar than I had perceived them to be. Alternatively, I could consider finding an election that is more similar to the 2024 Presidential Election than the 2016 Presidential Election and conducting leave-one-out validation on that other election. However, the changing dimension of time could make this challenging, especially if being used to predict future elections when we do not have the advantage of knowing how salient issues translate into voting outcomes.
 
 # Changes for next time
 
 Moving forward, an easy fix that I would want to make would be to change the parameters of my Republican vote share prediction model to be more reflective of Republican predictors.
 
-Beyond this, though, I would want to consider the results of the hypothesis tests above, as this would help determine the variables that I would include or exclude in my model, as well as the way I would compare variations of similar models. I strongly believe that I would add a variable for inflation, as this seems like a substantial omitted variable, but I believe that adding other variables (or potentially other interaction terms) could substanitally improve my model's performance.
+Beyond this, though, I would want to consider the results of the hypothesis tests above, as this would help determine the variables that I would include or exclude in my model, as well as the way I would compare variations of similar models. I strongly believe that I would add a variable for inflation, as this seems like a significant omitted variable, but I believe that adding other variables (or potentially other interaction terms) could substantially improve my model's performance.
 
 Beyond this, though, I would add some additional specifications to my model. For example, in order to avoid averaging across states that may be very different from each other, I would consider adding state fixed effects -- a consideration that was brought up in our last class and section. Finally, I would consider using regularization methods other than LASSO, considering the discussion that my classmate Cathy brought up during a presentation of her model. 
 
@@ -217,7 +214,7 @@ The New York Times. 2024a. “Maine Second District Presidential Election Result
 (8) Swenson, A. (2024, September 24). Several states are making late changes to election rules, even as voting is set to begin | AP News. AP News. https://apnews.com/article/election-2024-voting-ballots-certification-state-laws-c6d5a339503771596758a733851bfeae
 
 (9) Lopez, G. (2024, November 8). How Inflation Shaped Voting. The New York Times. https://www.nytimes.com/2024/11/08/briefing/how-inflation-shaped-voting.html
-Zahn, M. (2024, November 8). Why inflation helped tip the election toward Trump, according to experts. ABC News. https://abcnews.go.com/Business/inflation-helped-tip-election-trump-experts/story?id=115601699
+Zahn, M. (2024, November 8). Why inflation helped tip the election toward Trump, according to experts. ABC News. https://abcnews.go.com/Business/inflation-helped-tip-election-trump-experts/story?id=115601699; FRED Data from St. Louis FRED (appended with data from BEA and Brookings for 2024 GDP growth and Unemployment Figures, as discussed in previous blog post)
 
 (10) Current US Inflation Rates: 2000-2024. (n.d.). Retrieved November 17, 2024, from https://www.usinflationcalculator.com/inflation/current-inflation-rates/
 
@@ -227,7 +224,7 @@ Zahn, M. (2024, November 8). Why inflation helped tip the election toward Trump,
 
 # Data Sources
 
-(Same sources as last blog)
+(Same sources as last blog, aside from the inclusion of ultimate popular vote outcomes)
 
 All data sources are provided by GOV 1372 course staff
 
@@ -239,9 +236,11 @@ State Popular Vote Data from MIT elections project, Wikipedia, and manual editin
 
 Additional data from Politico and Wall Street Journal for Maine and Nebraska District 2 added to test dataset to enable lagged predictions
 
+2024 Popular Vote Totals by State 
+
 Economic Data
 
-FRED Data from St. Louis FRED (appended with data from BEA and Brookings for 2023 GDP growth and Unemployment Figures)
+FRED Data from St. Louis FRED (appended with data from BEA and Brookings for 2024 GDP growth and Unemployment Figures)
 
 Grants Data from Kriner and Reeves (2015) replication data
 
