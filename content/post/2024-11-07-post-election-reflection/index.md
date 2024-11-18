@@ -153,6 +153,7 @@ Interestingly, this analysis suggests that the model also did a better job at pr
 
 To understand geographic trends further, I charted my model's performance on both metrics. 
 
+
 <img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-11-1.png" width="672" /><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-11-2.png" width="672" />
 
 These maps seem to demonstrate that my models were especially inaccurate in states that were not deemed swing states in the 2024 election, such as California, Florida, Texas, Maryland, Massachusetts, and New York. This is likely because I selected my model based on its performance in predicting outcomes in the seven 2024 swing states. 

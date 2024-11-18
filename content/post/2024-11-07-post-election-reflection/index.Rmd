@@ -188,6 +188,7 @@ Interestingly, this analysis suggests that the model also did a better job at pr
 
 To understand geographic trends further, I charted my model's performance on both metrics. 
 
+
 ```{r message = FALSE, warning = FALSE, echo = FALSE}
 # (6)
 states <- final_preds |>
@@ -211,7 +212,7 @@ dem_map <- error_dem_map |>
   geom_polygon(aes(fill = pred_error_dem), color = "black") +
   scale_fill_gradient(high = "red2",
                       low = "white") +
-  labs(fill = "Democratic Prediction Error") + 
+  labs(fill = "Democratic Prediction Error", title = "Democratic Prediction Error by State") + 
   theme_void() +
   theme(legend.position = "bottom")
   
@@ -220,7 +221,7 @@ rep_map <- error_rep_map |>
   geom_polygon(aes(fill = pred_error_rep), color = "black") +
   scale_fill_gradient(high = "white",
                       low = "red2") +
-  labs(fill = "Republican Prediction Error") + 
+  labs(fill = "Republican Prediction Error", title = "Republican Prediction Error by State") + 
   theme_void() +
   theme(legend.position = "bottom")
 
