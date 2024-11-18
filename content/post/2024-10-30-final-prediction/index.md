@@ -186,6 +186,9 @@ Predicted Electoral Vote Count (for states with polling data)
 
 This model proves incredibly optimistic for the Harris campaign, resulting in wins in not only all of the battleground states, but also, curiously, Florida (although the margin in Florida is less than 0.15 percentage points and neither candidate earns over 50% of the vote). However, it is also interesting to consider that the prediction intervals of these measures may overlap with each other, such as in the case of Florida. While this does not necessarily align with what several pollsters predict for the election, it will be interesting to see how well this model shapes up in the final election! (4) Thank you again, as in all of the previous blogs, to Matt Dardet for his detailed starter code across the past several weeks, which I reference throughout this blog.
 
+
+
+
 # References:
 
 (1) Andina, Matias. 2016. “Answer to ‘How to Remove $ and % from Columns in R?’” Stack Overflow. https://stackoverflow.com/a/35757945.

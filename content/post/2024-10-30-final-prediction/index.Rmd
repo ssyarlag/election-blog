@@ -694,10 +694,10 @@ Notably, I also dropped training data from Washington DC, following the preceden
 # Table with coefficients from model (again, based on example from Matt Dardet)
 d.coeftable <- data.frame("OLS" = coef(final_modelOLS)[-1],
                          "Elastic Net" = coef(enet.final, s = lambda.min.enet.final)[-1]) |> 
-  rownames_to_column("coef_name") |>
-  knitr::kable(col.names = c("Coefficient", "OLS", "Elastic Net"), align = "c")
+  rownames_to_column("coef_name") 
 
-d.coeftable
+
+knitr::kable(d.coeftable, col.names = c("Coefficient", "OLS", "Elastic Net"), align = "c")
 ```
 
 Interpreting the Elastic Net coefficients, I find the following interpretations of my model:
@@ -869,6 +869,16 @@ final_pred_map |>
 ```
 
 This model proves incredibly optimistic for the Harris campaign, resulting in wins in not only all of the battleground states, but also, curiously, Florida (although the margin in Florida is less than 0.15 percentage points and neither candidate earns over 50% of the vote). However, it is also interesting to consider that the prediction intervals of these measures may overlap with each other, such as in the case of Florida. While this does not necessarily align with what several pollsters predict for the election, it will be interesting to see how well this model shapes up in the final election! (4) Thank you again, as in all of the previous blogs, to Matt Dardet for his detailed starter code across the past several weeks, which I reference throughout this blog.
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+
+# Chunk added after on-time of election model in order to export predictions, training, and test data for use in next blog post - using code from Julia. 2020. “Answer to ‘Export R Data to Csv.’” *Stack Overflow*. <https://stackoverflow.com/a/62017887>.
+
+write.csv(train_1984, "train_1984.csv", row.names = FALSE)
+write.csv(d.coeftable, "coefs_final.csv", row.names = FALSE)
+write.csv(final_pred_map, "final_pred_map.csv", row.names = FALSE)
+```
+
 
 # References:
 

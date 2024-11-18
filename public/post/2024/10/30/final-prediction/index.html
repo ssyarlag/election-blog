@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en-us">
-  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=5765&amp;path=livereload" data-no-instant defer></script>
+  <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Final Prediction | A minimal Hugo website</title>
@@ -105,7 +105,7 @@
 <p>These coefficients, especially D_pv_lag2, seem quite counterintuitive to me. However, it is interesting to me that the ultimate results of my model seem relatively close to what major pollsters are predicting. (8)</p>
 <h3 id="validation">Validation</h3>
 <p>The final OLS model has high internal validity, with an adjusted R^2 value of 0.9455. As demonstrated earlier, the model also has higher leave-one-out out-of-sample performance than any of the other models that I tested, predicting 2016 results. However, I also include a histogram of errors when conducting a more generalized cross-validation test. Thank you, again to Matt for his starter code.</p>
-<img src="/post/2024/10/30/final-prediction/index_files/figure-html/unnamed-chunk-14-1.png" width="672" />
+<img src="https://example.org/post/2024/10/30/final-prediction/index_files/figure-html/unnamed-chunk-14-1.png" width="672" />
 <p>Aside from the occasional large negative outlier, this model also generally performs well across elections, with mean errors centered around 0. It is especially interesting that the average error skews slighly negative, meaning that, if anything, the model tends to underpredict Democratic performance on average.</p>
 <h2 id="justification">Justification</h2>
 <h3 id="what-i-considered">What I considered</h3>
@@ -267,7 +267,7 @@
       </tr>
   </tbody>
 </table>
-<img src="/post/2024/10/30/final-prediction/index_files/figure-html/unnamed-chunk-17-1.png" width="672" />
+<img src="https://example.org/post/2024/10/30/final-prediction/index_files/figure-html/unnamed-chunk-17-1.png" width="672" />
 <p>This model proves incredibly optimistic for the Harris campaign, resulting in wins in not only all of the battleground states, but also, curiously, Florida (although the margin in Florida is less than 0.15 percentage points and neither candidate earns over 50% of the vote). However, it is also interesting to consider that the prediction intervals of these measures may overlap with each other, such as in the case of Florida. While this does not necessarily align with what several pollsters predict for the election, it will be interesting to see how well this model shapes up in the final election! (4) Thank you again, as in all of the previous blogs, to Matt Dardet for his detailed starter code across the past several weeks, which I reference throughout this blog.</p>
 <h1 id="references">References:</h1>
 <p>(1) Andina, Matias. 2016. “Answer to ‘How to Remove $ and % from Columns in R?’” Stack Overflow. <a href="https://stackoverflow.com/a/35757945">https://stackoverflow.com/a/35757945</a>.
