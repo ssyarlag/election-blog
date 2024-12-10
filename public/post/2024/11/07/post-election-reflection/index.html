@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en-us">
-  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=4321&amp;path=livereload" data-no-instant defer></script>
+  <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Post-Election Reflection | A minimal Hugo website</title>
@@ -155,7 +155,7 @@
 </table>
 <p>Predicted Winners by State (excluding states without polling data)</p>
 <p>(Thank you to Matt for the starter code!)</p>
-<img src="/post/2024/11/07/post-election-reflection/index_files/figure-html/unnamed-chunk-4-1.png" width="672" />
+<img src="https://example.org/post/2024/11/07/post-election-reflection/index_files/figure-html/unnamed-chunk-4-1.png" width="672" />
 <h1 id="trends-in-model-accuracy">Trends in Model Accuracy</h1>
 <p>My model demonstrates a strong performance for Democrats everywhere, including in a state that was largely predicted to vote Republican even prior to the election based on the polls (although my model predicted this result only by a small margin) (3). This suggests that the other variables I included in my model might be positively skewing Democratic performance. To explore this further, I calculated the Mean Absolute Error of each prediction type and ranked states based on how well my model predicted their Democratic and Republican vote shares.</p>
 <table>
@@ -355,7 +355,7 @@
 <p>This analysis demonstrates that my model generally did better at predicting Democratic vote shares than Republican vote shares, with the magnitude of the prediction error generally being lower for the Democratic outcomes. In particular, the mean absolute error for Democratic vote share was 3.30, while that for Republican vote share was 5.47. However, my model consistently both overpredicted Democratic performance and underpredicted Republican performance, leading to large prediction errors when trying to predict state winners.</p>
 <p>Interestingly, this analysis suggests that the model also did a better job at predicting Democratic vote share than Republican vote share in the seven swing states (3). In terms of raw numbers, the absolute prediction error of the best Republican prediction is larger than six out of the seven Democratic prediction errors, indicating that the Democratic model clearly had better performance. However, when also considering all of the other states, it seems like the model did a slightly better job at predicting the battleground states&rsquo; Democratic turnout, with four out of the seven appearing in the top 10 Democratic predictions and only three out of the seven appearing in the top 10 Republican predictions.</p>
 <p>To understand geographic trends further, I charted my model&rsquo;s performance on both metrics.</p>
-<p><img src="/post/2024/11/07/post-election-reflection/index_files/figure-html/unnamed-chunk-11-1.png" width="672" /><img src="/post/2024/11/07/post-election-reflection/index_files/figure-html/unnamed-chunk-11-2.png" width="672" /></p>
+<p><img src="https://example.org/post/2024/11/07/post-election-reflection/index_files/figure-html/unnamed-chunk-11-1.png" width="672" /><img src="https://example.org/post/2024/11/07/post-election-reflection/index_files/figure-html/unnamed-chunk-11-2.png" width="672" /></p>
 <p>These maps seem to demonstrate that my models were especially inaccurate in states that were not deemed swing states in the 2024 election, such as California, Florida, Texas, Maryland, Massachusetts, and New York. This is likely because I selected my model based on its performance in predicting outcomes in the seven 2024 swing states (3).</p>
 <p>Nevertheless, it is interesting to note that my model had greater prediction errors in some swing states than others. For example, we see from both the visual analysis and the tables above that the model had worse prediction errors in Arizona and Nevada (the bottom two battleground states in terms of both Democratic and Republican prediction errors) than Wisconsin and Georgia.</p>
 <h1 id="hypotheses">Hypotheses</h1>
